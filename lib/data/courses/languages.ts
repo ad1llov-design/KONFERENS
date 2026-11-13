@@ -493,7 +493,7 @@ Cliente: Para mí, un café con leche y una tostada, por favor.
 export const LANGUAGE_COURSES: Course[] = [
   {
     id: 'chinese-intro',
-    title: 'Chinese — Pinyin & Basics',
+    title: 'Chinese',
     tagline: 'Unlock the sounds, tones, and foundational words of Mandarin.',
     description:
       'Begin your Mandarin journey with clarity. Learn the four tones, essential survival phrases, and self-introductions through practical pronunciation exercises.',
@@ -511,7 +511,7 @@ export const LANGUAGE_COURSES: Course[] = [
   },
   {
     id: 'german-a1',
-    title: 'German A1 Foundations',
+    title: 'German',
     tagline: 'Practical German for study, travel, and clear conversations.',
     description:
       'Build solid A1 German skills. Master essential greetings, noun genders (der/die/das), and authentic everyday dialogues for travel and life in German-speaking countries.',
@@ -529,7 +529,7 @@ export const LANGUAGE_COURSES: Course[] = [
   },
   {
     id: 'korean-hangul',
-    title: 'Korean — Hangul & Phrases',
+    title: 'Korean',
     tagline: 'Read Hangul in hours and speak natural daily expressions.',
     description:
       'Discover the world’s most logical alphabet. Learn to read Hangul syllables, master natural polite greetings, and introduce yourself with confidence.',
@@ -547,7 +547,7 @@ export const LANGUAGE_COURSES: Course[] = [
   },
   {
     id: 'spanish-a1',
-    title: 'Spanish A1 Foundations',
+    title: 'Spanish',
     tagline: 'From your first ¡Hola! to confident everyday communication.',
     description:
       'Immerse yourself in practical Spanish. Master natural greetings, understand the crucial distinction between Ser and Estar, and order food with ease.',

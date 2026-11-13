@@ -9,7 +9,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Panel } from '@/components/ui/Panel';
 import { Badge } from '@/components/ui/Badge';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { getDiagnosticQuestions, LEVEL_LABELS, LEVEL_DESCRIPTIONS } from '@/lib/data/diagnostics';
+import { getDiagnosticQuestions, getLevelLabel, getLevelDescription } from '@/lib/data/diagnostics';
 import { DemoState } from '@/lib/demo-state';
 import { getCourse } from '@/lib/data/courses';
 import { useLanguage } from '@/lib/i18n/context';
@@ -23,7 +23,7 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
 
   const rawCourse = getCourse(courseId);
   const course = rawCourse ? getLocalizedCourse(rawCourse, locale) : null;
-  const questions = getDiagnosticQuestions(courseId);
+  const questions = getDiagnosticQuestions(courseId, locale);
 
   const [step, setStep] = useState<'intro' | 'quiz' | 'result'>('intro');
   const [currentQ, setCurrentQ] = useState(0);
@@ -98,6 +98,7 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
           level: diagResult.level,
           weeklyMinutes: 60,
           goal: `Build practical competence in ${course?.title ?? courseId}`,
+          locale,
         }),
       });
       if (planRes.ok) {
@@ -230,8 +231,8 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
   }
 
   if (step === 'result' && result) {
-    const levelName = LEVEL_LABELS[result.level] || result.level;
-    const levelDesc = LEVEL_DESCRIPTIONS[result.level] || '';
+    const levelName = getLevelLabel(result.level, locale);
+    const levelDesc = getLevelDescription(result.level, locale);
 
     return (
       <div className="flex flex-col min-h-screen bg-background text-foreground">

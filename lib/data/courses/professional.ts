@@ -630,7 +630,7 @@ Focus on the behavior and its consequence, never on character flaws.`,
 export const PROFESSIONAL_COURSES: Course[] = [
   {
     id: 'ui-ux-design',
-    title: 'UI/UX Design Fundamentals',
+    title: 'UX/UI Design Fundamentals',
     tagline: 'Design human-centered digital experiences that users love.',
     description:
       'Learn the core discipline of UX/UI. Master the Jobs-to-be-Done framework, visual hierarchy, low-fidelity wireframing, and Jakob Nielsen’s usability heuristics.',
@@ -666,7 +666,7 @@ export const PROFESSIONAL_COURSES: Course[] = [
   },
   {
     id: 'project-management',
-    title: 'Project Management Essentials',
+    title: 'Project Management',
     tagline: 'Deliver projects on time, within scope, and under budget.',
     description:
       'Lead initiatives with confidence. Master the Iron Triangle, Agile/Scrum ceremonies, sprint backlogs, and risk probability-impact matrices.',
@@ -684,7 +684,7 @@ export const PROFESSIONAL_COURSES: Course[] = [
   },
   {
     id: 'entrepreneurship',
-    title: 'Entrepreneurship & Startup Foundations',
+    title: 'Entrepreneurship & Startup Fundamentals',
     tagline: 'Transform validated problems into sustainable business ventures.',
     description:
       'Build startups that solve real problems. Master customer discovery with The Mom Test, craft compelling Unique Value Propositions, and launch lean MVPs.',

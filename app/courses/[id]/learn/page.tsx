@@ -161,20 +161,20 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                         className={[
                           'flex items-center gap-3 px-4 py-3 rounded-[var(--r-md)] border transition-all',
                           isCurrent ? 'glass border-accent/50 shadow-md ring-1 ring-accent/20' : '',
-                          isCompleted ? 'bg-emerald-950/20 border-emerald-500/25' : '',
+                          isCompleted ? 'bg-surface border-border/80 text-foreground' : '',
                           isAvailable ? 'bg-surface border-border hover:border-accent/30' : '',
                           isLocked ? 'bg-background/40 border-border/50 opacity-50' : '',
                         ].join(' ')}
                       >
                         <div className="shrink-0">
-                          {isCompleted && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+                          {isCompleted && <CheckCircle2 className="h-4 w-4 text-success" />}
                           {isCurrent && <Circle className="h-4 w-4 text-accent animate-pulse" />}
                           {isAvailable && <Circle className="h-4 w-4 text-muted" />}
                           {isLocked && <Lock className="h-4 w-4 text-muted/60" />}
                         </div>
                         <span className={[
                           'text-sm font-medium flex-1',
-                          isCompleted ? 'text-emerald-300' : isCurrent ? 'text-foreground font-semibold' : isLocked ? 'text-muted' : 'text-foreground',
+                          isCurrent ? 'text-foreground font-semibold' : isLocked ? 'text-muted' : 'text-foreground',
                         ].join(' ')}>
                           {lesson.title}
                         </span>

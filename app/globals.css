@@ -163,6 +163,83 @@ body {
     border: 1px solid rgba(229, 160, 56, 0.35);
     color: var(--amber);
   }
+
+  /* Specular glass highlight */
+  .glass-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .glass-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(169, 204, 245, 0.38) 50%, transparent 95%);
+    pointer-events: none;
+    z-index: 2;
+  }
+}
+
+/* ─── Ambient Light Glow Animations ────────────────────────────────────── */
+@keyframes ambientGlow1 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.60;
+  }
+  50% {
+    transform: translate(24px, -18px) scale(1.10);
+    opacity: 0.82;
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.60;
+  }
+}
+
+@keyframes ambientGlow2 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.50;
+  }
+  50% {
+    transform: translate(-20px, 22px) scale(1.08);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.50;
+  }
+}
+
+.ambient-orb-blue {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(111, 164, 232, 0.12) 0%, rgba(111, 164, 232, 0) 70%);
+  filter: blur(55px);
+  pointer-events: none;
+  animation: ambientGlow1 16s ease-in-out infinite;
+}
+
+.ambient-orb-orange {
+  position: absolute;
+  width: 480px;
+  height: 480px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(242, 138, 50, 0.08) 0%, rgba(242, 138, 50, 0) 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  animation: ambientGlow2 20s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-orb-blue,
+  .ambient-orb-orange {
+    animation: none !important;
+  }
 }
 
 /* ─── Scrollbar ─────────────────────────────────────────────────────────── */

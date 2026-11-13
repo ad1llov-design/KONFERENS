@@ -127,11 +127,13 @@ export interface CourseProgress {
 // ─── User / Session ─────────────────────────────────────────────────────────
 
 export interface UserProfile {
-  id:          string;
-  email:       string;
-  displayName: string | null;
-  locale?:     Locale;
-  createdAt:   string;
+  id:                string;
+  email:             string;
+  displayName:       string | null;
+  avatar?:           string;
+  dailyGoalMinutes?: number;
+  locale?:           Locale;
+  createdAt:         string;
 }
 
 // ─── AI Tutor ───────────────────────────────────────────────────────────────

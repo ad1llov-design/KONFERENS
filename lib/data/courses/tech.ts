@@ -536,7 +536,7 @@ This allows LLMs to cite factual proprietary documents with high precision.`,
 export const TECH_COURSES: Course[] = [
   {
     id: 'javascript-basics',
-    title: 'JavaScript Essentials',
+    title: 'JavaScript Basics',
     tagline: 'The language that powers the interactive modern web.',
     description:
       'Learn modern JavaScript from ground up. Master const/let, arrow functions, and array transformations to build interactive web apps with confidence.',
@@ -554,7 +554,7 @@ export const TECH_COURSES: Course[] = [
   },
   {
     id: 'web-development',
-    title: 'Web Development — HTML, CSS & Responsive Design',
+    title: 'HTML & CSS / Web Development',
     tagline: 'Craft modern, accessible, and responsive digital interfaces.',
     description:
       'Master the core architecture of the web: semantic HTML5 for accessibility and modern CSS Flexbox and Grid for responsive layouts across all devices.',
@@ -572,7 +572,7 @@ export const TECH_COURSES: Course[] = [
   },
   {
     id: 'data-analytics',
-    title: 'Data Analytics & Visualization',
+    title: 'Data Analytics',
     tagline: 'Turn raw numbers into actionable business decisions.',
     description:
       'Understand how to extract meaning from datasets. Learn measures of central tendency, data cleaning, aggregation patterns, and visual storytelling.',

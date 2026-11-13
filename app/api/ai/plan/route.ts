@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { isOpenAIConfigured } from '@/lib/env';
 import { getCourse, getAllLessons, COURSES } from '@/lib/data/courses';
-import type { CourseId, LearningPlan, UserLevel, LearningPlanWeek } from '@/lib/types';
+import type { CourseId, LearningPlan, UserLevel, LearningPlanWeek, Locale } from '@/lib/types';
 
 const VALID_COURSE_IDS: CourseId[] = COURSES.map(c => c.id);
 
@@ -10,19 +10,29 @@ interface PlanRequestBody {
   level: UserLevel;
   weeklyMinutes?: number;
   goal?: string;
+  locale?: Locale;
 }
 
-function generateDefaultPlan(courseId: CourseId, level: UserLevel, weeklyMinutes: number): LearningPlan {
+function generateDefaultPlan(courseId: CourseId, level: UserLevel, weeklyMinutes: number, locale: Locale = 'en'): LearningPlan {
   const course = getCourse(courseId);
   const stages = course?.stages ?? [];
 
-  const weeks: LearningPlanWeek[] = stages.map((stage, idx) => ({
-    week: idx + 1,
-    focus: stage.title,
-    stageId: stage.id,
-    lessonIds: stage.lessons.map(l => l.id),
-    goalSummary: `Complete ${stage.lessons.length} lessons on ${stage.title}: ${stage.description}`,
-  }));
+  const weeks: LearningPlanWeek[] = stages.map((stage, idx) => {
+    let goalSummary = `Complete ${stage.lessons.length} lessons on ${stage.title}: ${stage.description}`;
+    if (locale === 'ru') {
+      goalSummary = `Освойте ${stage.lessons.length} уроков по модулю «${stage.title}»: ${stage.description}`;
+    } else if (locale === 'ky') {
+      goalSummary = `«${stage.title}» модулу боюнча ${stage.lessons.length} сабакты өздөштүрүңүз: ${stage.description}`;
+    }
+
+    return {
+      week: idx + 1,
+      focus: stage.title,
+      stageId: stage.id,
+      lessonIds: stage.lessons.map(l => l.id),
+      goalSummary,
+    };
+  });
 
   return {
     courseId,
@@ -47,7 +57,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Request body must be an object' }, { status: 400 });
   }
 
-  const { courseId, level, weeklyMinutes = 60, goal } = body as Partial<PlanRequestBody>;
+  const { courseId, level, weeklyMinutes = 60, goal, locale = 'en' } = body as Partial<PlanRequestBody>;
 
   if (!courseId || !VALID_COURSE_IDS.includes(courseId)) {
     return NextResponse.json({ error: 'Invalid courseId' }, { status: 400 });
@@ -60,10 +70,11 @@ export async function POST(request: NextRequest) {
 
   const validLevel: UserLevel = level === 'elementary' || level === 'pre-intermediate' ? level : 'beginner';
   const minutes = typeof weeklyMinutes === 'number' && weeklyMinutes > 0 && weeklyMinutes <= 600 ? weeklyMinutes : 60;
+  const validLocale: Locale = locale === 'ru' || locale === 'ky' ? locale : 'en';
 
   // If OpenAI is not configured, return deterministic verified plan
   if (!isOpenAIConfigured()) {
-    const plan = generateDefaultPlan(courseId, validLevel, minutes);
+    const plan = generateDefaultPlan(courseId, validLevel, minutes, validLocale);
     return NextResponse.json({ plan, isDemo: true });
   }
 
@@ -146,7 +157,7 @@ Each week should assign a subset of the stageId and lessonIds matching the curri
   } catch (err: unknown) {
     console.error('[AI Plan] Error:', err);
     // Fallback safely to default verified plan
-    const fallbackPlan = generateDefaultPlan(courseId, validLevel, minutes);
+    const fallbackPlan = generateDefaultPlan(courseId, validLevel, minutes, validLocale);
     return NextResponse.json({ plan: fallbackPlan, isDemo: true, fallback: true });
   }
 }

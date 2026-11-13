@@ -9,6 +9,7 @@ import type {
   TutorMessage,
   UserLevel,
   LearningPlan,
+  UserProfile,
 } from '@/lib/types';
 import { getCourse, getFirstLesson, getNextLesson, getAllLessons } from '@/lib/data/courses';
 
@@ -91,6 +92,25 @@ export const DemoState = {
 
   getUser() {
     return loadState().user;
+  },
+
+  updateProfile(updates: Partial<UserProfile>): void {
+    const state = loadState();
+    if (!state.user) {
+      state.user = {
+        id: 'demo-user',
+        email: 'learner@kivora.app',
+        displayName: 'Learner',
+        avatar: '🦊',
+        dailyGoalMinutes: 20,
+        createdAt: new Date().toISOString(),
+      };
+    }
+    state.user = {
+      ...state.user,
+      ...updates,
+    };
+    saveState(state);
   },
 
   // ── Enrollment ────────────────────────────────────────────────────────────

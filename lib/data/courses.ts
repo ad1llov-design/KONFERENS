@@ -856,7 +856,7 @@ export const COURSES: Course[] = [
   // Languages
   {
     id: 'english-a1-a2',
-    title: 'English A1–A2',
+    title: 'English',
     tagline: 'From your first words to confident conversations.',
     description:
       'Build a practical foundation in English. You will learn everyday vocabulary, essential grammar, and real phrases you can use from day one.',

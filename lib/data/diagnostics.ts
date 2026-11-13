@@ -1,5 +1,6 @@
-import type { DiagnosticQuestion, CourseId, UserLevel } from '@/lib/types';
+import type { DiagnosticQuestion, CourseId, UserLevel, Locale } from '@/lib/types';
 import { EXTRA_DIAGNOSTIC_QUESTIONS } from './diagnostics/extra';
+import { DIAGNOSTIC_TRANSLATIONS } from './diagnostics/translations';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Python Fundamentals — Diagnostic Questions
@@ -183,8 +184,22 @@ const DIAGNOSTIC_QUESTIONS: Partial<Record<CourseId, DiagnosticQuestion[]>> = {
   ...EXTRA_DIAGNOSTIC_QUESTIONS,
 };
 
-export function getDiagnosticQuestions(courseId: CourseId): DiagnosticQuestion[] {
-  return DIAGNOSTIC_QUESTIONS[courseId] ?? [];
+export function getDiagnosticQuestions(courseId: CourseId, locale?: Locale): DiagnosticQuestion[] {
+  const base = DIAGNOSTIC_QUESTIONS[courseId] ?? [];
+  if (!locale || locale === 'en') return base;
+
+  const locMap = DIAGNOSTIC_TRANSLATIONS[locale];
+  if (!locMap) return base;
+
+  return base.map(q => {
+    const loc = locMap[q.id];
+    if (!loc) return q;
+    return {
+      ...q,
+      question: loc.question || q.question,
+      options: loc.options || q.options,
+    };
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -241,3 +256,57 @@ export const LEVEL_DESCRIPTIONS: Record<UserLevel, string> = {
   'advanced':
     'Excellent command of key principles. You are set for mastery.',
 };
+
+export const LOCALIZED_LEVEL_LABELS: Record<Locale, Record<UserLevel, string>> = {
+  en: LEVEL_LABELS,
+  ru: {
+    'beginner':         'Начинающий',
+    'elementary':       'Базовый',
+    'pre-intermediate': 'Уверенный базовый',
+    'intermediate':     'Средний',
+    'advanced':         'Продвинутый',
+  },
+  ky: {
+    'beginner':         'Башталгыч',
+    'elementary':       'Базалык',
+    'pre-intermediate': 'Ишенимдүү базалык',
+    'intermediate':     'Орто',
+    'advanced':         'Өркүндөтүлгөн',
+  },
+};
+
+export const LOCALIZED_LEVEL_DESCRIPTIONS: Record<Locale, Record<UserLevel, string>> = {
+  en: LEVEL_DESCRIPTIONS,
+  ru: {
+    'beginner':
+      'Вы начинаете с самого начала — отлично. Программа курса построена шаг за шагом от ключевых понятий к практике.',
+    'elementary':
+      'У вас уже есть начальные представления. Программа освежит фундамент и быстро перейдёт к ключевым практическим темам.',
+    'pre-intermediate':
+      'Вы уверенно знаете основы. Мы сосредоточимся на углублённых навыках и решении реальных задач.',
+    'intermediate':
+      'Отличная база ключевых принципов. Вы готовы к решению прикладных задач повышенной сложности.',
+    'advanced':
+      'Превосходное владение ключевыми концепциями. Вы готовы к профессиональному мастерству.',
+  },
+  ky: {
+    'beginner':
+      'Сиз нөлдөн баштап жатасыз — эң сонун. Курс негизги түшүнүктөрдөн баштап кадам сайын практикага жетелейт.',
+    'elementary':
+      'Сизде алгачкы түшүнүктөр бар. Программа пайдубалды бекемдеп, дароо маанилүү практикалык темаларга өтөт.',
+    'pre-intermediate':
+      'Сиз негиздерди жакшы өздөштүргөнсүз. Биз тереңдетилген көндүмдөргө жана реалдуу маселелерди чечүүгө басым жасайбыз.',
+    'intermediate':
+      'Негизги принциптер боюнча бекем билим. Татаал практикалык тапшырмаларды аткарууга толук даярсыз.',
+    'advanced':
+      'Негизги концепцияларды мыкты өздөштүргөнсүз. Кесиптик деңгээлге жетүү үчүн даярсыз.',
+  },
+};
+
+export function getLevelLabel(level: UserLevel, locale: Locale = 'en'): string {
+  return LOCALIZED_LEVEL_LABELS[locale]?.[level] || LEVEL_LABELS[level] || level;
+}
+
+export function getLevelDescription(level: UserLevel, locale: Locale = 'en'): string {
+  return LOCALIZED_LEVEL_DESCRIPTIONS[locale]?.[level] || LEVEL_DESCRIPTIONS[level] || '';
+}
