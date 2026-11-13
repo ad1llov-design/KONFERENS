@@ -39,6 +39,16 @@ function buildSystemPrompt(ctx: TutorContext): string {
   if (ctx.stageName) {
     lines.push(`This lesson is part of the stage: "${ctx.stageName}".`);
   }
+
+  // Locale instruction
+  if (ctx.locale === 'ru') {
+    lines.push('User interface language: Russian. Respond in natural Russian (Русский язык) unless the student is asking to practice another target language.');
+  } else if (ctx.locale === 'ky') {
+    lines.push('User interface language: Kyrgyz. Respond in natural Kyrgyz (Кыргыз тили) with proper Cyrillic letters (ң, ү, ө) unless the student is asking to practice another target language.');
+  } else {
+    lines.push('User interface language: English. Respond in clear, encouraging English unless the student asks otherwise.');
+  }
+
   lines.push(
     '',
     'Your rules:',
@@ -48,7 +58,6 @@ function buildSystemPrompt(ctx: TutorContext): string {
     '- Do not claim to have read the student\'s full course notes or progress data unless it was provided to you here.',
     '- Do not make up facts, citations, or external resources.',
     '- Keep responses focused; avoid unnecessary preamble.',
-    '- Respond in the same language the student uses to write to you.',
     '- If a question is completely unrelated to the subject, politely redirect.',
   );
   return lines.join('\n');
@@ -56,19 +65,28 @@ function buildSystemPrompt(ctx: TutorContext): string {
 
 // ─── Demo responses ───────────────────────────────────────────────────────────
 
-const DEMO_RESPONSES: Record<string, string> = {
-  default:
-    "Great question! This is a **demo response** because the OpenAI API key isn't configured yet.\n\nIn the real version, I'd give you a tailored explanation based on your course, level, and the specific question you asked. Set `OPENAI_API_KEY` in your `.env.local` file to enable live AI responses.",
-  python:
-    "In Python, **variables** are like labelled containers — you give a value a name so you can use it later.\n\n```python\nname = \"Alice\"  # str\nage  = 22       # int\n```\n\nThis is a **demo response**. Set `OPENAI_API_KEY` to get real, context-aware answers.",
-  english:
-    "Great question about English! In a live session, I'd explain the grammar rule step by step, give you an example, and check your understanding.\n\nThis is a **demo response**. Set `OPENAI_API_KEY` to enable the real AI tutor.",
-};
-
 function getDemoResponse(ctx: TutorContext): string {
-  if (ctx.courseId === 'python-fundamentals') return DEMO_RESPONSES.python;
-  if (ctx.courseId === 'english-a1-a2') return DEMO_RESPONSES.english;
-  return DEMO_RESPONSES.default;
+  const lang = ctx.locale || 'en';
+
+  if (lang === 'ru') {
+    if (ctx.courseId === 'python-fundamentals' || ctx.courseId === 'javascript-basics' || ctx.courseId === 'web-development') {
+      return "Отличный вопрос по коду! Это **демо-ответ AI**, так как ключ OpenAI API ещё не настроен.\n\nВ реальном режиме я подробно разберу логику переменных, функций или тегов и подскажу следующий шаг.\n\nДобавьте `OPENAI_API_KEY` в `.env.local` для запуска живого ИИ.";
+    }
+    if (ctx.courseId.includes('english') || ctx.courseId.includes('chinese') || ctx.courseId.includes('german') || ctx.courseId.includes('korean') || ctx.courseId.includes('spanish')) {
+      return "Замечательный вопрос по изучению языка! Это **демо-ответ AI**.\n\nВ полной версии я разберу грамматику, произношение и дам практический пример в контексте вашего текущего урока.\n\nУкажите `OPENAI_API_KEY` в `.env.local` для включения полного интерактивного диалога.";
+    }
+    return "Хороший вопрос! Это **демо-ответ AI**, так как ключ OpenAI API ещё не подключён.\n\nВ боевом режиме я помогу с решением практических кейсов по вашей теме и отвечу на любые вопросы по уроку.\n\nУкажите `OPENAI_API_KEY` в файле `.env.local`.";
+  }
+
+  if (lang === 'ky') {
+    return "Эң жакшы суроо! Бул **AI демо-жообу**, анткени OpenAI API ачкычы орнотула элек.\n\nТолук режимде мен сиздин деңгээлиңизге ылайыкталган түшүндүрмө берип, сабак боюнча жардам берем.\n\nЖандуу ИИни иштетүү үчүн `.env.local` файлына `OPENAI_API_KEY` кошуңуз.";
+  }
+
+  // English fallback
+  if (ctx.courseId === 'python-fundamentals' || ctx.courseId === 'javascript-basics') {
+    return "Great question about code! This is a **demo response** because the OpenAI API key is not configured yet.\n\nIn live mode, I'll guide you through syntax, debugging hints, and conceptual explanations.\n\nSet `OPENAI_API_KEY` in `.env.local` to enable live AI responses.";
+  }
+  return "Great question! This is a **demo response** because the OpenAI API key isn't configured yet.\n\nIn the real version, I'd give you a tailored explanation based on your course, level, and the specific question you asked.\n\nSet `OPENAI_API_KEY` in your `.env.local` file to enable live AI responses.";
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────

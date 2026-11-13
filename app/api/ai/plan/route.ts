@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { isOpenAIConfigured } from '@/lib/env';
-import { getCourse, getAllLessons } from '@/lib/data/courses';
+import { getCourse, getAllLessons, COURSES } from '@/lib/data/courses';
 import type { CourseId, LearningPlan, UserLevel, LearningPlanWeek } from '@/lib/types';
 
-const VALID_COURSE_IDS: CourseId[] = ['python-fundamentals', 'english-a1-a2'];
+const VALID_COURSE_IDS: CourseId[] = COURSES.map(c => c.id);
 
 interface PlanRequestBody {
   courseId: CourseId;

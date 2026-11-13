@@ -12,13 +12,17 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { getDiagnosticQuestions, LEVEL_LABELS, LEVEL_DESCRIPTIONS } from '@/lib/data/diagnostics';
 import { DemoState } from '@/lib/demo-state';
 import { getCourse } from '@/lib/data/courses';
+import { useLanguage } from '@/lib/i18n/context';
+import { getLocalizedCourse } from '@/lib/data/course-localization';
 import type { CourseId, DiagnosticResult, LearningPlan } from '@/lib/types';
 
 function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const courseId = id as CourseId;
+  const { t, locale } = useLanguage();
 
-  const course = getCourse(courseId);
+  const rawCourse = getCourse(courseId);
+  const course = rawCourse ? getLocalizedCourse(rawCourse, locale) : null;
   const questions = getDiagnosticQuestions(courseId);
 
   const [step, setStep] = useState<'intro' | 'quiz' | 'result'>('intro');
@@ -31,8 +35,13 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
 
   if (!course) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted">Course not found. <Link href="/courses" className="text-accent underline">Back to courses</Link></p>
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        <p className="text-muted">
+          {t.common.error}.{' '}
+          <Link href="/courses" className="text-accent underline font-medium">
+            {t.common.tryAgain}
+          </Link>
+        </p>
       </div>
     );
   }
@@ -45,7 +54,7 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
   }
 
   function nextQuestion() {
-    if (selected === null) return;
+    if (selected === null || !q) return;
     const newAnswers = { ...answers, [q.id]: selected };
     setAnswers(newAnswers);
     setSelected(null);
@@ -53,7 +62,6 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
     if (currentQ < questions.length - 1) {
       setCurrentQ(c => c + 1);
     } else {
-      // All answered — score
       finishDiagnostic(newAnswers);
     }
   }
@@ -109,26 +117,34 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
 
   if (step === 'intro') {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
         <Navbar />
         <main className="flex-1 flex items-center justify-center px-4 py-16">
           <div className="max-w-md w-full">
-            <div className="glass rounded-[var(--r-xl)] p-8">
-              <Badge variant="accent" className="mb-5">Diagnostic</Badge>
+            <div className="glass rounded-[var(--r-xl)] p-8 border border-border/80 shadow-2xl">
+              <Badge variant="accent" className="mb-4">{t.diagnostic.badge}</Badge>
               <h1 className="text-2xl font-bold text-foreground mb-3">
-                Let&apos;s find your starting point
+                {t.diagnostic.introTitle}
               </h1>
-              <p className="text-muted leading-relaxed mb-6">
-                Answer <strong>{questions.length} short questions</strong> about {course.title}.
-                There&apos;s no pass or fail — this helps us assign you the right level and build your learning path.
+              <p className="text-muted leading-relaxed mb-6 text-sm">
+                {questions.length} {t.diagnostic.introDesc} {course.title}.
               </p>
-              <ul className="flex flex-col gap-2 mb-8 text-sm text-muted">
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-accent" /> Takes about 3–5 minutes</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-accent" /> No time pressure</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-accent" /> You can retake it later</li>
+              <ul className="flex flex-col gap-2.5 mb-8 text-sm text-muted">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0" />
+                  {t.diagnostic.bullet1}
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0" />
+                  {t.diagnostic.bullet2}
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0" />
+                  {t.diagnostic.bullet3}
+                </li>
               </ul>
               <Button className="w-full" onClick={() => setStep('quiz')} size="lg">
-                Start diagnostic
+                {t.diagnostic.startBtn}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -139,21 +155,27 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
   }
 
   if (step === 'quiz' && q) {
+    const questionLabel = `${t.diagnostic.questionLabel} ${currentQ + 1} / ${questions.length}`;
+
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
         <Navbar />
         <main className="flex-1 max-w-xl mx-auto px-4 py-10 w-full">
           <div className="mb-6">
             <ProgressBar
               value={progress}
-              label={`Question ${currentQ + 1} of ${questions.length}`}
+              label={questionLabel}
               showLabel
             />
           </div>
 
-          <div className="glass rounded-[var(--r-xl)] p-7">
-            <p className="text-sm text-muted mb-1 font-medium">Question {currentQ + 1}</p>
-            <h2 className="text-base font-semibold text-foreground mb-6 whitespace-pre-wrap">{q.question}</h2>
+          <div className="glass rounded-[var(--r-xl)] p-7 border border-border/80 shadow-xl">
+            <p className="text-xs text-accent mb-2 font-semibold tracking-wide uppercase">
+              {course.title} · {t.diagnostic.badge}
+            </p>
+            <h2 className="text-base md:text-lg font-semibold text-foreground mb-6 whitespace-pre-wrap leading-snug">
+              {q.question}
+            </h2>
 
             <div className="flex flex-col gap-2.5">
               {q.options.map((opt, idx) => (
@@ -163,13 +185,13 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
                   className={[
                     'w-full text-left px-4 py-3 rounded-[var(--r-md)] border text-sm font-medium transition-all',
                     selected === idx
-                      ? 'border-accent bg-accent-light text-accent'
-                      : 'border-border bg-surface text-foreground hover:border-accent/40 hover:bg-accent-light/40',
+                      ? 'border-accent bg-accent/15 text-accent shadow-sm'
+                      : 'border-border bg-surface text-foreground hover:border-accent/40 hover:bg-surface-raised',
                   ].join(' ')}
                 >
                   <span className={[
                     'inline-flex w-5 h-5 rounded-full border items-center justify-center text-xs mr-3 shrink-0',
-                    selected === idx ? 'border-accent bg-accent text-white' : 'border-border',
+                    selected === idx ? 'border-accent bg-accent text-white' : 'border-border text-muted',
                   ].join(' ')}>
                     {String.fromCharCode(65 + idx)}
                   </span>
@@ -178,13 +200,17 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
               ))}
             </div>
 
-            <div className="mt-7 flex justify-between items-center">
+            <div className="mt-7 flex justify-between items-center pt-4 border-t border-border/60">
               {currentQ > 0 ? (
                 <button
-                  onClick={() => { setCurrentQ(c => c - 1); setSelected(answers[questions[currentQ - 1].id] ?? null); }}
-                  className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground"
+                  onClick={() => {
+                    const prevIdx = currentQ - 1;
+                    setCurrentQ(prevIdx);
+                    setSelected(answers[questions[prevIdx].id] ?? null);
+                  }}
+                  className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors"
                 >
-                  <ArrowLeft className="h-4 w-4" /> Back
+                  <ArrowLeft className="h-4 w-4" /> {t.diagnostic.backBtn}
                 </button>
               ) : <span />}
 
@@ -193,7 +219,7 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
                 disabled={selected === null}
                 loading={submitting && currentQ === questions.length - 1}
               >
-                {currentQ < questions.length - 1 ? 'Next' : 'Finish'}
+                {currentQ < questions.length - 1 ? t.diagnostic.nextBtn : t.diagnostic.finishBtn}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -204,28 +230,35 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
   }
 
   if (step === 'result' && result) {
+    const levelName = LEVEL_LABELS[result.level] || result.level;
+    const levelDesc = LEVEL_DESCRIPTIONS[result.level] || '';
+
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
         <Navbar />
         <main className="flex-1 flex items-center justify-center px-4 py-16">
           <div className="max-w-xl w-full">
-            <div className="glass rounded-[var(--r-xl)] p-8">
+            <div className="glass rounded-[var(--r-xl)] p-8 border border-border/80 shadow-2xl">
               <div className="text-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-accent-light mx-auto flex items-center justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-accent/15 border border-accent/25 mx-auto flex items-center justify-center mb-4">
                   <CheckCircle2 className="h-8 w-8 text-accent" />
                 </div>
-                <h1 className="text-2xl font-bold text-foreground mb-1">Diagnostic complete</h1>
-                <p className="text-sm text-muted">{result.correctCount} of {result.totalCount} correct</p>
+                <h1 className="text-2xl font-bold text-foreground mb-1">{t.diagnostic.resultTitle}</h1>
+                <p className="text-sm text-muted">
+                  {result.correctCount} / {result.totalCount} {t.diagnostic.correctOf}
+                </p>
               </div>
 
-              <Panel variant="accent" className="mb-6">
-                <p className="text-xs text-muted uppercase tracking-wider font-medium mb-1">Your level</p>
-                <p className="text-2xl font-bold text-accent">{LEVEL_LABELS[result.level]}</p>
-                <p className="text-sm text-muted mt-2">{LEVEL_DESCRIPTIONS[result.level]}</p>
+              <Panel variant="accent" className="mb-6 bg-accent/10 border-accent/20">
+                <p className="text-xs text-muted uppercase tracking-wider font-semibold mb-1">
+                  {t.diagnostic.yourLevel}
+                </p>
+                <p className="text-2xl font-bold text-accent">{levelName}</p>
+                <p className="text-sm text-muted mt-2">{levelDesc}</p>
               </Panel>
 
               <div className="mb-6">
-                <ProgressBar value={result.score} label="Score" showLabel />
+                <ProgressBar value={result.score} label={t.diagnostic.scoreLabel} showLabel />
               </div>
 
               {plan && (
@@ -233,26 +266,26 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-accent" />
-                      <h3 className="text-sm font-semibold text-foreground">Personalized Study Plan</h3>
+                      <h3 className="text-sm font-semibold text-foreground">{t.diagnostic.planTitle}</h3>
                     </div>
                     {plan.isAIGenerated ? (
                       <Badge variant="accent">
                         <Sparkles className="h-3 w-3 mr-1" />
-                        AI Plan
+                        {t.diagnostic.aiPlanBadge}
                       </Badge>
                     ) : (
-                      <Badge variant="muted">Structured Plan</Badge>
+                      <Badge variant="muted">{t.diagnostic.structPlanBadge}</Badge>
                     )}
                   </div>
                   <p className="text-xs text-muted mb-4">
-                    Paced for {plan.weeklyMinutes} mins/week across {plan.totalWeeks} modules.
+                    {t.diagnostic.planPace} ({plan.weeklyMinutes} min/week, {plan.totalWeeks} modules)
                   </p>
                   <div className="flex flex-col gap-2.5">
                     {plan.weeks.map(w => (
-                      <div key={w.week} className="bg-background/60 rounded-[var(--r-sm)] p-3 text-xs border border-border/60">
+                      <div key={w.week} className="bg-surface-raised rounded-[var(--r-sm)] p-3 text-xs border border-border/60">
                         <div className="flex items-center justify-between font-medium text-foreground mb-1">
-                          <span>Week {w.week}: {w.focus}</span>
-                          <span className="text-muted">{w.lessonIds.length} lessons</span>
+                          <span>{t.diagnostic.weekLabel} {w.week}: {w.focus}</span>
+                          <span className="text-muted">{w.lessonIds.length} {t.diagnostic.lessonsUnit}</span>
                         </div>
                         <p className="text-muted">{w.goalSummary}</p>
                       </div>
@@ -261,15 +294,17 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
                 </div>
               )}
 
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2.5">
                 <Link href={`/courses/${courseId}/learn`}>
                   <Button className="w-full" size="lg">
-                    Start learning
+                    {t.diagnostic.startLearningBtn}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href={`/courses/${courseId}`}>
-                  <Button variant="secondary" className="w-full">Back to course</Button>
+                  <Button variant="secondary" className="w-full">
+                    {t.diagnostic.backToCourseBtn}
+                  </Button>
                 </Link>
               </div>
             </div>
@@ -284,7 +319,7 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
 
 export default function DiagnosticPage(props: { params: Promise<{ id: string }> }) {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner label="Loading diagnostic…" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><LoadingSpinner label="Loading diagnostic…" /></div>}>
       <DiagnosticContent {...props} />
     </Suspense>
   );

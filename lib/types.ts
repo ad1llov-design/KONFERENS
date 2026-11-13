@@ -1,10 +1,32 @@
+// ─── Locales ─────────────────────────────────────────────────────────────────
+export type Locale = 'en' | 'ru' | 'ky';
+
 // ─── Course Structure ───────────────────────────────────────────────────────
 
-export type CourseId = 'python-fundamentals' | 'english-a1-a2';
+export type CourseId =
+  // Languages
+  | 'english-a1-a2'
+  | 'chinese-intro'
+  | 'german-a1'
+  | 'korean-hangul'
+  | 'spanish-a1'
+  // Technology
+  | 'python-fundamentals'
+  | 'javascript-basics'
+  | 'web-development'
+  | 'data-analytics'
+  | 'artificial-intelligence'
+  // Professional Skills
+  | 'ui-ux-design'
+  | 'digital-marketing'
+  | 'project-management'
+  | 'entrepreneurship'
+  | 'communication-skills';
+
 export type CourseCategory = 'programming' | 'languages' | 'professional';
 export type LessonStatus = 'locked' | 'available' | 'current' | 'completed';
 export type StageStatus  = 'locked' | 'available' | 'current' | 'completed';
-export type UserLevel    = 'beginner' | 'elementary' | 'pre-intermediate';
+export type UserLevel    = 'beginner' | 'elementary' | 'intermediate' | 'advanced' | 'pre-intermediate';
 
 export type ExerciseType =
   | 'multiple-choice'
@@ -108,6 +130,7 @@ export interface UserProfile {
   id:          string;
   email:       string;
   displayName: string | null;
+  locale?:     Locale;
   createdAt:   string;
 }
 
@@ -129,6 +152,7 @@ export interface TutorContext {
   lessonId?:  string;
   lessonTitle?: string;
   stageName?: string;
+  locale?:    Locale;
 }
 
 // ─── Learning Plan ───────────────────────────────────────────────────────────

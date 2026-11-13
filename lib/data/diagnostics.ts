@@ -1,4 +1,5 @@
 import type { DiagnosticQuestion, CourseId, UserLevel } from '@/lib/types';
+import { EXTRA_DIAGNOSTIC_QUESTIONS } from './diagnostics/extra';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Python Fundamentals — Diagnostic Questions
@@ -176,9 +177,10 @@ const englishQuestions: DiagnosticQuestion[] = [
 // Registry
 // ─────────────────────────────────────────────────────────────────────────────
 
-const DIAGNOSTIC_QUESTIONS: Record<CourseId, DiagnosticQuestion[]> = {
+const DIAGNOSTIC_QUESTIONS: Partial<Record<CourseId, DiagnosticQuestion[]>> = {
   'python-fundamentals': pythonQuestions,
   'english-a1-a2':       englishQuestions,
+  ...EXTRA_DIAGNOSTIC_QUESTIONS,
 };
 
 export function getDiagnosticQuestions(courseId: CourseId): DiagnosticQuestion[] {
@@ -223,6 +225,8 @@ export const LEVEL_LABELS: Record<UserLevel, string> = {
   'beginner':          'Beginner',
   'elementary':        'Elementary',
   'pre-intermediate':  'Pre-Intermediate',
+  'intermediate':      'Intermediate',
+  'advanced':          'Advanced',
 };
 
 export const LEVEL_DESCRIPTIONS: Record<UserLevel, string> = {
@@ -232,4 +236,8 @@ export const LEVEL_DESCRIPTIONS: Record<UserLevel, string> = {
     'You have some familiarity. The path starts at the foundations and quickly moves to core concepts.',
   'pre-intermediate':
     'You know the basics. We\'ll move efficiently to deepen your understanding.',
+  'intermediate':
+    'Solid baseline knowledge. You are ready to dive into practical real-world problems.',
+  'advanced':
+    'Excellent command of key principles. You are set for mastery.',
 };

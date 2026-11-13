@@ -1,4 +1,7 @@
 import type { Course, CourseId, Stage, Lesson } from '@/lib/types';
+import { LANGUAGE_COURSES } from './courses/languages';
+import { TECH_COURSES } from './courses/tech';
+import { PROFESSIONAL_COURSES } from './courses/professional';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Python Fundamentals
@@ -829,6 +832,7 @@ Use **will** + base verb for predictions, spontaneous decisions, and promises:
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const COURSES: Course[] = [
+  // Technology
   {
     id: 'python-fundamentals',
     title: 'Python Fundamentals',
@@ -848,6 +852,8 @@ export const COURSES: Course[] = [
       'Error handling (coming soon)',
     ],
   },
+  ...TECH_COURSES,
+  // Languages
   {
     id: 'english-a1-a2',
     title: 'English A1–A2',
@@ -867,6 +873,9 @@ export const COURSES: Course[] = [
       'Listening & reading (coming soon)',
     ],
   },
+  ...LANGUAGE_COURSES,
+  // Professional Skills
+  ...PROFESSIONAL_COURSES,
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

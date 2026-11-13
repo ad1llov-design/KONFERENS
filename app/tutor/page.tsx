@@ -1,41 +1,70 @@
 'use client';
 
 import { useState, useEffect, useRef, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Send, ArrowLeft, Bot, User, AlertCircle } from 'lucide-react';
+import { Send, ArrowLeft, Bot, User, AlertCircle, Sparkles, BookOpen } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { DemoBanner } from '@/components/ui/DemoBanner';
 import { DemoState } from '@/lib/demo-state';
-import { getCourse, getLesson } from '@/lib/data/courses';
-import type { CourseId, TutorMessage, TutorContext } from '@/lib/types';
+import { COURSES, getCourse, getLesson } from '@/lib/data/courses';
+import { useLanguage } from '@/lib/i18n/context';
+import { getLocalizedCourse } from '@/lib/data/course-localization';
+import type { CourseId, TutorMessage, TutorContext, Locale } from '@/lib/types';
 
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-function getWelcomeMessages(cId: CourseId, lId: string | null): TutorMessage[] {
+let msgSequence = 0;
+function createMessageId(role: 'user' | 'assistant') {
+  msgSequence += 1;
+  return `${role}-${msgSequence}`;
+}
+
+function getWelcomeMessages(cId: CourseId, lId: string | null, locale: Locale): TutorMessage[] {
   const c = getCourse(cId);
   const l = lId ? getLesson(cId, lId) : null;
-  const topic = l ? `the lesson "${l.title}"` : c?.title ?? 'this course';
+  const courseTitle = c?.title ?? cId;
+  const lessonTitle = l ? l.title : null;
+
+  let content = '';
+  if (locale === 'ru') {
+    content = lessonTitle
+      ? `Привет! Я твой персональный AI-наставник по курсу **«${courseTitle}»**.\n\nСейчас мы разбираем урок **«${lessonTitle}»**. Спрашивай о синтаксисе, сложных терминах или логике упражнения — я дам наводящую подсказку и помогу разобраться шаг за шагом!`
+      : `Привет! Я твой персональный AI-наставник по курсу **«${courseTitle}»**.\n\nЗадавай любые вопросы по программе, терминам или концепциям — я помогу разложить материал по полочкам!`;
+  } else if (locale === 'ky') {
+    content = lessonTitle
+      ? `Салам! Мен **«${courseTitle}»** курсу боюнча жеке AI-насаатчыңмын.\n\nАзыр биз **«${lessonTitle}»** сабагын өтүп жатабыз. Каалаган сурооңду бер — мен маанисин түшүндүрүп, багыт берип жардам берем!`
+      : `Салам! Мен **«${courseTitle}»** курсу боюнча жеке AI-насаатчыңмын.\n\nКурс боюнча каалаган сурооңду бер — мен сизге үйрөнүүгө жардам берем!`;
+  } else {
+    content = lessonTitle
+      ? `Hi! I'm your AI tutor for **${courseTitle}**.\n\nWe're focusing on **"${lessonTitle}"**. Ask me anything about concepts, syntax, or tricky exercises — I'll give hints and clear explanations to guide you forward!`
+      : `Hi! I'm your AI tutor for **${courseTitle}**.\n\nAsk me anything about the curriculum, terminology, or practical problems — what would you like to explore?`;
+  }
+
   return [
     {
       id: 'welcome',
       role: 'assistant',
-      content: `Hi! I'm your AI tutor for **${c?.title ?? 'this course'}**. I'm here to help you understand ${topic} — ask me anything, and I'll explain it clearly. I'll give you hints rather than just handing over answers straight away.\n\nWhat would you like to know?`,
+      content,
       createdAt: new Date().toISOString(),
     },
   ];
 }
 
 function TutorChatInner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const courseIdParam = searchParams.get('course') as CourseId | null;
   const lessonIdParam = searchParams.get('lesson');
 
-  const course = courseIdParam ? getCourse(courseIdParam) : null;
+  const { t, locale } = useLanguage();
+
+  const rawCourse = courseIdParam ? getCourse(courseIdParam) : null;
+  const course = rawCourse ? getLocalizedCourse(rawCourse, locale) : null;
   const lesson = courseIdParam && lessonIdParam ? getLesson(courseIdParam, lessonIdParam) : null;
 
   const [messages, setMessages] = useState<TutorMessage[]>([]);
@@ -52,22 +81,23 @@ function TutorChatInner() {
     setMounted(true);
     if (courseIdParam) {
       const saved = DemoState.getTutorMessages(courseIdParam);
-      setMessages(saved.length > 0 ? saved : getWelcomeMessages(courseIdParam, lessonIdParam));
+      setMessages(saved.length > 0 ? saved : getWelcomeMessages(courseIdParam, lessonIdParam, locale));
     }
-  }, [courseIdParam, lessonIdParam]);
+  }, [courseIdParam, lessonIdParam, locale]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  async function sendMessage() {
-    if (!input.trim() || loading || !courseIdParam) return;
+  async function sendMessage(textToSend?: string) {
+    const text = textToSend ?? input;
+    if (!text.trim() || loading || !courseIdParam) return;
     setError(null);
 
     const userMsg: TutorMessage = {
-      id: `u-${Date.now()}`,
+      id: createMessageId('user'),
       role: 'user',
-      content: input.trim(),
+      content: text.trim(),
       createdAt: new Date().toISOString(),
     };
 
@@ -78,7 +108,7 @@ function TutorChatInner() {
       level,
       lessonId: lessonIdParam ?? undefined,
       lessonTitle: lesson?.title,
-      stageName: undefined,
+      locale,
     };
 
     const updatedMessages = [...messages, userMsg];
@@ -108,7 +138,7 @@ function TutorChatInner() {
       setAiDemoMode(data.isDemo);
 
       const assistantMsg: TutorMessage = {
-        id: `a-${Date.now()}`,
+        id: createMessageId('assistant'),
         role: 'assistant',
         content: data.message,
         createdAt: new Date().toISOString(),
@@ -118,7 +148,7 @@ function TutorChatInner() {
       setMessages(finalMessages);
       if (courseIdParam) DemoState.addTutorMessage(courseIdParam, assistantMsg);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to get a response';
+      const msg = err instanceof Error ? err.message : t.common.error;
       setError(msg);
     } finally {
       setLoading(false);
@@ -133,142 +163,202 @@ function TutorChatInner() {
     }
   }
 
-  if (!mounted) return <div className="min-h-screen" />;
+  const starterChips = locale === 'ru'
+    ? ['Объясни простыми словами', 'Дай подсказку к упражнению', 'Приведи жизненный пример']
+    : locale === 'ky'
+    ? ['Жөнөкөй тил менен түшүндүрүп бер', 'Көнүгүүгө багыт берчи', 'Турмуштук мисал келтир']
+    : ['Explain this in simple terms', 'Give me a hint for this exercise', 'Show a real-world example'];
+
+  if (!mounted) return <div className="min-h-screen bg-background" />;
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Navbar />
-      <main className="flex-1 max-w-3xl mx-auto px-4 py-6 w-full flex flex-col">
+      <main className="flex-1 max-w-4xl mx-auto px-4 py-6 w-full flex flex-col">
 
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          {courseIdParam && (
-            <Link
-              href={lesson ? `/courses/${courseIdParam}/learn/${lessonIdParam}` : `/courses/${courseIdParam}/learn`}
-              className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back to {lesson ? 'lesson' : 'path'}
-            </Link>
-          )}
-          <div className="ml-auto flex items-center gap-2">
-            {aiDemoMode && <Badge variant="demo">Demo AI</Badge>}
+        {/* Top Header / Breadcrumb */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            {courseIdParam ? (
+              <Link
+                href={lesson ? `/courses/${courseIdParam}/learn/${lessonIdParam}` : `/courses/${courseIdParam}/learn`}
+                className="flex items-center gap-1.5 text-xs md:text-sm text-muted hover:text-foreground transition-colors font-medium surface px-3 py-1.5 rounded-[var(--r-sm)] border border-border"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                {t.tutor.backToLesson}
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-accent" />
+                <h1 className="text-xl font-bold text-foreground">{t.nav.tutor}</h1>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {aiDemoMode && <Badge variant="demo">{t.tutor.badgeDemo}</Badge>}
             {course && <Badge variant="accent">{course.title}</Badge>}
             {lesson && <Badge variant="muted">{lesson.title}</Badge>}
           </div>
         </div>
 
-        {aiDemoMode && (
-          <div className="mb-4">
-            <DemoBanner message="AI responses are pre-written demos. Set OPENAI_API_KEY to enable the real tutor." missingVars={['OPENAI_API_KEY']} />
+        {/* Course Selector if no course param in URL */}
+        {!courseIdParam && (
+          <div className="glass rounded-[var(--r-xl)] p-8 mb-6 border border-border/80 shadow-xl">
+            <h2 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-accent" />
+              {t.tutor.selectCourseHint}
+            </h2>
+            <p className="text-xs text-muted mb-6">
+              Pick any of our 15 tracks to start a guided, level-aware tutoring session.
+            </p>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {COURSES.map(c => {
+                const loc = getLocalizedCourse(c, locale);
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => router.push(`/tutor?course=${c.id}`)}
+                    className="text-left surface p-3.5 rounded-[var(--r-md)] border border-border/80 hover:border-accent hover:bg-surface-raised transition-all group"
+                  >
+                    <p className="text-xs font-semibold text-foreground group-hover:text-accent transition-colors">
+                      {loc.title}
+                    </p>
+                    <span className="text-[11px] text-muted">{loc.level}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
-        {/* Chat area */}
-        <div className="flex-1 flex flex-col glass rounded-[var(--r-xl)] overflow-hidden">
-          <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4 min-h-[400px] max-h-[60vh]">
-            {messages.map(msg => (
-              <div
-                key={msg.id}
-                className={['flex gap-3', msg.role === 'user' ? 'flex-row-reverse' : ''].join(' ')}
-              >
-                {/* Avatar */}
-                <div className={[
-                  'w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-1',
-                  msg.role === 'assistant' ? 'bg-accent-light' : 'bg-background border border-border',
-                ].join(' ')}>
-                  {msg.role === 'assistant'
-                    ? <Bot className="h-4 w-4 text-accent" />
-                    : <User className="h-3.5 w-3.5 text-muted" />
-                  }
-                </div>
+        {aiDemoMode && (
+          <div className="mb-4">
+            <DemoBanner message={t.tutor.demoBannerText} missingVars={['OPENAI_API_KEY']} />
+          </div>
+        )}
 
-                {/* Bubble */}
-                <div className={[
-                  'max-w-[75%] rounded-[var(--r-lg)] px-4 py-3 text-sm leading-relaxed',
-                  msg.role === 'assistant'
-                    ? 'bg-surface border border-border text-foreground rounded-tl-[var(--r-xs)]'
-                    : 'bg-accent text-white rounded-tr-[var(--r-xs)]',
-                ].join(' ')}>
-                  <p className="whitespace-pre-wrap">{msg.content}</p>
-                  <p className={[
-                    'text-xs mt-1.5 opacity-60',
-                    msg.role === 'user' ? 'text-right' : '',
+        {/* Chat Window */}
+        {courseIdParam && (
+          <div className="flex-1 flex flex-col glass rounded-[var(--r-xl)] border border-border/80 shadow-2xl overflow-hidden min-h-[460px]">
+            {/* Messages Scroll Area */}
+            <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4 max-h-[58vh]">
+              {messages.map(msg => (
+                <div
+                  key={msg.id}
+                  className={['flex gap-3', msg.role === 'user' ? 'flex-row-reverse' : ''].join(' ')}
+                >
+                  {/* Avatar */}
+                  <div className={[
+                    'w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1',
+                    msg.role === 'assistant' ? 'bg-accent/15 border border-accent/25 text-accent' : 'bg-surface border border-border text-foreground',
                   ].join(' ')}>
-                    {formatTime(msg.createdAt)}
-                  </p>
-                </div>
-              </div>
-            ))}
+                    {msg.role === 'assistant'
+                      ? <Bot className="h-4 w-4" />
+                      : <User className="h-4 w-4" />
+                    }
+                  </div>
 
-            {loading && (
-              <div className="flex gap-3">
-                <div className="w-7 h-7 rounded-full bg-accent-light flex items-center justify-center shrink-0 mt-1">
-                  <Bot className="h-4 w-4 text-accent" />
-                </div>
-                <div className="bg-surface border border-border rounded-[var(--r-lg)] rounded-tl-[var(--r-xs)] px-4 py-3">
-                  <div className="flex gap-1 items-center h-5">
-                    {[0, 1, 2].map(i => (
-                      <div
-                        key={i}
-                        className="w-2 h-2 bg-muted rounded-full animate-bounce"
-                        style={{ animationDelay: `${i * 0.15}s` }}
-                      />
-                    ))}
+                  {/* Bubble */}
+                  <div className={[
+                    'max-w-[80%] rounded-[var(--r-lg)] px-4 py-3 text-sm leading-relaxed shadow-sm',
+                    msg.role === 'assistant'
+                      ? 'bg-surface border border-border text-foreground rounded-tl-[var(--r-xs)]'
+                      : 'bg-accent text-white rounded-tr-[var(--r-xs)]',
+                  ].join(' ')}>
+                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                    <p className={[
+                      'text-[10px] mt-1.5 opacity-60 font-mono',
+                      msg.role === 'user' ? 'text-right' : '',
+                    ].join(' ')}>
+                      {formatTime(msg.createdAt)}
+                    </p>
                   </div>
                 </div>
-              </div>
-            )}
+              ))}
 
-            {error && (
-              <div className="flex items-center gap-2 text-sm text-danger bg-danger-light border border-danger/20 rounded-[var(--r-md)] px-4 py-3">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>{error}</span>
-                <button
-                  onClick={() => setError(null)}
-                  className="ml-auto text-xs underline underline-offset-2 hover:no-underline"
-                >
-                  Dismiss
-                </button>
-              </div>
-            )}
+              {loading && (
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-full bg-accent/15 border border-accent/25 flex items-center justify-center shrink-0 mt-1 text-accent">
+                    <Bot className="h-4 w-4" />
+                  </div>
+                  <div className="bg-surface border border-border rounded-[var(--r-lg)] rounded-tl-[var(--r-xs)] px-4 py-3">
+                    <div className="flex gap-1.5 items-center h-5">
+                      {[0, 1, 2].map(i => (
+                        <div
+                          key={i}
+                          className="w-2 h-2 bg-accent rounded-full animate-bounce"
+                          style={{ animationDelay: `${i * 0.15}s` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
-            <div ref={bottomRef} />
-          </div>
+              {error && (
+                <div className="flex items-center gap-2 text-sm text-danger bg-danger-light border border-danger/20 rounded-[var(--r-md)] px-4 py-3">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>{error}</span>
+                  <button
+                    onClick={() => setError(null)}
+                    className="ml-auto text-xs underline underline-offset-2 hover:no-underline"
+                  >
+                    {t.tutor.dismiss}
+                  </button>
+                </div>
+              )}
 
-          {/* Input */}
-          <div className="border-t border-border p-4">
-            {!courseIdParam && (
-              <p className="text-sm text-muted text-center mb-3">
-                Open the tutor from a course lesson for context-aware answers.{' '}
-                <Link href="/courses" className="text-accent underline underline-offset-2">Go to courses</Link>
-              </p>
-            )}
-            <div className="flex gap-3 items-end">
-              <textarea
-                ref={inputRef}
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={courseIdParam ? "Ask anything about this lesson…" : "Select a course to start"}
-                disabled={!courseIdParam || loading}
-                rows={2}
-                className="flex-1 resize-none px-4 py-3 rounded-[var(--r-md)] border border-border bg-surface text-sm placeholder:text-subtle focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent disabled:opacity-50 leading-relaxed"
-              />
-              <Button
-                onClick={sendMessage}
-                disabled={!input.trim() || loading || !courseIdParam}
-                loading={loading}
-                className="shrink-0"
-                aria-label="Send message"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
+              <div ref={bottomRef} />
             </div>
-            <p className="text-xs text-muted mt-2 text-center">
-              Enter to send · Shift+Enter for new line
-            </p>
+
+            {/* Starter Suggestion Chips */}
+            {messages.length <= 1 && (
+              <div className="px-5 py-2 border-t border-border/40 bg-surface/50 flex flex-wrap items-center gap-2">
+                <span className="text-[11px] text-muted font-semibold uppercase tracking-wider">
+                  Tips:
+                </span>
+                {starterChips.map((chip, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => sendMessage(chip)}
+                    className="text-xs bg-surface border border-border/70 hover:border-accent text-foreground hover:text-accent px-2.5 py-1 rounded-full transition-all"
+                  >
+                    {chip}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Input Bar */}
+            <div className="border-t border-border p-4 bg-surface/80">
+              <div className="flex gap-3 items-end">
+                <textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={t.tutor.inputPlaceholder}
+                  disabled={loading}
+                  rows={2}
+                  className="flex-1 resize-none px-4 py-2.5 rounded-[var(--r-md)] border border-border bg-background text-sm text-foreground placeholder:text-subtle focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent disabled:opacity-50 leading-relaxed"
+                />
+                <Button
+                  onClick={() => sendMessage()}
+                  disabled={!input.trim() || loading}
+                  loading={loading}
+                  className="shrink-0"
+                  aria-label="Send message"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-[11px] text-muted mt-2 text-center">
+                {t.tutor.enterToSend}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
@@ -276,7 +366,7 @@ function TutorChatInner() {
 
 export default function TutorPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><span className="text-sm text-muted">Loading tutor…</span></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><span className="text-sm text-muted">Loading tutor…</span></div>}>
       <TutorChatInner />
     </Suspense>
   );

@@ -1,36 +1,46 @@
 @import "tailwindcss";
 
-/* ─── Kivora Design Tokens ─────────────────────────────────────────────── */
+/* ─── Kivora Design Tokens — Dark Mirror Navy & Orange Contrast ────────── */
 :root {
-  --bg:            #F5F4F0;
-  --bg-surface:    #FDFCF8;
-  --text:          #202321;
-  --text-muted:    #69716D;
-  --text-subtle:   #9AA09B;
-  --accent:        #367C6A;
-  --accent-hover:  #2d6859;
-  --accent-light:  #EBF4F1;
-  --amber:         #C4873A;
-  --amber-light:   #FDF3E7;
-  --danger:        #C0392B;
-  --danger-light:  #FDECEA;
-  --success:       #2E7D52;
-  --success-light: #EAF5EF;
-  --border:        #E2DED7;
-  --border-strong: #C8C4BC;
+  --bg:            #0A0F18;
+  --bg-deep:       #101827;
+  --bg-surface:    #151F2E;
+  --bg-raised:     #1A2738;
+  --text:          #F3F6FA;
+  --text-muted:    #A7B2C2;
+  --text-subtle:   #6C788A;
 
-  /* Glass panel material */
-  --glass-bg:         rgba(253, 252, 248, 0.72);
-  --glass-bg-strong:  rgba(253, 252, 248, 0.88);
-  --glass-border:     rgba(255, 255, 255, 0.55);
-  --glass-shine:      rgba(255, 255, 255, 0.60);
-  --glass-shadow:     0 4px 24px rgba(32, 35, 33, 0.07), inset 0 1px 0 rgba(255,255,255,0.65);
+  /* Brand Accents */
+  --accent:        #F28A32; /* Primary Orange Accent */
+  --accent-hover:  #FF9C45; /* Warm Orange Hover */
+  --accent-light:  rgba(242, 138, 50, 0.16);
+
+  --blue-accent:   #6FA4E8; /* Cool Blue Accent */
+  --blue-pale:     #A9CCF5; /* Pale Blue Light Accent */
+  --blue-light:    rgba(111, 164, 232, 0.14);
+
+  --amber:         #E5A038;
+  --amber-light:   rgba(229, 160, 56, 0.16);
+  --danger:        #E64D4D;
+  --danger-light:  rgba(230, 77, 77, 0.16);
+  --success:       #2EAA68;
+  --success-light: rgba(46, 170, 104, 0.16);
+
+  --border:        #1F2D42;
+  --border-strong: #2D3F59;
+
+  /* Glass panel material — Translucent dark navy with cool blue shimmer */
+  --glass-bg:         rgba(21, 31, 46, 0.72);
+  --glass-bg-strong:  rgba(26, 39, 56, 0.88);
+  --glass-border:     rgba(111, 164, 232, 0.22);
+  --glass-shine:      rgba(169, 204, 245, 0.12);
+  --glass-shadow:     0 8px 32px rgba(5, 10, 18, 0.50), inset 0 1px 0 rgba(169, 204, 245, 0.14);
 
   /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(32,35,33,0.05);
-  --shadow-sm: 0 1px 4px rgba(32,35,33,0.07);
-  --shadow-md: 0 4px 16px rgba(32,35,33,0.08);
-  --shadow-lg: 0 8px 32px rgba(32,35,33,0.10);
+  --shadow-xs: 0 1px 2px rgba(5, 10, 18, 0.35);
+  --shadow-sm: 0 2px 6px rgba(5, 10, 18, 0.40);
+  --shadow-md: 0 8px 24px rgba(5, 10, 18, 0.55);
+  --shadow-lg: 0 16px 40px rgba(5, 10, 18, 0.65);
 
   /* Radii */
   --r-xs:  4px;
@@ -44,20 +54,29 @@
 /* ─── Tailwind v4 Theme ────────────────────────────────────────────────── */
 @theme {
   --color-background: var(--bg);
+  --color-deep:       var(--bg-deep);
   --color-surface:    var(--bg-surface);
+  --color-raised:     var(--bg-raised);
   --color-foreground: var(--text);
   --color-muted:      var(--text-muted);
   --color-subtle:     var(--text-subtle);
-  --color-accent:     var(--accent);
+
+  --color-accent:       var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-light: var(--accent-light);
-  --color-amber:      var(--amber);
-  --color-amber-light: var(--amber-light);
-  --color-danger:     var(--danger);
+
+  --color-blue:       var(--blue-accent);
+  --color-blue-pale:  var(--blue-pale);
+  --color-blue-light: var(--blue-light);
+
+  --color-amber:        var(--amber);
+  --color-amber-light:  var(--amber-light);
+  --color-danger:       var(--danger);
   --color-danger-light: var(--danger-light);
-  --color-success:    var(--success);
-  --color-success-light: var(--success-light);
-  --color-border:     var(--border);
+  --color-success:      var(--success);
+  --color-success-light:var(--success-light);
+
+  --color-border:        var(--border);
   --color-border-strong: var(--border-strong);
 
   --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
@@ -68,6 +87,8 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg);
+  color-scheme: dark;
 }
 
 body {
@@ -80,7 +101,7 @@ body {
 /* ─── Custom Utility Classes ───────────────────────────────────────────── */
 @layer utilities {
 
-  /* Glass panel — the signature material of Kivora */
+  /* Signature mirror glass panel */
   .glass {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
@@ -104,7 +125,13 @@ body {
     box-shadow: var(--shadow-sm);
   }
 
-  /* Focus ring consistent with accent */
+  .surface-raised {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Focus ring consistent with orange brand accent */
   .focus-accent {
     outline: none;
   }
@@ -115,33 +142,34 @@ body {
   }
 
   /* Lesson node states */
-  .node-locked    { opacity: 0.45; cursor: not-allowed; }
+  .node-locked    { opacity: 0.40; cursor: not-allowed; }
   .node-available { cursor: pointer; }
   .node-current   { ring: 2px solid var(--accent); }
-  .node-done      { opacity: 0.9; }
+  .node-done      { opacity: 0.95; }
 
   /* Smooth hover lift */
   .hover-lift {
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   }
   .hover-lift:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+    border-color: rgba(111, 164, 232, 0.35);
   }
 
   /* Demo mode banner */
   .demo-banner {
     background: var(--amber-light);
-    border: 1px solid rgba(196,135,58,0.3);
+    border: 1px solid rgba(229, 160, 56, 0.35);
     color: var(--amber);
   }
 }
 
 /* ─── Scrollbar ─────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-subtle); }
+::-webkit-scrollbar-thumb:hover { background: var(--blue-accent); }
 
 /* ─── Prose for lesson content ─────────────────────────────────────────── */
 .lesson-prose {
@@ -155,31 +183,35 @@ body {
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
   color: var(--text);
+  letter-spacing: -0.01em;
 }
-.lesson-prose p { margin-bottom: 0.875rem; }
+.lesson-prose p { margin-bottom: 0.875rem; color: var(--text); }
 .lesson-prose code {
   font-family: var(--font-mono);
-  background: rgba(54, 124, 106, 0.08);
-  color: var(--accent);
-  padding: 0.1em 0.4em;
+  background: rgba(111, 164, 232, 0.15);
+  color: var(--blue-pale);
+  padding: 0.15em 0.45em;
   border-radius: var(--r-xs);
   font-size: 0.875em;
+  border: 1px solid rgba(111, 164, 232, 0.25);
 }
 .lesson-prose pre {
   font-family: var(--font-mono);
-  background: #1e2422;
-  color: #d4f0e8;
+  background: #080D14;
+  color: #D6E4F7;
   padding: 1rem 1.25rem;
   border-radius: var(--r-md);
   font-size: 0.875rem;
   line-height: 1.6;
   overflow-x: auto;
   margin: 1rem 0;
+  border: 1px solid var(--border);
 }
 .lesson-prose ul {
   list-style: disc;
   padding-left: 1.25rem;
   margin-bottom: 0.875rem;
+  color: var(--text-muted);
 }
-.lesson-prose li { margin-bottom: 0.25rem; }
-.lesson-prose strong { font-weight: 600; }
+.lesson-prose li { margin-bottom: 0.35rem; }
+.lesson-prose strong { font-weight: 600; color: var(--text); }

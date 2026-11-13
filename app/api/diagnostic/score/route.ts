@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { scoreDiagnostic, getDiagnosticQuestions } from '@/lib/data/diagnostics';
+import { COURSES } from '@/lib/data/courses';
 import type { CourseId, DiagnosticResult } from '@/lib/types';
 
-const VALID_COURSE_IDS: CourseId[] = ['python-fundamentals', 'english-a1-a2'];
+const VALID_COURSE_IDS: CourseId[] = COURSES.map(c => c.id);
 
 export async function POST(request: NextRequest) {
   let body: unknown;
