@@ -185,6 +185,13 @@ export interface Translations {
     available: string;
     locked: string;
     allStagesCompleted: string;
+    treasureChestTitle: string;
+    treasureChestSubtitle: string;
+    treasureChestUnlocked: string;
+    treasureChestLocked: string;
+    treasureChestGoal: string;
+    remainingToGoal: string;
+    islandLabel: string;
   };
   lesson: {
     breadcrumbPath: string;
@@ -236,6 +243,17 @@ export interface Translations {
     analyzerCompletedRatio: string;
     analyzerActivePace: string;
     allUpToDate: string;
+    recommendationTitle: string;
+    recommendationContinueLesson: string;
+    recommendationOpenPlan: string;
+    recommendationPlanDesc: string;
+    recommendationNoCoursesTitle: string;
+    recommendationNoCoursesDesc: string;
+    recommendationExploreBtn: string;
+    recommendationCourseCompletedTitle: string;
+    recommendationCourseCompletedDesc: string;
+    recommendationReviewTopics: string;
+    themeSelectLabel: string;
     profileSettingsBtn: string;
     editProfileTitle: string;
     displayNameLabel: string;
@@ -274,6 +292,10 @@ export interface Translations {
     intermediate: string;
     advanced: string;
     preIntermediate: string;
+    themeLabel: string;
+    themeLight: string;
+    themeDark: string;
+    themeSystem: string;
   };
 }
 
@@ -501,6 +523,13 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       available: 'Available',
       locked: 'Locked',
       allStagesCompleted: 'Track completed! Great job.',
+      treasureChestTitle: 'Course Treasure Chest',
+      treasureChestSubtitle: 'Complete all milestones on the roadmap to claim your mastery rewards and certificate.',
+      treasureChestUnlocked: 'Treasure unlocked! You have completed the entire course.',
+      treasureChestLocked: 'Treasure chest locked',
+      treasureChestGoal: 'Final Treasure Goal',
+      remainingToGoal: 'milestones remaining to the treasure',
+      islandLabel: 'Exploration Zone',
     },
     lesson: {
       breadcrumbPath: 'Learning Path',
@@ -552,6 +581,17 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       analyzerCompletedRatio: 'total lessons mastered',
       analyzerActivePace: 'Continuous active learning',
       allUpToDate: 'All enrolled lessons are currently up to date!',
+      recommendationTitle: 'Recommended Next Step',
+      recommendationContinueLesson: 'Continue lesson',
+      recommendationOpenPlan: 'Open personal learning roadmap',
+      recommendationPlanDesc: 'You finished the diagnostic! Explore your personalized weekly roadmap and begin stage 1.',
+      recommendationNoCoursesTitle: 'Choose your first track',
+      recommendationNoCoursesDesc: 'Take a short baseline diagnostic or pick any of our 15 professional and language tracks.',
+      recommendationExploreBtn: 'Browse catalog',
+      recommendationCourseCompletedTitle: 'Course completed!',
+      recommendationCourseCompletedDesc: 'Outstanding work! Review completed topics or choose your next skill track.',
+      recommendationReviewTopics: 'Review materials',
+      themeSelectLabel: 'Color Theme',
       profileSettingsBtn: 'Profile Settings',
       editProfileTitle: 'Profile & Learning Preferences',
       displayNameLabel: 'Display Name',
@@ -590,6 +630,10 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       intermediate: 'Intermediate',
       advanced: 'Advanced',
       preIntermediate: 'Pre-Intermediate',
+      themeLabel: 'Theme',
+      themeLight: 'Light',
+      themeDark: 'Dark',
+      themeSystem: 'System',
     },
   },
 
@@ -816,6 +860,13 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       available: 'Доступен',
       locked: 'Закрыт',
       allStagesCompleted: 'Курс полностью пройден! Отличная работа.',
+      treasureChestTitle: 'Сундук с сокровищами курса',
+      treasureChestSubtitle: 'Пройдите все этапы маршрута, чтобы открыть финальную награду и получить сертификат.',
+      treasureChestUnlocked: 'Сокровище открыто! Вы успешно завершили весь маршрут курса.',
+      treasureChestLocked: 'Сундук закрыт',
+      treasureChestGoal: 'Цель: Сундук сокровищ',
+      remainingToGoal: 'этапов осталось до сокровища',
+      islandLabel: 'Зона маршрута',
     },
     lesson: {
       breadcrumbPath: 'Траектория обучения',
@@ -867,6 +918,17 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       analyzerCompletedRatio: 'уроков успешно пройдено',
       analyzerActivePace: 'Непрерывное обучение',
       allUpToDate: 'Все уроки по выбранным курсам пройдены и актуальны!',
+      recommendationTitle: 'Рекомендуем следующий шаг',
+      recommendationContinueLesson: 'Продолжить урок',
+      recommendationOpenPlan: 'Открыть персональный план',
+      recommendationPlanDesc: 'Вы успешно прошли входную диагностику! Откройте персональный план обучения и начните первый модуль.',
+      recommendationNoCoursesTitle: 'Выберите первое направление',
+      recommendationNoCoursesDesc: 'Пройдите короткую диагностику или начните изучение любого из 15 профессиональных треков.',
+      recommendationExploreBtn: 'Перейти в каталог',
+      recommendationCourseCompletedTitle: 'Курс успешно завершён!',
+      recommendationCourseCompletedDesc: 'Отличная работа! Вы можете повторить материалы или выбрать следующее направление для развития.',
+      recommendationReviewTopics: 'Повторить материалы',
+      themeSelectLabel: 'Цветовая тема',
       profileSettingsBtn: 'Настройки профиля',
       editProfileTitle: 'Профиль и цели обучения',
       displayNameLabel: 'Имя пользователя',
@@ -905,6 +967,10 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       intermediate: 'Средний',
       advanced: 'Продвинутый',
       preIntermediate: 'Ниже среднего',
+      themeLabel: 'Тема оформления',
+      themeLight: 'Светлая',
+      themeDark: 'Тёмная',
+      themeSystem: 'Системная',
     },
   },
 
@@ -1131,6 +1197,13 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       available: 'Жеткиликтүү',
       locked: 'Жабык',
       allStagesCompleted: 'Багыт толугу менен аяктады! Мыкты иш.',
+      treasureChestTitle: 'Курстун кенч сандыкчасы',
+      treasureChestSubtitle: 'Финалдык сыйлыкты ачуу жана сертификат алуу үчүн маршруттун бардык баскычтарын басып өтүңүз.',
+      treasureChestUnlocked: 'Кенч ачылды! Сиз курстун бардык маршрутун ийгиликтүү аяктадыңыз.',
+      treasureChestLocked: 'Сандык жабык',
+      treasureChestGoal: 'Максат: Кенч сандыкчасы',
+      remainingToGoal: 'баскыч калды кенчке чейин',
+      islandLabel: 'Маршрут аймагы',
     },
     lesson: {
       breadcrumbPath: 'Окуу маршруту',
@@ -1182,6 +1255,17 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       analyzerCompletedRatio: 'сабак ийгиликтүү өздөштүрүлдү',
       analyzerActivePace: 'Үзгүлтүксүз окуу',
       allUpToDate: 'Тандалган курстар боюнча бардык сабактар аткарылды жана актуалдуу!',
+      recommendationTitle: 'Сунушталган кийинки кадам',
+      recommendationContinueLesson: 'Сабакты улантуу',
+      recommendationOpenPlan: 'Жеке окуу планын ачуу',
+      recommendationPlanDesc: 'Сиз диагностикадан өттүңүз! Жеке окуу планыңызды ачып, биринчи модуль менен таанышыңыз.',
+      recommendationNoCoursesTitle: 'Биринчи багытыңызды тандаңыз',
+      recommendationNoCoursesDesc: 'Кыска диагностикадан өтүңүз же 15 профессионалдык багыттын каалаганын тандаңыз.',
+      recommendationExploreBtn: 'Каталогго өтүү',
+      recommendationCourseCompletedTitle: 'Курс ийгиликтүү аяктады!',
+      recommendationCourseCompletedDesc: 'Азаматсыз! Өтүлгөн темаларды кайталап же кийинки багытты тандай аласыз.',
+      recommendationReviewTopics: 'Материалдарды кайталоо',
+      themeSelectLabel: 'Түс темасы',
       profileSettingsBtn: 'Профиль жөндөөлөрү',
       editProfileTitle: 'Профиль жана окуу максаттары',
       displayNameLabel: 'Колдонуучунун аты',
@@ -1220,6 +1304,10 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       intermediate: 'Орто',
       advanced: 'Өркүндөтүлгөн',
       preIntermediate: 'Базалыктан төмөн',
+      themeLabel: 'Тема тандоо',
+      themeLight: 'Жарык',
+      themeDark: 'Караңгы',
+      themeSystem: 'Системалык',
     },
   },
 };

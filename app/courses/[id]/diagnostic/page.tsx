@@ -90,6 +90,13 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
 
     // Generate personalized learning plan
     try {
+      const goalPrompt =
+        locale === 'ru'
+          ? `Сформировать практические навыки по направлению «${course?.title ?? courseId}»`
+          : locale === 'ky'
+          ? `«${course?.title ?? courseId}» багыты боюнча практикалык көндүмдөрдү калыптандыруу`
+          : `Build practical competence in ${course?.title ?? courseId}`;
+
       const planRes = await fetch('/api/ai/plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -97,7 +104,7 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
           courseId,
           level: diagResult.level,
           weeklyMinutes: 60,
-          goal: `Build practical competence in ${course?.title ?? courseId}`,
+          goal: goalPrompt,
           locale,
         }),
       });
@@ -279,7 +286,7 @@ function DiagnosticContent({ params }: { params: Promise<{ id: string }> }) {
                     )}
                   </div>
                   <p className="text-xs text-muted mb-4">
-                    {t.diagnostic.planPace} ({plan.weeklyMinutes} min/week, {plan.totalWeeks} modules)
+                    {t.diagnostic.planPace} ({plan.weeklyMinutes} {locale === 'ru' ? 'мин/нед' : locale === 'ky' ? 'мүнөт/жума' : 'min/wk'}, {plan.totalWeeks} {locale === 'ru' ? 'модулей' : locale === 'ky' ? 'модуль' : 'modules'})
                   </p>
                   <div className="flex flex-col gap-2.5">
                     {plan.weeks.map(w => (

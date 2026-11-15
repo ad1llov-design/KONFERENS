@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/Badge';
 import { DemoBanner } from '@/components/ui/DemoBanner';
 import { DemoState } from '@/lib/demo-state';
 import { COURSES, getCourse, getLesson } from '@/lib/data/courses';
+import { getLocalizedLesson } from '@/lib/data/course-content-localization';
 import { useLanguage } from '@/lib/i18n/context';
 import { getLocalizedCourse } from '@/lib/data/course-localization';
 import type { CourseId, TutorMessage, TutorContext, Locale } from '@/lib/types';
@@ -26,8 +27,10 @@ function createMessageId(role: 'user' | 'assistant') {
 
 function getWelcomeMessages(cId: CourseId, lId: string | null, locale: Locale): TutorMessage[] {
   const c = getCourse(cId);
-  const l = lId ? getLesson(cId, lId) : null;
-  const courseTitle = c?.title ?? cId;
+  const rawL = lId ? getLesson(cId, lId) : null;
+  const l = rawL ? getLocalizedLesson(cId, rawL, locale) : null;
+  const courseLoc = c ? getLocalizedCourse(c, locale) : null;
+  const courseTitle = courseLoc?.title ?? c?.title ?? cId;
   const lessonTitle = l ? l.title : null;
 
   let content = '';
@@ -65,7 +68,8 @@ function TutorChatInner() {
 
   const rawCourse = courseIdParam ? getCourse(courseIdParam) : null;
   const course = rawCourse ? getLocalizedCourse(rawCourse, locale) : null;
-  const lesson = courseIdParam && lessonIdParam ? getLesson(courseIdParam, lessonIdParam) : null;
+  const rawLesson = courseIdParam && lessonIdParam ? getLesson(courseIdParam, lessonIdParam) : null;
+  const lesson = (rawLesson && courseIdParam) ? getLocalizedLesson(courseIdParam, rawLesson, locale) : null;
 
   const [messages, setMessages] = useState<TutorMessage[]>([]);
   const [input, setInput] = useState('');
@@ -164,10 +168,10 @@ function TutorChatInner() {
   }
 
   const starterChips = locale === 'ru'
-    ? ['Объясни простыми словами', 'Дай подсказку к упражнению', 'Приведи жизненный пример']
+    ? ['Объясни проще', 'Дай подсказку', 'Проверь моё решение', 'Покажи другой пример', 'Сделай мини-тест']
     : locale === 'ky'
-    ? ['Жөнөкөй тил менен түшүндүрүп бер', 'Көнүгүүгө багыт берчи', 'Турмуштук мисал келтир']
-    : ['Explain this in simple terms', 'Give me a hint for this exercise', 'Show a real-world example'];
+    ? ['Жөнөкөй түшүндүрүп бер', 'Багыт / кеңеш бер', 'Менин чыгарылышымды текшер', 'Башка мисал көрсөт', 'Чакан тест өткөр']
+    : ['Explain simply', 'Give me a hint', 'Check my answer', 'Show another example', 'Give me a mini-quiz'];
 
   if (!mounted) return <div className="min-h-screen bg-background" />;
 

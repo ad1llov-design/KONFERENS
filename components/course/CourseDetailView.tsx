@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useLanguage } from '@/lib/i18n/context';
 import { getLocalizedCourse } from '@/lib/data/course-localization';
+import { getLocalizedCourseWithStages } from '@/lib/data/course-content-localization';
 import type { Course } from '@/lib/types';
 
 interface CourseDetailViewProps {
@@ -15,6 +16,7 @@ interface CourseDetailViewProps {
 export function CourseDetailView({ course }: CourseDetailViewProps) {
   const { t, locale } = useLanguage();
   const loc = getLocalizedCourse(course, locale);
+  const localizedCourse = getLocalizedCourseWithStages(course, locale);
 
   const totalLessons = course.stages.reduce((acc, s) => acc + s.lessons.length, 0);
 
@@ -82,7 +84,7 @@ export function CourseDetailView({ course }: CourseDetailViewProps) {
           {t.courseDetail.structureTitle}
         </h2>
         <div className="flex flex-col gap-4">
-          {course.stages.map((stage, si) => (
+          {localizedCourse.stages.map((stage, si) => (
             <div key={stage.id} className="surface rounded-[var(--r-lg)] overflow-hidden border border-border/80">
               <div className="px-5 py-4 border-b border-border flex items-center gap-3 bg-surface/80">
                 <div className="w-7 h-7 rounded-full bg-accent/15 border border-accent/25 text-accent text-xs font-bold flex items-center justify-center shrink-0">

@@ -124,6 +124,9 @@ export interface CourseProgress {
   diagnosticAttempt: DiagnosticResult | null;
 }
 
+// ─── Theme ──────────────────────────────────────────────────────────────────
+export type ThemeMode = 'light' | 'dark' | 'system';
+
 // ─── User / Session ─────────────────────────────────────────────────────────
 
 export interface UserProfile {
@@ -133,6 +136,7 @@ export interface UserProfile {
   avatar?:           string;
   dailyGoalMinutes?: number;
   locale?:           Locale;
+  theme?:            ThemeMode;
   createdAt:         string;
 }
 

@@ -1,46 +1,55 @@
 @import "tailwindcss";
 
-/* ─── Kivora Design Tokens — Dark Mirror Navy & Orange Contrast ────────── */
-:root {
-  --bg:            #0A0F18;
-  --bg-deep:       #101827;
-  --bg-surface:    #151F2E;
-  --bg-raised:     #1A2738;
-  --text:          #F3F6FA;
-  --text-muted:    #A7B2C2;
-  --text-subtle:   #6C788A;
+/* ─── Kivora Design System — Light, Dark & Semantic Tokens ────────────── */
 
-  /* Brand Accents */
-  --accent:        #F28A32; /* Primary Orange Accent */
-  --accent-hover:  #FF9C45; /* Warm Orange Hover */
-  --accent-light:  rgba(242, 138, 50, 0.16);
+:root,
+html.light {
+  color-scheme: light;
 
-  --blue-accent:   #6FA4E8; /* Cool Blue Accent */
-  --blue-pale:     #A9CCF5; /* Pale Blue Light Accent */
-  --blue-light:    rgba(111, 164, 232, 0.14);
+  /* Backgrounds & Surfaces (Apple-inspired airy, clean minimalism) */
+  --bg:            #F5F5F7;
+  --bg-deep:       #FFFFFF;
+  --bg-surface:    #FFFFFF;
+  --bg-raised:     #F5F5F7;
 
-  --amber:         #E5A038;
-  --amber-light:   rgba(229, 160, 56, 0.16);
-  --danger:        #E64D4D;
-  --danger-light:  rgba(230, 77, 77, 0.16);
-  --success:       #2EAA68;
-  --success-light: rgba(46, 170, 104, 0.16);
+  /* Typography */
+  --text:          #1D1D1F;
+  --text-muted:    #6E6E73;
+  --text-subtle:   #86868B;
 
-  --border:        #1F2D42;
-  --border-strong: #2D3F59;
+  /* Functional Accent (Restrained, calm Apple blue) */
+  --accent:        #0071E3;
+  --accent-hover:  #0077ED;
+  --accent-light:  rgba(0, 113, 227, 0.08);
 
-  /* Glass panel material — Translucent dark navy with cool blue shimmer */
-  --glass-bg:         rgba(21, 31, 46, 0.72);
-  --glass-bg-strong:  rgba(26, 39, 56, 0.88);
-  --glass-border:     rgba(111, 164, 232, 0.22);
-  --glass-shine:      rgba(169, 204, 245, 0.12);
-  --glass-shadow:     0 8px 32px rgba(5, 10, 18, 0.50), inset 0 1px 0 rgba(169, 204, 245, 0.14);
+  --blue-accent:   #0071E3;
+  --blue-pale:     #EBF4FF;
+  --blue-light:    rgba(0, 113, 227, 0.08);
+
+  /* Semantic Statuses (Strictly for feedback and states) */
+  --success:       #34C759;
+  --success-light: rgba(52, 199, 89, 0.12);
+  --danger:        #FF3B30;
+  --danger-light:  rgba(255, 59, 48, 0.12);
+  --amber:         #FF9500;
+  --amber-light:   rgba(255, 149, 0, 0.12);
+
+  /* Borders & Dividers */
+  --border:        #E5E5EA;
+  --border-strong: #D1D1D6;
+
+  /* Glass Material (Light) */
+  --glass-bg:         rgba(255, 255, 255, 0.82);
+  --glass-bg-strong:  rgba(255, 255, 255, 0.95);
+  --glass-border:     rgba(0, 0, 0, 0.07);
+  --glass-shine:      rgba(255, 255, 255, 0.70);
+  --glass-shadow:     0 4px 20px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 
   /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(5, 10, 18, 0.35);
-  --shadow-sm: 0 2px 6px rgba(5, 10, 18, 0.40);
-  --shadow-md: 0 8px 24px rgba(5, 10, 18, 0.55);
-  --shadow-lg: 0 16px 40px rgba(5, 10, 18, 0.65);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09);
 
   /* Radii */
   --r-xs:  4px;
@@ -51,7 +60,56 @@
   --r-2xl: 32px;
 }
 
-/* ─── Tailwind v4 Theme ────────────────────────────────────────────────── */
+html.dark {
+  color-scheme: dark;
+
+  /* Backgrounds & Surfaces (Neutral graphite) */
+  --bg:            #111113;
+  --bg-deep:       #0D0D0E;
+  --bg-surface:    #1C1C1E;
+  --bg-raised:     #2C2C2E;
+
+  /* Typography */
+  --text:          #F5F5F7;
+  --text-muted:    #8E8E93;
+  --text-subtle:   #636366;
+
+  /* Functional Accent (Neutral dark calm blue) */
+  --accent:        #2997FF;
+  --accent-hover:  #409CFF;
+  --accent-light:  rgba(41, 151, 255, 0.15);
+
+  --blue-accent:   #2997FF;
+  --blue-pale:     #98C7FF;
+  --blue-light:    rgba(41, 151, 255, 0.15);
+
+  /* Semantic Statuses */
+  --success:       #32D74B;
+  --success-light: rgba(50, 215, 75, 0.15);
+  --danger:        #FF453A;
+  --danger-light:  rgba(255, 69, 58, 0.15);
+  --amber:         #FF9F0A;
+  --amber-light:   rgba(255, 159, 10, 0.15);
+
+  /* Borders & Dividers */
+  --border:        #2C2C2E;
+  --border-strong: #3A3A3C;
+
+  /* Glass Material (Dark) */
+  --glass-bg:         rgba(28, 28, 30, 0.82);
+  --glass-bg-strong:  rgba(36, 36, 38, 0.95);
+  --glass-border:     rgba(255, 255, 255, 0.08);
+  --glass-shine:      rgba(255, 255, 255, 0.10);
+  --glass-shadow:     0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.40);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+/* ─── Tailwind v4 Theme Mapping ────────────────────────────────────────── */
 @theme {
   --color-background: var(--bg);
   --color-deep:       var(--bg-deep);
@@ -83,12 +141,11 @@
   --font-mono: var(--font-geist-mono), 'Courier New', monospace;
 }
 
-/* ─── Base ─────────────────────────────────────────────────────────────── */
+/* ─── Base Styles ───────────────────────────────────────────────────────── */
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg);
-  color-scheme: dark;
 }
 
 body {
@@ -101,7 +158,7 @@ body {
 /* ─── Custom Utility Classes ───────────────────────────────────────────── */
 @layer utilities {
 
-  /* Signature mirror glass panel */
+  /* Modern Glass Effect */
   .glass {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
@@ -118,7 +175,7 @@ body {
     box-shadow: var(--glass-shadow);
   }
 
-  /* Surfaces */
+  /* Solid Clean Surfaces */
   .surface {
     background: var(--bg-surface);
     border: 1px solid var(--border);
@@ -131,7 +188,7 @@ body {
     box-shadow: var(--shadow-md);
   }
 
-  /* Focus ring consistent with orange brand accent */
+  /* Accessible Focus Ring */
   .focus-accent {
     outline: none;
   }
@@ -141,30 +198,23 @@ body {
     border-radius: var(--r-sm);
   }
 
-  /* Lesson node states */
-  .node-locked    { opacity: 0.40; cursor: not-allowed; }
+  /* Lesson Node States */
+  .node-locked    { opacity: 0.45; cursor: not-allowed; }
   .node-available { cursor: pointer; }
   .node-current   { ring: 2px solid var(--accent); }
   .node-done      { opacity: 0.95; }
 
-  /* Smooth hover lift */
+  /* Smooth Subtle Hover Lift */
   .hover-lift {
     transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   }
   .hover-lift:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-    border-color: rgba(111, 164, 232, 0.35);
+    border-color: var(--border-strong);
   }
 
-  /* Demo mode banner */
-  .demo-banner {
-    background: var(--amber-light);
-    border: 1px solid rgba(229, 160, 56, 0.35);
-    color: var(--amber);
-  }
-
-  /* Specular glass highlight */
+  /* Specular Highlight */
   .glass-shine {
     position: relative;
     overflow: hidden;
@@ -176,60 +226,42 @@ body {
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent 5%, rgba(169, 204, 245, 0.38) 50%, transparent 95%);
+    background: linear-gradient(90deg, transparent 5%, var(--glass-shine) 50%, transparent 95%);
     pointer-events: none;
     z-index: 2;
   }
 }
 
-/* ─── Ambient Light Glow Animations ────────────────────────────────────── */
+/* ─── Ambient Light Glow Animations (Subtle & Functional) ────────────────── */
 @keyframes ambientGlow1 {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-    opacity: 0.60;
-  }
-  50% {
-    transform: translate(24px, -18px) scale(1.10);
-    opacity: 0.82;
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-    opacity: 0.60;
-  }
+  0% { transform: translate(0px, 0px) scale(1); opacity: 0.35; }
+  50% { transform: translate(20px, -15px) scale(1.08); opacity: 0.55; }
+  100% { transform: translate(0px, 0px) scale(1); opacity: 0.35; }
 }
 
 @keyframes ambientGlow2 {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-    opacity: 0.50;
-  }
-  50% {
-    transform: translate(-20px, 22px) scale(1.08);
-    opacity: 0.75;
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-    opacity: 0.50;
-  }
+  0% { transform: translate(0px, 0px) scale(1); opacity: 0.30; }
+  50% { transform: translate(-18px, 18px) scale(1.06); opacity: 0.48; }
+  100% { transform: translate(0px, 0px) scale(1); opacity: 0.30; }
 }
 
 .ambient-orb-blue {
   position: absolute;
-  width: 520px;
-  height: 520px;
+  width: 450px;
+  height: 450px;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(111, 164, 232, 0.12) 0%, rgba(111, 164, 232, 0) 70%);
+  background: radial-gradient(circle, var(--accent-light) 0%, rgba(0, 113, 227, 0) 70%);
   filter: blur(55px);
   pointer-events: none;
   animation: ambientGlow1 16s ease-in-out infinite;
 }
 
-.ambient-orb-orange {
+.ambient-orb-secondary {
   position: absolute;
-  width: 480px;
-  height: 480px;
+  width: 420px;
+  height: 420px;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(242, 138, 50, 0.08) 0%, rgba(242, 138, 50, 0) 70%);
+  background: radial-gradient(circle, rgba(142, 142, 147, 0.08) 0%, rgba(142, 142, 147, 0) 70%);
   filter: blur(60px);
   pointer-events: none;
   animation: ambientGlow2 20s ease-in-out infinite;
@@ -237,8 +269,11 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .ambient-orb-blue,
-  .ambient-orb-orange {
+  .ambient-orb-secondary {
     animation: none !important;
+  }
+  .hover-lift {
+    transition: none !important;
   }
 }
 
@@ -246,9 +281,9 @@ body {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--blue-accent); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-/* ─── Prose for lesson content ─────────────────────────────────────────── */
+/* ─── Prose for Lesson Content ─────────────────────────────────────────── */
 .lesson-prose {
   color: var(--text);
   line-height: 1.75;
@@ -265,17 +300,17 @@ body {
 .lesson-prose p { margin-bottom: 0.875rem; color: var(--text); }
 .lesson-prose code {
   font-family: var(--font-mono);
-  background: rgba(111, 164, 232, 0.15);
-  color: var(--blue-pale);
+  background: var(--bg-raised);
+  color: var(--accent);
   padding: 0.15em 0.45em;
   border-radius: var(--r-xs);
   font-size: 0.875em;
-  border: 1px solid rgba(111, 164, 232, 0.25);
+  border: 1px solid var(--border);
 }
 .lesson-prose pre {
   font-family: var(--font-mono);
-  background: #080D14;
-  color: #D6E4F7;
+  background: var(--bg-raised);
+  color: var(--text);
   padding: 1rem 1.25rem;
   border-radius: var(--r-md);
   font-size: 0.875rem;

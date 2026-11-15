@@ -17,20 +17,36 @@ import {
   Send,
   Star,
 } from 'lucide-react';
+import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { useLanguage } from '@/lib/i18n/context';
 import { COURSES } from '@/lib/data/courses';
 import { getLocalizedCourse } from '@/lib/data/course-localization';
 import type { CourseCategory } from '@/lib/types';
 
 function PathPreview() {
-  const steps = [
-    { label: 'Variables & Types', done: true, active: false },
-    { label: 'Control Flow', done: false, active: true },
-    { label: 'Functions', done: false, active: false },
-  ];
+  const { locale } = useLanguage();
+  const steps = locale === 'ru'
+    ? [
+        { label: 'Переменные и типы данных', done: true, active: false },
+        { label: 'Управляющие конструкции (if/for)', done: false, active: true },
+        { label: 'Функции и абстракции', done: false, active: false },
+        { label: 'Сундук сокровищ: Итоговый проект', done: false, active: false, isTreasure: true },
+      ]
+    : locale === 'ky'
+    ? [
+        { label: 'Өзгөрмөлөр жана маалымат типтери', done: true, active: false },
+        { label: 'Башкаруу конструкциялары', done: false, active: true },
+        { label: 'Функциялар жана модулдар', done: false, active: false },
+        { label: 'Кенч сандыкчасы: Финалдык долбоор', done: false, active: false, isTreasure: true },
+      ]
+    : [
+        { label: 'Variables & Data Types', done: true, active: false },
+        { label: 'Control Flow (if/for)', done: false, active: true },
+        { label: 'Functions & Modules', done: false, active: false },
+        { label: 'Treasure Chest: Capstone Project', done: false, active: false, isTreasure: true },
+      ];
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -42,7 +58,9 @@ function PathPreview() {
             step.done
               ? 'surface border-border text-foreground'
               : step.active
-              ? 'glass border-accent/60 text-foreground shadow-md ring-1 ring-accent/20'
+              ? 'surface-raised border-accent text-foreground shadow-sm ring-1 ring-accent/30'
+              : step.isTreasure
+              ? 'bg-surface-raised border-border/80 text-foreground font-semibold'
               : 'bg-background/40 border-border/60 text-muted opacity-60',
           ].join(' ')}
         >
@@ -52,13 +70,15 @@ function PathPreview() {
               step.done
                 ? 'bg-success text-white'
                 : step.active
-                ? 'bg-accent text-white shadow-sm'
+                ? 'bg-accent text-white shadow-xs'
+                : step.isTreasure
+                ? 'bg-amber text-white'
                 : 'bg-surface border border-border text-muted',
             ].join(' ')}
           >
-            {step.done ? '✓' : i + 1}
+            {step.done ? '✓' : step.isTreasure ? '🏆' : i + 1}
           </div>
-          <span className="text-sm font-medium">{step.label}</span>
+          <span className="text-xs md:text-sm font-medium">{step.label}</span>
           {step.active && (
             <ChevronRight className="ml-auto h-4 w-4 text-accent shrink-0" aria-hidden="true" />
           )}
@@ -87,59 +107,24 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground relative overflow-hidden">
-      {/* Ambient background light orbs */}
-      <div className="ambient-orb-blue top-[-80px] right-[-100px]" aria-hidden="true" />
-      <div className="ambient-orb-orange top-[600px] left-[-120px]" aria-hidden="true" />
-      <div className="ambient-orb-blue bottom-[300px] right-[-80px]" aria-hidden="true" />
+    <div className="min-h-screen flex flex-col bg-background text-foreground relative overflow-hidden transition-colors duration-200">
+      {/* Subtle ambient light highlight orbs (suppressed on prefers-reduced-motion) */}
+      <div className="ambient-orb-blue top-[-100px] right-[-100px]" aria-hidden="true" />
+      <div className="ambient-orb-secondary top-[650px] left-[-120px]" aria-hidden="true" />
 
-      {/* Top Navbar */}
-      <header className="border-b border-border/80 sticky top-0 z-40 bg-[#0A0F18]/90 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-accent bg-clip-text text-transparent">
-              {t.nav.brand}
-            </span>
-            <Badge variant="blue" className="text-[10px]">MVP</Badge>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-6 text-sm text-muted">
-            <Link href="/courses" className="hover:text-foreground transition-colors font-medium">
-              {t.nav.courses}
-            </Link>
-            <Link href="/dashboard" className="hover:text-foreground transition-colors font-medium">
-              {t.nav.dashboard}
-            </Link>
-            <Link href="/tutor" className="hover:text-foreground transition-colors font-medium">
-              {t.nav.tutor}
-            </Link>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <LanguageSwitcher />
-            <Link
-              href="/auth"
-              className="text-sm text-muted hover:text-foreground transition-colors hidden sm:inline"
-            >
-              {t.nav.signIn}
-            </Link>
-            <Link href="/courses">
-              <Button size="sm">{t.home.startBtn}</Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Unified Navbar with Theme and Language Selectors */}
+      <Navbar />
 
       <main className="flex-1">
-        {/* ── 1. Hero Section ──────────────────────────────────────────────── */}
+        {/* ── 1. Hero Section: Clear Value Proposition & Product Preview ─── */}
         <section className="max-w-6xl mx-auto px-6 pt-16 pb-20 md:pt-24 md:pb-28">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Left Column */}
+            {/* Left Column: Heading and Clear CTAs */}
             <div>
               <div className="mb-4">
                 <Badge variant="accent">{t.home.badge}</Badge>
               </div>
-              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground leading-[1.14] mb-5">
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground leading-[1.15] mb-5">
                 {t.home.heroHeadline1}{' '}
                 <span className="text-accent">{t.home.heroHeadline2}</span>
               </h1>
@@ -161,9 +146,9 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Column — Mirror Glass Path Preview */}
+            {/* Right Column: Interactive Path & Treasure Goal Mirror Preview */}
             <div className="relative">
-              <div className="glass glass-shine rounded-[var(--r-xl)] p-7 border border-border/80 shadow-2xl relative">
+              <div className="surface rounded-[var(--r-xl)] p-7 border border-border shadow-md relative">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="text-xs text-accent font-semibold uppercase tracking-wider mb-0.5">
@@ -171,7 +156,7 @@ export default function LandingPage() {
                     </p>
                     <p className="text-sm font-semibold text-foreground">{t.home.pathDemoStage}</p>
                   </div>
-                  <Badge variant="amber">{t.home.pathDemoLevel}</Badge>
+                  <Badge variant="default">{t.home.pathDemoLevel}</Badge>
                 </div>
                 <PathPreview />
                 <div className="mt-5 pt-4 border-t border-border flex items-center justify-between">
@@ -186,11 +171,11 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── 2. Problem vs Solution ───────────────────────────────────────── */}
-        <section className="bg-surface/50 border-y border-border py-20">
+        {/* ── 2. Who Kivora Helps & Real Learning Pain Points ─────────────── */}
+        <section className="bg-surface border-y border-border py-20">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-14">
-              <Badge variant="blue" className="mb-3">{t.home.problemBadge}</Badge>
+              <Badge variant="default" className="mb-3">{t.home.problemBadge}</Badge>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 {t.home.problemTitle}
               </h2>
@@ -200,8 +185,8 @@ export default function LandingPage() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="surface rounded-[var(--r-xl)] p-6 border border-border">
-                <div className="w-12 h-12 rounded-[var(--r-md)] bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-4 text-rose-400">
+              <div className="surface-raised rounded-[var(--r-xl)] p-6 border border-border">
+                <div className="w-12 h-12 rounded-[var(--r-md)] bg-danger-light text-danger flex items-center justify-center mb-4">
                   <VideoOff className="h-6 w-6" />
                 </div>
                 <h3 className="text-base font-semibold text-foreground mb-2">
@@ -212,8 +197,8 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="surface rounded-[var(--r-xl)] p-6 border border-border">
-                <div className="w-12 h-12 rounded-[var(--r-md)] bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4 text-amber-400">
+              <div className="surface-raised rounded-[var(--r-xl)] p-6 border border-border">
+                <div className="w-12 h-12 rounded-[var(--r-md)] bg-amber-light text-amber flex items-center justify-center mb-4">
                   <Target className="h-6 w-6" />
                 </div>
                 <h3 className="text-base font-semibold text-foreground mb-2">
@@ -224,8 +209,8 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="surface rounded-[var(--r-xl)] p-6 border border-border">
-                <div className="w-12 h-12 rounded-[var(--r-md)] bg-blue/10 border border-blue/20 flex items-center justify-center mb-4 text-blue">
+              <div className="surface-raised rounded-[var(--r-xl)] p-6 border border-border">
+                <div className="w-12 h-12 rounded-[var(--r-md)] bg-accent-light text-accent flex items-center justify-center mb-4">
                   <HelpCircle className="h-6 w-6" />
                 </div>
                 <h3 className="text-base font-semibold text-foreground mb-2">
@@ -239,7 +224,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── 3. How Kivora Works (5 Steps) ────────────────────────────────── */}
+        {/* ── 3. How Kivora Works (5 Pedagogical Steps) ───────────────────── */}
         <section className="py-24 max-w-6xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
@@ -263,7 +248,7 @@ export default function LandingPage() {
                 className="surface rounded-[var(--r-lg)] p-5 border border-border hover-lift flex flex-col justify-between"
               >
                 <div>
-                  <span className="text-2xl font-black text-accent/80 mb-3 block">
+                  <span className="text-2xl font-black text-accent mb-3 block">
                     {step.num}
                   </span>
                   <h3 className="font-semibold text-sm text-foreground mb-2">
@@ -279,7 +264,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 4. 15 Practical Tracks Showcase ──────────────────────────────── */}
-        <section className="bg-surface/40 border-t border-border py-20">
+        <section className="bg-surface border-t border-border py-20">
           <div className="max-w-6xl mx-auto px-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
               <div>
@@ -305,7 +290,7 @@ export default function LandingPage() {
                     className={[
                       'px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors border',
                       selectedCategory === cat.id
-                        ? 'bg-accent text-white border-accent shadow-sm'
+                        ? 'bg-accent text-white border-accent shadow-xs'
                         : 'bg-surface text-muted border-border hover:border-accent/40 hover:text-foreground',
                     ].join(' ')}
                   >
@@ -326,11 +311,11 @@ export default function LandingPage() {
                   <Link
                     key={course.id}
                     href={`/courses/${course.id}`}
-                    className="surface rounded-[var(--r-xl)] p-5 border border-border/80 hover-lift flex flex-col justify-between group"
+                    className="surface-raised rounded-[var(--r-xl)] p-5 border border-border hover-lift flex flex-col justify-between group"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <Badge variant={isTech ? 'blue' : isLang ? 'accent' : 'muted'}>
+                        <Badge variant={isTech ? 'default' : isLang ? 'accent' : 'muted'}>
                           {isTech
                             ? t.catalog.techCategory
                             : isLang
@@ -382,8 +367,8 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-10">
-            <div className="glass glass-shine rounded-[var(--r-xl)] p-6 border border-border/80">
-              <div className="w-11 h-11 rounded-[var(--r-md)] bg-accent/15 border border-accent/25 flex items-center justify-center mb-4 text-accent">
+            <div className="surface rounded-[var(--r-xl)] p-6 border border-border shadow-xs">
+              <div className="w-11 h-11 rounded-[var(--r-md)] bg-accent-light text-accent flex items-center justify-center mb-4">
                 <Sparkles className="h-5 w-5" />
               </div>
               <h3 className="text-base font-semibold text-foreground mb-2">
@@ -394,8 +379,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="glass glass-shine rounded-[var(--r-xl)] p-6 border border-border/80">
-              <div className="w-11 h-11 rounded-[var(--r-md)] bg-blue/15 border border-blue/25 flex items-center justify-center mb-4 text-blue">
+            <div className="surface rounded-[var(--r-xl)] p-6 border border-border shadow-xs">
+              <div className="w-11 h-11 rounded-[var(--r-md)] bg-accent-light text-accent flex items-center justify-center mb-4">
                 <MessageSquare className="h-5 w-5" />
               </div>
               <h3 className="text-base font-semibold text-foreground mb-2">
@@ -406,8 +391,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="glass glass-shine rounded-[var(--r-xl)] p-6 border border-border/80">
-              <div className="w-11 h-11 rounded-[var(--r-md)] bg-amber/15 border border-amber/25 flex items-center justify-center mb-4 text-amber">
+            <div className="surface rounded-[var(--r-xl)] p-6 border border-border shadow-xs">
+              <div className="w-11 h-11 rounded-[var(--r-md)] bg-accent-light text-accent flex items-center justify-center mb-4">
                 <TrendingUp className="h-5 w-5" />
               </div>
               <h3 className="text-base font-semibold text-foreground mb-2">
@@ -430,9 +415,9 @@ export default function LandingPage() {
         </section>
 
         {/* ── 6. Real Trust & Conference Review Gathering (No Fake Reviews) ── */}
-        <section className="bg-surface/50 border-y border-border py-20">
+        <section className="bg-surface border-y border-border py-20">
           <div className="max-w-4xl mx-auto px-6">
-            <div className="glass rounded-[var(--r-2xl)] p-8 md:p-10 border border-border/80 shadow-2xl">
+            <div className="surface-raised rounded-[var(--r-xl)] p-8 md:p-10 border border-border shadow-sm">
               <div className="flex items-center gap-2 mb-3">
                 <ShieldCheck className="h-5 w-5 text-accent" />
                 <Badge variant="accent">{t.home.trustBadge}</Badge>
@@ -443,7 +428,7 @@ export default function LandingPage() {
               <p className="text-sm md:text-base text-muted leading-relaxed mb-6">
                 {t.home.trustDesc}
               </p>
-              <div className="bg-surface rounded-[var(--r-lg)] p-4 border border-border mb-6 flex items-start gap-3">
+              <div className="surface rounded-[var(--r-lg)] p-4 border border-border mb-6 flex items-start gap-3">
                 <Star className="h-5 w-5 text-amber shrink-0 mt-0.5" />
                 <p className="text-xs md:text-sm text-foreground">
                   {t.home.trustNote}
@@ -453,7 +438,13 @@ export default function LandingPage() {
               {feedbackSent ? (
                 <div className="surface rounded-[var(--r-md)] p-4 border border-success/30 flex items-center gap-2 text-sm text-foreground">
                   <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
-                  <span>Спасибо! Ваш отзыв сохранён для методической команды конференции.</span>
+                  <span>
+                    {locale === 'ru'
+                      ? 'Спасибо! Ваш отзыв сохранён для методической команды конференции.'
+                      : locale === 'ky'
+                      ? 'Ыраазычылык! Сиздин пикириңиз конференциянын уюштуруу тобуна сакталды.'
+                      : 'Thank you! Your feedback has been noted for the conference product team.'}
+                  </span>
                 </div>
               ) : (
                 <form onSubmit={handleSendFeedback} className="flex flex-col sm:flex-row gap-3">
@@ -461,8 +452,14 @@ export default function LandingPage() {
                     type="text"
                     value={feedbackText}
                     onChange={e => setFeedbackText(e.target.value)}
-                    placeholder="Напишите ваше впечатление или предложение…"
-                    className="flex-1 bg-surface border border-border rounded-[var(--r-md)] px-4 py-2.5 text-sm text-foreground focus-accent placeholder:text-muted/60"
+                    placeholder={
+                      locale === 'ru'
+                        ? 'Напишите ваше впечатление или предложение…'
+                        : locale === 'ky'
+                        ? 'Өз пикириңизди же сунушуңузду жазыңыз…'
+                        : 'Share your impression or suggestion…'
+                    }
+                    className="flex-1 bg-surface border border-border rounded-[var(--r-md)] px-4 py-2.5 text-sm text-foreground focus-accent placeholder:text-muted"
                   />
                   <Button type="submit">
                     <Send className="h-4 w-4" />
@@ -477,14 +474,14 @@ export default function LandingPage() {
         {/* ── 7. Preliminary Freemium Pricing Hypotheses ───────────────────── */}
         <section className="py-24 max-w-6xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <Badge variant="amber" className="mb-3">{t.home.pricingBadge}</Badge>
+            <Badge variant="default" className="mb-3">{t.home.pricingBadge}</Badge>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
               {t.home.pricingTitle}
             </h2>
             <p className="text-sm md:text-base text-muted mb-3">
               {t.home.pricingSubtitle}
             </p>
-            <p className="text-xs text-amber font-medium bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-1 inline-block">
+            <p className="text-xs text-muted font-medium bg-surface-raised border border-border rounded-full px-4 py-1 inline-block">
               {t.home.pricingNote}
             </p>
           </div>
@@ -518,7 +515,7 @@ export default function LandingPage() {
             </div>
 
             {/* Student Tier (Highlighted) */}
-            <div className="glass glass-shine rounded-[var(--r-xl)] p-7 border-2 border-accent/70 shadow-2xl flex flex-col justify-between relative">
+            <div className="surface-raised rounded-[var(--r-xl)] p-7 border-2 border-accent shadow-md flex flex-col justify-between relative">
               <div className="absolute top-[-11px] right-6">
                 <Badge variant="accent">{t.home.tierStudentBadge}</Badge>
               </div>
@@ -576,8 +573,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── 8. FAQ Section ──────────────────────────────────────────────── */}
-        <section className="bg-surface/40 border-t border-border py-20">
+        {/* ── 8. Interactive FAQ Accordion ─────────────────────────────────── */}
+        <section className="bg-surface border-t border-border py-20">
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
@@ -594,11 +591,11 @@ export default function LandingPage() {
                 return (
                   <div
                     key={idx}
-                    className="surface rounded-[var(--r-lg)] border border-border overflow-hidden transition-all"
+                    className="surface-raised rounded-[var(--r-lg)] border border-border overflow-hidden transition-all"
                   >
                     <button
                       onClick={() => setOpenFaq(isOpen ? null : idx)}
-                      className="w-full flex items-center justify-between p-4 text-left font-semibold text-sm text-foreground hover:bg-surface-raised transition-colors"
+                      className="w-full flex items-center justify-between p-4 text-left font-semibold text-sm text-foreground hover:bg-surface transition-colors"
                     >
                       <span>{item.q}</span>
                       <ChevronDown
@@ -609,7 +606,7 @@ export default function LandingPage() {
                       />
                     </button>
                     {isOpen && (
-                      <div className="px-4 pb-4 pt-1 text-xs md:text-sm text-muted leading-relaxed border-t border-border/60">
+                      <div className="px-4 pb-4 pt-1 text-xs md:text-sm text-muted leading-relaxed border-t border-border">
                         {item.a}
                       </div>
                     )}
@@ -621,7 +618,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 9. Final CTA ─────────────────────────────────────────────────── */}
-        <section className="py-20 border-t border-border bg-gradient-to-b from-surface/30 to-background">
+        <section className="py-20 border-t border-border bg-surface">
           <div className="max-w-xl mx-auto px-6 text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
               {t.home.readyTitle}
@@ -642,11 +639,11 @@ export default function LandingPage() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8 px-6 bg-[#0A0F18]">
+      {/* Clean Global Footer */}
+      <footer className="border-t border-border py-8 px-6 bg-surface">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 text-xs text-muted">
-            <span className="font-semibold text-foreground">Kivora MVP</span>
+            <span className="font-semibold text-foreground">Kivora</span>
             <Link href="/courses" className="hover:text-foreground transition-colors">{t.nav.courses}</Link>
             <Link href="/dashboard" className="hover:text-foreground transition-colors">{t.nav.dashboard}</Link>
             <Link href="/tutor" className="hover:text-foreground transition-colors">{t.nav.tutor}</Link>
