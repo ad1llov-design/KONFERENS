@@ -18,7 +18,10 @@ import {
   Moon,
   Monitor,
   RotateCcw,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
+import { soundManager } from '@/lib/sound/sound-manager';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -60,6 +63,8 @@ export default function DashboardPage() {
   const [editGoal, setEditGoal] = useState(30);
   const [editLocale, setEditLocale] = useState<Locale>(locale);
   const [editTheme, setEditTheme] = useState<ThemeMode>(theme);
+  const [editSoundEnabled, setEditSoundEnabled] = useState(true);
+  const [editSoundVolume, setEditSoundVolume] = useState(0.7);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
@@ -75,6 +80,19 @@ export default function DashboardPage() {
       setEditAvatar(currentUser.avatar ?? '🦊');
       setEditGoal(currentUser.dailyGoalMinutes ?? 30);
       if (currentUser.theme) setEditTheme(currentUser.theme);
+      if (typeof currentUser.soundEnabled === 'boolean') {
+        setEditSoundEnabled(currentUser.soundEnabled);
+      } else {
+        setEditSoundEnabled(soundManager.isEnabled());
+      }
+      if (typeof currentUser.soundVolume === 'number') {
+        setEditSoundVolume(currentUser.soundVolume);
+      } else {
+        setEditSoundVolume(soundManager.getVolume());
+      }
+    } else {
+      setEditSoundEnabled(soundManager.isEnabled());
+      setEditSoundVolume(soundManager.getVolume());
     }
     setEditLocale(locale);
 
@@ -102,7 +120,11 @@ export default function DashboardPage() {
       dailyGoalMinutes: editGoal,
       locale: editLocale,
       theme: editTheme,
+      soundEnabled: editSoundEnabled,
+      soundVolume: editSoundVolume,
     });
+    soundManager.setEnabled(editSoundEnabled);
+    soundManager.setVolume(editSoundVolume);
     setUser(DemoState.getUser());
     if (editLocale !== locale) {
       setLocale(editLocale);
@@ -601,6 +623,78 @@ export default function DashboardPage() {
                         {item.label}
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                {/* Sound Effects & Volume */}
+                <div className="p-3 rounded-[var(--r-md)] border border-border bg-surface-raised/50 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                      {editSoundEnabled ? (
+                        <Volume2 className="h-3.5 w-3.5 text-accent" />
+                      ) : (
+                        <VolumeX className="h-3.5 w-3.5 text-muted" />
+                      )}
+                      <span>
+                        {locale === 'ru'
+                          ? 'Игровые звуковые эффекты'
+                          : locale === 'ky'
+                          ? 'Оюндун үн эффекттери'
+                          : 'Game Sound Effects'}
+                      </span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = !editSoundEnabled;
+                        setEditSoundEnabled(next);
+                        if (next) soundManager.testSound();
+                      }}
+                      className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
+                        editSoundEnabled
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold'
+                          : 'bg-muted/20 text-muted'
+                      }`}
+                    >
+                      {editSoundEnabled
+                        ? locale === 'ru'
+                          ? 'ВКЛ'
+                          : locale === 'ky'
+                          ? 'КҮЙҮК'
+                          : 'ON'
+                        : locale === 'ru'
+                        ? 'ВЫКЛ'
+                        : locale === 'ky'
+                        ? 'ӨЧҮК'
+                        : 'OFF'}
+                    </button>
+                  </div>
+
+                  <div className="space-y-1.5 pt-1">
+                    <div className="flex items-center justify-between text-[11px] text-muted">
+                      <span>{locale === 'ru' ? 'Громкость' : locale === 'ky' ? 'Үндүн көлөмү' : 'Volume'}</span>
+                      <span className="font-mono">{Math.round(editSoundVolume * 100)}%</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        disabled={!editSoundEnabled}
+                        value={editSoundVolume}
+                        onChange={(e) => setEditSoundVolume(parseFloat(e.target.value))}
+                        className="flex-1 h-1.5 bg-border rounded-lg appearance-none cursor-pointer accent-accent disabled:opacity-40"
+                      />
+                      <button
+                        type="button"
+                        disabled={!editSoundEnabled}
+                        onClick={() => soundManager.testSound()}
+                        className="px-2 py-1 text-[11px] font-medium rounded border border-border bg-surface hover:bg-background text-foreground transition-colors disabled:opacity-40 shrink-0"
+                      >
+                        {locale === 'ru' ? 'Проверить' : locale === 'ky' ? 'Текшерүү' : 'Test'}
+                      </button>
+                    </div>
                   </div>
                 </div>
 

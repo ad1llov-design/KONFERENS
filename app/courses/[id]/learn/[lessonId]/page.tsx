@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use, Suspense } from 'react';
+import { useState, useEffect, useMemo, use, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -11,36 +11,106 @@ import {
   XCircle,
   MessageSquare,
   Sparkles,
+  Target,
+  Bookmark,
+  CheckSquare,
+  ChevronRight,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { CodeBlock } from '@/components/lesson/CodeBlock';
+import { PythonDefBreakdown } from '@/components/lesson/PythonDefBreakdown';
+import { HtmlCssPreview } from '@/components/lesson/HtmlCssPreview';
+import { LessonTextToSpeech } from '@/components/lesson/LessonTextToSpeech';
+import { KiviSticker } from '@/components/lesson/KiviSticker';
+import { SoundToggle } from '@/components/sound/SoundToggle';
+import { soundManager } from '@/lib/sound/sound-manager';
 import { getLesson, getNextLesson, getLessonStage } from '@/lib/data/courses';
 import { getLocalizedLesson, getLocalizedStage } from '@/lib/data/course-content-localization';
 import { DemoState } from '@/lib/demo-state';
 import { useLanguage } from '@/lib/i18n/context';
-import type { CourseId } from '@/lib/types';
+import type { CourseId, Exercise } from '@/lib/types';
 
 type AnswerState = 'idle' | 'correct' | 'incorrect';
 
-function LessonContent({ content }: { content: string }) {
+/**
+ * Splits lesson markdown content into blocks (markdown text and syntax-highlighted code blocks)
+ */
+function RichLessonContent({
+  content,
+  lessonId,
+  courseId,
+}: {
+  content: string;
+  lessonId: string;
+  courseId: string;
+}) {
+  // Regex to split code blocks: ```lang ... ```
+  const parts = content.split(/(```[a-zA-Z0-9_\-]*\r?\n[\s\S]*?```)/g);
+
+  const isPythonFunctionLesson =
+    courseId === 'python-fundamentals' &&
+    (lessonId.includes('s3') || content.includes('def ') || content.includes('def calculate'));
+
+  const isHtmlCssLesson =
+    courseId === 'web-development' &&
+    (lessonId.includes('s1') || lessonId.includes('s2') || content.includes('<header>') || content.includes('display: flex'));
+
   return (
-    <div
-      className="lesson-prose"
-      dangerouslySetInnerHTML={{
-        __html: content
-          .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-          .replace(/`([^`]+)`/g, '<code>$1</code>')
-          .replace(/```[a-zA-Z0-9_-]*\r?\n([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-          .replace(/\| (.+) \|/g, (m) => `<div class="table-row">${m}</div>`)
-          .replace(/^- (.+)$/gm, '<li>$1</li>')
-          .replace(/(<li>[\s\S]*?<\/li>)+/g, (m) => `<ul>${m}</ul>`)
-          .replace(/\n\n/g, '<br/>')
-          .replace(/\n(?!<)/g, ' '),
-      }}
-    />
+    <div className="space-y-4">
+      {parts.map((part, index) => {
+        const codeMatch = part.match(/^```([a-zA-Z0-9_\-]*)\r?\n([\s\S]*?)```$/);
+        if (codeMatch) {
+          const lang = codeMatch[1] || (courseId.includes('python') ? 'python' : courseId.includes('javascript') ? 'javascript' : 'html');
+          const code = codeMatch[2];
+          return (
+            <CodeBlock
+              key={index}
+              code={code}
+              language={lang}
+              showLineNumbers={true}
+            />
+          );
+        }
+
+        // Render prose block
+        if (!part.trim()) return null;
+
+        return (
+          <div
+            key={index}
+            className="lesson-prose"
+            dangerouslySetInnerHTML={{
+              __html: part
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^### (.+)$/gm, '<h3 class="text-base font-bold text-foreground mt-4 mb-2">$1</h3>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\| (.+) \|/g, (m) => `<div class="table-row">${m}</div>`)
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/(<li>[\s\S]*?<\/li>)+/g, (m) => `<ul>${m}</ul>`)
+                .replace(/\n\n/g, '<br/>')
+                .replace(/\n(?!<)/g, ' '),
+            }}
+          />
+        );
+      })}
+
+      {/* Embedded Python Function Dissection Card when discussing def/functions */}
+      {isPythonFunctionLesson && <PythonDefBreakdown />}
+
+      {/* Embedded HTML/CSS Live Preview when discussing Web markup and styles */}
+      {isHtmlCssLesson && (
+        <HtmlCssPreview
+          htmlCode={`<div class="card">\n  <h3>HTML & CSS</h3>\n  <p>Стили преображают страницу</p>\n</div>`}
+          cssCode={`.card {\n  background: #ffffff;\n  border-radius: 12px;\n  padding: 16px;\n  box-shadow: 0 4px 12px rgba(0,0,0,0.08);\n}`}
+          previewType="card"
+          ruleExplanation="Свойство border-radius: 12px мягко скругляет края блока, а box-shadow создает ощущение парящей карточки над фоном."
+        />
+      )}
+    </div>
   );
 }
 
@@ -58,17 +128,29 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
   const stage = rawStage ? getLocalizedStage(courseId, rawStage, locale) : undefined;
   const nextLesson = rawNextLesson ? getLocalizedLesson(courseId, rawNextLesson, locale) : undefined;
 
+  // Normalized list of 3+ exercises
+  const exercises: Exercise[] = useMemo(() => {
+    if (!lesson) return [];
+    return lesson.exercises && lesson.exercises.length > 0 ? lesson.exercises : [lesson.exercise];
+  }, [lesson]);
+
   const [phase, setPhase] = useState<'reading' | 'exercise'>('reading');
+  const [currentExIndex, setCurrentExIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState<string | number | null>(null);
   const [answerState, setAnswerState] = useState<AnswerState>('idle');
   const [showHint, setShowHint] = useState(false);
+  const [completedExercises, setCompletedExercises] = useState<number[]>([]);
   const [alreadyCompleted, setAlreadyCompleted] = useState(false);
 
   useEffect(() => {
     if (lesson) {
-      setAlreadyCompleted(DemoState.isLessonCompleted(courseId, lessonId));
+      const isDone = DemoState.isLessonCompleted(courseId, lessonId);
+      setAlreadyCompleted(isDone);
+      if (isDone) {
+        setCompletedExercises(exercises.map((_, i) => i));
+      }
     }
-  }, [courseId, lessonId, lesson]);
+  }, [courseId, lessonId, lesson, exercises]);
 
   if (!lesson) {
     return (
@@ -83,8 +165,18 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
     );
   }
 
-  const ex = lesson.exercise;
+  const ex = exercises[currentExIndex] || lesson.exercise;
+  const totalExercises = exercises.length;
 
+  // Exercise selection handler
+  function selectExercise(idx: number) {
+    setCurrentExIndex(idx);
+    setUserAnswer(null);
+    setAnswerState('idle');
+    setShowHint(false);
+  }
+
+  // Answer validation
   async function checkAnswer() {
     if (userAnswer === null || userAnswer === '') return;
     const correct =
@@ -94,278 +186,554 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
 
     if (correct) {
       setAnswerState('correct');
-      if (!alreadyCompleted) {
-        DemoState.completeLesson({
-          lessonId,
-          courseId,
-          completedAt: new Date().toISOString(),
-          correct: true,
-          score: 100,
-        });
-        setAlreadyCompleted(true);
-        fetch('/api/progress/complete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ courseId, lessonId, correct: true, score: 100 }),
-        }).catch(() => {});
+      if (!completedExercises.includes(currentExIndex)) {
+        const nextCompleted = [...completedExercises, currentExIndex];
+        setCompletedExercises(nextCompleted);
+
+        // If all checks are completed, record lesson progress and play complete milestone fanfare
+        if (nextCompleted.length >= totalExercises && !alreadyCompleted) {
+          soundManager.playComplete();
+          DemoState.completeLesson({
+            lessonId,
+            courseId,
+            completedAt: new Date().toISOString(),
+            correct: true,
+            score: 100,
+          });
+          setAlreadyCompleted(true);
+          fetch('/api/progress/complete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ courseId, lessonId, correct: true, score: 100 }),
+          }).catch(() => {});
+        } else {
+          soundManager.playCorrect();
+        }
+      } else {
+        soundManager.playCorrect();
       }
     } else {
       setAnswerState('incorrect');
+      soundManager.playIncorrect();
     }
   }
 
-  function goNext() {
-    if (nextLesson) {
-      router.push(`/courses/${courseId}/learn/${nextLesson.id}`);
+  function handleNextExerciseOrFinish() {
+    if (currentExIndex < totalExercises - 1) {
+      selectExercise(currentExIndex + 1);
     } else {
-      router.push(`/courses/${courseId}/learn`);
+      // Go to next lesson or roadmap
+      if (nextLesson) {
+        router.push(`/courses/${courseId}/learn/${nextLesson.id}`);
+      } else {
+        router.push(`/courses/${courseId}/learn`);
+      }
     }
   }
+
+  // Learning objective & recap text
+  const lessonGoalText = locale === 'ru'
+    ? `Освоить ключевые концепции темы «${lesson.title}» и применить их в ${totalExercises} интерактивных практических проверках.`
+    : locale === 'ky'
+    ? `«${lesson.title}» темасынын негизги түшүнүктөрүн өздөштүрүү жана аларды ${totalExercises} практикалык көнүгүүдө колдонуу.`
+    : `Master core concepts of "${lesson.title}" and validate understanding across ${totalExercises} interactive checks.`;
+
+  const previousRecapText = locale === 'ru'
+    ? `Тема опирается на материал модуля «${stage?.title || 'Основы'}». Если возникают трудности, обратитесь к подсказке или AI-наставнику.`
+    : locale === 'ky'
+    ? `Бул сабак «${stage?.title || 'Негиздер'}» модулуна таянат. Кыйынчылык болсо, кыйытманы же AI-насаатчыны колдонуңуз.`
+    : `Builds upon concepts from "${stage?.title || 'Fundamentals'}". Use progressive hints or AI Tutor if needed.`;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">
       <Navbar />
-      <main className="flex-1 max-w-3xl mx-auto px-4 py-8 w-full">
+
+      {/* Main Wide Container (max-w-6xl) - Eliminates dead side space! */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
 
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-1.5 text-xs text-muted mb-6" aria-label="Breadcrumb">
+        <nav className="flex items-center gap-2 text-xs text-muted mb-6 flex-wrap" aria-label="Breadcrumb">
           <Link href={`/courses/${courseId}/learn`} className="hover:text-foreground transition-colors font-medium">
             {t.lesson.backToPath}
           </Link>
-          <span>/</span>
+          <ChevronRight className="h-3 w-3 text-muted/60" />
           <span className="text-muted">{stage?.title}</span>
-          <span>/</span>
+          <ChevronRight className="h-3 w-3 text-muted/60" />
           <span className="text-foreground font-semibold">{lesson.title}</span>
         </nav>
 
-        {/* Phase Switcher Tabs */}
-        <div className="flex gap-1 bg-surface border border-border rounded-[var(--r-md)] p-1 mb-6 max-w-xs shadow-xs">
-          <button
-            onClick={() => setPhase('reading')}
-            className={[
-              'flex-1 py-1.5 text-xs md:text-sm font-medium rounded-[calc(var(--r-sm)-2px)] transition-colors',
-              phase === 'reading' ? 'bg-surface-raised text-foreground shadow-xs font-semibold' : 'text-muted hover:text-foreground',
-            ].join(' ')}
-          >
-            {t.lesson.readingTab}
-          </button>
-          <button
-            onClick={() => setPhase('exercise')}
-            className={[
-              'flex-1 py-1.5 text-xs md:text-sm font-medium rounded-[calc(var(--r-sm)-2px)] transition-colors',
-              phase === 'exercise' ? 'bg-accent text-white shadow-xs font-semibold' : 'text-muted hover:text-foreground',
-            ].join(' ')}
-          >
-            {t.lesson.exerciseTab}
-          </button>
+        {/* Phase Switcher Tabs with Exercise Step Counter */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-border/80">
+          <div className="flex gap-1.5 bg-surface border border-border rounded-[var(--r-md)] p-1 max-w-xs shadow-xs">
+            <button
+              onClick={() => setPhase('reading')}
+              className={[
+                'flex-1 py-1.5 px-3 text-xs md:text-sm font-medium rounded-[calc(var(--r-sm)-2px)] transition-all cursor-pointer',
+                phase === 'reading'
+                  ? 'bg-surface-raised text-foreground shadow-xs font-bold border border-border/60'
+                  : 'text-muted hover:text-foreground',
+              ].join(' ')}
+            >
+              {t.lesson.readingTab}
+            </button>
+            <button
+              onClick={() => setPhase('exercise')}
+              className={[
+                'flex-1 py-1.5 px-3 text-xs md:text-sm font-medium rounded-[calc(var(--r-sm)-2px)] transition-all cursor-pointer flex items-center justify-center gap-1.5',
+                phase === 'exercise'
+                  ? 'bg-accent text-white shadow-xs font-bold'
+                  : 'text-muted hover:text-foreground',
+              ].join(' ')}
+            >
+              <span>{t.lesson.exerciseTab}</span>
+              <span className={[
+                'text-[10px] px-1.5 py-0.2 rounded-full font-mono',
+                phase === 'exercise' ? 'bg-white/20 text-white' : 'bg-surface-raised text-muted',
+              ].join(' ')}>
+                {completedExercises.length}/{totalExercises}
+              </span>
+            </button>
+          </div>
+
+          {/* Quick status pill & Sound Toggle */}
+          <div className="flex items-center gap-2">
+            <SoundToggle showVolumeSlider={true} />
+            {alreadyCompleted ? (
+              <Badge variant="success">
+                <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+                {t.lesson.completedBadge}
+              </Badge>
+            ) : (
+              <Badge variant="amber">
+                <Target className="h-3.5 w-3.5 mr-1 text-amber" />
+                {completedExercises.length > 0 ? `${completedExercises.length} из ${totalExercises} пройдено` : 'В процессе'}
+              </Badge>
+            )}
+          </div>
         </div>
 
-        {/* Phase 1: Reading & Step-by-Step Theory */}
-        {phase === 'reading' && (
-          <div>
-            <div className="mb-6 flex items-center justify-between gap-3">
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">{lesson.title}</h1>
-              {alreadyCompleted && (
-                <Badge variant="success">{t.lesson.completedBadge}</Badge>
-              )}
-            </div>
+        {/* Responsive 2-Column Desktop Grid (8 cols Main + 4 cols Companion Sidebar) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-            <div className="surface rounded-[var(--r-xl)] p-6 md:p-8 mb-6 border border-border shadow-sm">
-              <LessonContent content={lesson.content} />
-            </div>
+          {/* ── Left Column (8 cols): Main Lesson Reading or Hands-on Practice ── */}
+          <div className="lg:col-span-8 min-w-0">
 
-            <div className="flex justify-between items-center pt-2">
-              <Link
-                href={`/courses/${courseId}/learn`}
-                className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors font-medium"
-              >
-                <ArrowLeft className="h-4 w-4" /> {t.lesson.backToPath}
-              </Link>
-              <Button onClick={() => setPhase('exercise')}>
-                {t.lesson.toExerciseBtn}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Phase 2: Active Hands-on Exercise */}
-        {phase === 'exercise' && (
-          <div>
-            <h2 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-accent" />
-              {t.lesson.exerciseHeading}
-            </h2>
-
-            <div className="surface rounded-[var(--r-xl)] p-6 md:p-8 mb-5 border border-border shadow-sm">
-              <p className="text-base font-semibold text-foreground mb-5 whitespace-pre-wrap leading-relaxed">
-                {ex.question}
-              </p>
-
-              {/* Multiple choice options */}
-              {ex.type === 'multiple-choice' && ex.options && (
-                <div className="flex flex-col gap-2.5">
-                  {ex.options.map((opt, idx) => {
-                    const isSelected = userAnswer === idx;
-                    const isCorrectAnswer = idx === ex.correctAnswer;
-                    const showCorrect = answerState !== 'idle' && isCorrectAnswer;
-                    const showIncorrect = answerState === 'incorrect' && isSelected;
-
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => { if (answerState === 'idle') setUserAnswer(idx); }}
-                        disabled={answerState !== 'idle'}
-                        className={[
-                          'w-full text-left px-4 py-3 rounded-[var(--r-md)] border text-sm font-medium transition-all',
-                          answerState === 'idle' && isSelected
-                            ? 'border-accent bg-accent-light text-accent shadow-xs'
-                            : showCorrect
-                            ? 'border-success bg-success-light text-success'
-                            : showIncorrect
-                            ? 'border-danger bg-danger-light text-danger'
-                            : 'border-border bg-surface text-foreground hover:border-accent/40 hover:bg-surface-raised',
-                        ].join(' ')}
-                      >
-                        <span className={[
-                          'inline-flex w-5 h-5 rounded-full border items-center justify-center text-xs mr-3 shrink-0 font-bold',
-                          answerState === 'idle' && isSelected ? 'border-accent bg-accent text-white' :
-                          showCorrect ? 'border-success bg-success text-white' :
-                          showIncorrect ? 'border-danger bg-danger text-white' :
-                          'border-border text-muted',
-                        ].join(' ')}>
-                          {String.fromCharCode(65 + idx)}
-                        </span>
-                        {opt}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Text / Code output input */}
-              {(ex.type === 'fill-blank' || ex.type === 'translation' || ex.type === 'code-output') && (
+            {/* Phase 1: Reading & Interactive Theory */}
+            {phase === 'reading' && (
+              <div className="space-y-6">
                 <div>
-                  <input
-                    type="text"
-                    placeholder={t.lesson.typeAnswerPlaceholder}
-                    value={typeof userAnswer === 'string' ? userAnswer : ''}
-                    onChange={e => { if (answerState === 'idle') setUserAnswer(e.target.value); }}
-                    disabled={answerState !== 'idle'}
-                    className={[
-                      'w-full px-4 py-3 rounded-[var(--r-md)] border text-sm font-medium transition-colors',
-                      'bg-surface placeholder:text-subtle text-foreground focus:outline-none focus:ring-2',
-                      answerState === 'correct' ? 'border-success focus:ring-success/30' :
-                      answerState === 'incorrect' ? 'border-danger focus:ring-danger/30' :
-                      'border-border focus:ring-accent/40 focus:border-accent',
-                    ].join(' ')}
-                    onKeyDown={e => { if (e.key === 'Enter' && answerState === 'idle') checkAnswer(); }}
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-accent">
+                      {stage?.title} · Урок {lesson.order}
+                    </span>
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+                    {lesson.title}
+                  </h1>
+
+                  {/* Read Aloud (Text-to-Speech) Control */}
+                  <div className="mt-3">
+                    <LessonTextToSpeech
+                      content={lesson.content}
+                      lessonTitle={lesson.title}
+                    />
+                  </div>
+                </div>
+
+                <div className="glass-card rounded-[var(--r-xl)] p-6 sm:p-8 border border-border shadow-sm bg-surface">
+                  <RichLessonContent
+                    content={lesson.content}
+                    lessonId={lesson.id}
+                    courseId={courseId}
                   />
                 </div>
-              )}
 
-              {/* Progressive Pedagogical Hint */}
-              {ex.hint && answerState === 'idle' && (
-                <div className="mt-5 pt-4 border-t border-border">
-                  {!showHint ? (
-                    <button
-                      onClick={() => setShowHint(true)}
-                      className="flex items-center gap-1.5 text-xs text-muted hover:text-amber transition-colors font-medium"
-                    >
-                      <Lightbulb className="h-3.5 w-3.5 text-amber" /> {t.lesson.showHintBtn}
-                    </button>
-                  ) : (
-                    <div className="flex items-start gap-2 bg-amber-light border border-amber/30 rounded-[var(--r-sm)] px-3.5 py-2.5">
-                      <Lightbulb className="h-4 w-4 text-amber mt-0.5 shrink-0" />
-                      <p className="text-xs text-foreground font-medium">{ex.hint}</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+                {/* Bottom Navigation for Reading Phase */}
+                <div className="flex items-center justify-between pt-2">
+                  <Link
+                    href={`/courses/${courseId}/learn`}
+                    className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors font-medium"
+                  >
+                    <ArrowLeft className="h-4 w-4" /> {t.lesson.backToPath}
+                  </Link>
 
-            {/* Explanatory Feedback (Success or Correction Breakdown) */}
-            {answerState !== 'idle' && (
-              <div
-                className={[
-                  'rounded-[var(--r-xl)] p-5 mb-6 border transition-all',
-                  answerState === 'correct'
-                    ? 'border-success/40 bg-success-light'
-                    : 'border-danger/40 bg-danger-light',
-                ].join(' ')}
-              >
-                <div className="flex items-start gap-3">
-                  {answerState === 'correct' ? (
-                    <CheckCircle2 className="h-5 w-5 text-success mt-0.5 shrink-0" />
-                  ) : (
-                    <XCircle className="h-5 w-5 text-danger mt-0.5 shrink-0" />
-                  )}
-                  <div>
-                    <p className={[
-                      'font-bold text-sm mb-1',
-                      answerState === 'correct' ? 'text-success' : 'text-danger',
-                    ].join(' ')}>
-                      {answerState === 'correct' ? t.lesson.correctHeading : t.lesson.incorrectHeading}
-                    </p>
-                    <p className="text-xs md:text-sm text-foreground/90 leading-relaxed">{ex.explanation}</p>
-                  </div>
+                  <Button onClick={() => setPhase('exercise')} size="md" className="btn-accent-glow">
+                    <span>{t.lesson.toExerciseBtn} ({totalExercises} {locale === 'ru' ? 'проверки' : locale === 'ky' ? 'көнүгүү' : 'checks'})</span>
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
                 </div>
               </div>
             )}
 
-            {/* Navigation and Submission Actions */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPhase('reading')}
-                  className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors font-medium"
-                >
-                  <ArrowLeft className="h-4 w-4" /> {t.lesson.readingTab}
-                </button>
-                <Link
-                  href={`/courses/${courseId}/learn`}
-                  className="text-sm text-muted hover:text-foreground ml-4 transition-colors font-medium"
-                >
-                  {t.lesson.backToPath}
-                </Link>
-              </div>
+            {/* Phase 2: Multi-Step Interactive Exercises (At least 3 checks!) */}
+            {phase === 'exercise' && (
+              <div className="space-y-6">
+                {/* Stepper Header with pills */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-accent" />
+                      <span>{t.lesson.exerciseHeading}</span>
+                    </h2>
+                    <span className="text-xs font-mono text-muted">
+                      Проверка {currentExIndex + 1} из {totalExercises}
+                    </span>
+                  </div>
 
-              <div className="flex items-center gap-2">
-                {answerState === 'idle' ? (
-                  <Button onClick={checkAnswer} disabled={userAnswer === null || userAnswer === ''}>
-                    {t.lesson.checkAnswerBtn}
-                  </Button>
-                ) : (
-                  <>
-                    {answerState === 'incorrect' && (
-                      <Button
-                        variant="secondary"
-                        onClick={() => { setAnswerState('idle'); setUserAnswer(null); setShowHint(false); }}
-                      >
-                        {t.lesson.tryAgainBtn}
-                      </Button>
-                    )}
-                    <Button onClick={goNext}>
-                      {nextLesson ? t.lesson.nextLessonBtn : t.lesson.finishCourseBtn}
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </>
+                  {/* Visual Step Progress Bar */}
+                  <div className="flex items-center gap-2 mb-6">
+                    {exercises.map((item, idx) => {
+                      const isDone = completedExercises.includes(idx);
+                      const isCurrent = idx === currentExIndex;
+                      return (
+                        <button
+                          key={item.id || idx}
+                          onClick={() => selectExercise(idx)}
+                          className={[
+                            'flex-1 py-2 px-2 rounded-[var(--r-md)] border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer',
+                            isCurrent
+                              ? 'border-accent bg-accent text-white shadow-xs'
+                              : isDone
+                              ? 'border-success/60 bg-success-light text-success hover:border-success'
+                              : 'border-border bg-surface text-muted hover:text-foreground',
+                          ].join(' ')}
+                        >
+                          {isDone ? (
+                            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                          ) : (
+                            <span className="w-3.5 h-3.5 rounded-full border border-current flex items-center justify-center text-[9px] shrink-0">
+                              {idx + 1}
+                            </span>
+                          )}
+                          <span className="truncate">
+                            {idx === 0 ? 'Понимание' : idx === 1 ? 'Вывод кода' : 'Практика'}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Exercise Question Card */}
+                <div className="glass-card rounded-[var(--r-xl)] p-6 sm:p-8 border border-border shadow-sm bg-surface">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Badge variant="accent">
+                      {ex.type === 'multiple-choice'
+                        ? 'Выбор ответа'
+                        : ex.type === 'code-output'
+                        ? 'Предсказание вывода'
+                        : 'Заполнение пропуска'}
+                    </Badge>
+                  </div>
+
+                  <p className="text-base sm:text-lg font-semibold text-foreground mb-4 whitespace-pre-wrap leading-relaxed">
+                    {ex.question}
+                  </p>
+
+                  {/* Optional Code Snippet to Inspect */}
+                  {ex.codeSnippet && (
+                    <div className="my-4">
+                      <CodeBlock
+                        code={ex.codeSnippet}
+                        language={courseId.includes('python') ? 'python' : courseId.includes('javascript') ? 'javascript' : 'html'}
+                        showLineNumbers={true}
+                      />
+                    </div>
+                  )}
+
+                  {/* Multiple Choice Options */}
+                  {ex.type === 'multiple-choice' && ex.options && (
+                    <div className="flex flex-col gap-2.5 mt-5">
+                      {ex.options.map((opt, idx) => {
+                        const isSelected = userAnswer === idx;
+                        const isCorrectAnswer = idx === ex.correctAnswer;
+                        const showCorrect = answerState !== 'idle' && isCorrectAnswer;
+                        const showIncorrect = answerState === 'incorrect' && isSelected;
+
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              if (answerState === 'idle') setUserAnswer(idx);
+                            }}
+                            disabled={answerState !== 'idle'}
+                            className={[
+                              'w-full text-left px-4 py-3.5 rounded-[var(--r-md)] border text-sm font-medium transition-all cursor-pointer',
+                              answerState === 'idle' && isSelected
+                                ? 'border-accent bg-accent-light text-accent shadow-xs ring-1 ring-accent'
+                                : showCorrect
+                                ? 'border-success bg-success-light text-success font-semibold'
+                                : showIncorrect
+                                ? 'border-danger bg-danger-light text-danger'
+                                : 'border-border bg-surface text-foreground hover:border-accent/50 hover:bg-surface-raised',
+                            ].join(' ')}
+                          >
+                            <span
+                              className={[
+                                'inline-flex w-5 h-5 rounded-full border items-center justify-center text-xs mr-3 shrink-0 font-bold',
+                                answerState === 'idle' && isSelected
+                                  ? 'border-accent bg-accent text-white'
+                                  : showCorrect
+                                  ? 'border-success bg-success text-white'
+                                  : showIncorrect
+                                  ? 'border-danger bg-danger text-white'
+                                  : 'border-border text-muted',
+                              ].join(' ')}
+                            >
+                              {String.fromCharCode(65 + idx)}
+                            </span>
+                            <span>{opt}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Text / Code Output Input */}
+                  {(ex.type === 'fill-blank' || ex.type === 'translation' || ex.type === 'code-output') && (
+                    <div className="mt-5">
+                      <label className="block text-xs font-medium text-muted mb-1.5">
+                        {t.lesson.typeAnswerPlaceholder}
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Введите точный ответ..."
+                        value={typeof userAnswer === 'string' ? userAnswer : ''}
+                        onChange={(e) => {
+                          if (answerState === 'idle') setUserAnswer(e.target.value);
+                        }}
+                        disabled={answerState !== 'idle'}
+                        className={[
+                          'w-full px-4 py-3 rounded-[var(--r-md)] border text-sm font-mono transition-all',
+                          'bg-surface placeholder:text-subtle text-foreground focus:outline-none focus:ring-2',
+                          answerState === 'correct'
+                            ? 'border-success focus:ring-success/30 bg-success-light/20'
+                            : answerState === 'incorrect'
+                            ? 'border-danger focus:ring-danger/30 bg-danger-light/20'
+                            : 'border-border focus:ring-accent/40 focus:border-accent',
+                        ].join(' ')}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && answerState === 'idle') checkAnswer();
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Progressive Hint */}
+                  {ex.hint && answerState === 'idle' && (
+                    <div className="mt-5 pt-4 border-t border-border">
+                      {!showHint ? (
+                        <button
+                          onClick={() => setShowHint(true)}
+                          className="flex items-center gap-1.5 text-xs text-muted hover:text-amber transition-colors font-medium cursor-pointer"
+                        >
+                          <Lightbulb className="h-3.5 w-3.5 text-amber" /> {t.lesson.showHintBtn}
+                        </button>
+                      ) : (
+                        <div className="space-y-2">
+                          <KiviSticker mood="thinking" size="sm" customText={ex.hint} />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Explanatory Pedagogical Feedback with Kivi Mascot Reaction */}
+                {answerState !== 'idle' && (
+                  <div
+                    className={[
+                      'rounded-[var(--r-xl)] p-5 border transition-all animate-fadeIn space-y-3.5',
+                      answerState === 'correct'
+                        ? 'border-success/40 bg-success-light'
+                        : 'border-danger/40 bg-danger-light',
+                    ].join(' ')}
+                  >
+                    <KiviSticker
+                      mood={
+                        answerState === 'correct'
+                          ? completedExercises.length >= totalExercises
+                            ? 'champion'
+                            : 'celebrate'
+                          : 'encourage'
+                      }
+                      size="sm"
+                    />
+
+                    <div className="flex items-start gap-3">
+                      {answerState === 'correct' ? (
+                        <CheckCircle2 className="h-5 w-5 text-success mt-0.5 shrink-0" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-danger mt-0.5 shrink-0" />
+                      )}
+                      <div className="flex-1">
+                        <p
+                          className={[
+                            'font-bold text-sm mb-1',
+                            answerState === 'correct' ? 'text-success' : 'text-danger',
+                          ].join(' ')}
+                        >
+                          {answerState === 'correct'
+                            ? t.lesson.correctHeading
+                            : t.lesson.incorrectHeading}
+                        </p>
+                        <p className="text-xs md:text-sm text-foreground/90 leading-relaxed">
+                          {ex.explanation}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 )}
+
+                {/* Bottom Action Buttons */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setPhase('reading')}
+                      className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors font-medium cursor-pointer"
+                    >
+                      <ArrowLeft className="h-4 w-4" /> {t.lesson.readingTab}
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {answerState === 'idle' ? (
+                      <Button
+                        onClick={checkAnswer}
+                        disabled={userAnswer === null || userAnswer === ''}
+                        className="btn-accent-glow"
+                      >
+                        {t.lesson.checkAnswerBtn}
+                      </Button>
+                    ) : (
+                      <>
+                        {answerState === 'incorrect' && (
+                          <Button
+                            variant="secondary"
+                            onClick={() => {
+                              setAnswerState('idle');
+                              setUserAnswer(null);
+                              setShowHint(false);
+                            }}
+                          >
+                            {t.lesson.tryAgainBtn}
+                          </Button>
+                        )}
+
+                        <Button onClick={handleNextExerciseOrFinish} className="btn-accent-glow">
+                          {currentExIndex < totalExercises - 1 ? (
+                            <>
+                              <span>Следующее задание ({currentExIndex + 2} из {totalExercises})</span>
+                              <ArrowRight className="h-4 w-4 ml-1" />
+                            </>
+                          ) : (
+                            <>
+                              <span>{nextLesson ? t.lesson.nextLessonBtn : t.lesson.finishCourseBtn}</span>
+                              <ArrowRight className="h-4 w-4 ml-1" />
+                            </>
+                          )}
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ── Right Column (4 cols): Sticky Learning Companion Sidebar ── */}
+          <aside className="lg:col-span-4 space-y-5 lg:sticky lg:top-24">
+            {/* Card 1: Learning Goal & Prerequisites */}
+            <div className="glass-card rounded-[var(--r-xl)] p-5 border border-border shadow-xs bg-surface">
+              <div className="flex items-center gap-2 mb-2 text-foreground font-bold text-sm">
+                <Target className="h-4 w-4 text-accent" />
+                <span>Учебная цель урока</span>
+              </div>
+              <p className="text-xs text-muted leading-relaxed mb-4">
+                {lessonGoalText}
+              </p>
+
+              <div className="pt-3 border-t border-border/60">
+                <div className="flex items-center gap-1.5 text-[11px] font-semibold text-muted mb-1">
+                  <Bookmark className="h-3 w-3 text-amber" />
+                  <span>Связь с программой:</span>
+                </div>
+                <p className="text-[11px] text-muted/90 leading-relaxed">
+                  {previousRecapText}
+                </p>
               </div>
             </div>
 
-            {/* Socratic AI Tutor Bridge with Context */}
-            <div className="mt-8 pt-6 border-t border-border">
+            {/* Card 2: Interactive Lesson Checklist */}
+            <div className="glass-card rounded-[var(--r-xl)] p-5 border border-border shadow-xs bg-surface">
+              <div className="flex items-center justify-between mb-3 text-foreground font-bold text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="h-4 w-4 text-emerald-500" />
+                  <span>Чеклист урока</span>
+                </div>
+                <span className="text-xs font-mono text-muted">
+                  {completedExercises.length + (phase === 'exercise' ? 1 : 0)}/{totalExercises + 1}
+                </span>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                {/* Theory read item */}
+                <div className="flex items-center gap-2 p-2 rounded-[var(--r-sm)] bg-surface-raised border border-border/40">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
+                  <span className="text-foreground font-medium">Изучить теорию и примеры</span>
+                </div>
+
+                {/* Exercises checklist */}
+                {exercises.map((_, i) => {
+                  const done = completedExercises.includes(i);
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setPhase('exercise');
+                        selectExercise(i);
+                      }}
+                      className={[
+                        'w-full flex items-center gap-2 p-2 rounded-[var(--r-sm)] border text-left transition-colors cursor-pointer',
+                        done
+                          ? 'bg-success-light/30 border-success/30 text-success'
+                          : 'bg-surface-raised border-border/40 text-muted hover:text-foreground',
+                      ].join(' ')}
+                    >
+                      {done ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
+                      ) : (
+                        <span className="w-3.5 h-3.5 rounded-full border border-muted/60 flex items-center justify-center text-[9px] shrink-0">
+                          {i + 1}
+                        </span>
+                      )}
+                      <span className={done ? 'line-through opacity-80' : 'font-medium'}>
+                        {i === 0 ? 'Проверка понимания' : i === 1 ? 'Предсказание вывода' : 'Практическое закрепление'}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Card 3: Socratic AI Tutor Bridge */}
+            <div className="glass-card rounded-[var(--r-xl)] p-5 border border-accent/20 bg-accent-light/10 shadow-xs">
+              <div className="flex items-center gap-2 mb-2 text-foreground font-bold text-sm">
+                <MessageSquare className="h-4 w-4 text-accent" />
+                <span>AI-наставник Kivora</span>
+              </div>
+              <p className="text-xs text-muted leading-relaxed mb-3">
+                Возникли вопросы по коду или хотите разобрать логику пошагово? Наставник поможет наводящими вопросами.
+              </p>
               <Link
                 href={`/tutor?course=${courseId}&lesson=${lessonId}`}
-                className="inline-flex items-center gap-2 text-xs md:text-sm text-muted hover:text-accent transition-colors font-medium"
+                className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-[var(--r-md)] bg-accent text-white text-xs font-semibold shadow-xs hover:bg-accent-hover transition-colors"
               >
-                <MessageSquare className="h-4 w-4 text-accent" />
-                {t.lesson.askTutorLink}
+                <span>{t.lesson.askTutorLink}</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-          </div>
-        )}
+          </aside>
+        </div>
       </main>
     </div>
   );
@@ -373,7 +741,13 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
 
 export default function LessonPage(props: { params: Promise<{ id: string; lessonId: string }> }) {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><LoadingSpinner label="Loading lesson…" /></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <LoadingSpinner label="Загрузка урока…" />
+        </div>
+      }
+    >
       <LessonBody {...props} />
     </Suspense>
   );

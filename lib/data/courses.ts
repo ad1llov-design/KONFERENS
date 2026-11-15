@@ -12,128 +12,214 @@ const pythonStages: Stage[] = [
     id: 'py-s1',
     courseId: 'python-fundamentals',
     order: 1,
-    title: 'Variables & Types',
-    description: 'Store and work with different kinds of data.',
+    title: 'Variables & Data Types',
+    description: 'Store and manipulate numbers, text strings, and ordered collections.',
     lessons: [
       {
         id: 'py-s1-l1',
         stageId: 'py-s1',
         courseId: 'python-fundamentals',
         order: 1,
-        title: 'What is a Variable?',
-        content: `## Variables store values
+        title: 'Variables and Assignment',
+        content: `## Variables Store Data
 
-A **variable** is a named container that holds a value. In Python, you create a variable simply by writing a name, an equals sign, and a value:
+A **variable** is a named location in memory used to store values. In Python, you create a variable using the assignment operator \`=\`:
 
 \`\`\`python
-name = "Alice"
-age  = 22
-score = 9.5
+user_name = "Alice"
+user_age = 22
+account_balance = 150.75
+is_active = True
 \`\`\`
 
-The variable name is on the left, the value on the right. Python figures out the type automatically.
+The variable name is on the left, and the value is on the right. Python automatically determines the data type.
 
-## Naming rules
+## Naming Rules in Python
 
-- Use letters, digits, and underscores: \`user_score\`, \`item1\`
-- Must start with a letter or underscore — not a digit
-- Python is case-sensitive: \`Score\` and \`score\` are different variables
-- Choose descriptive names; avoid \`x\`, \`y\` for real data`,
+- Use letters, digits, and underscores (\`_\`): e.g., \`total_score\`, \`player_1\`
+- Must start with a letter or underscore — **never a digit**
+- Python is strictly case-sensitive: \`Score\` and \`score\` are different variables
+- Adopt the **snake_case** convention with meaningful names (\`user_email\` instead of \`x\`)
+
+## Line-by-Line Breakdown
+
+\`\`\`python
+score = 100        # Variable 'score' is initialized with integer 100
+score = score + 25 # Evaluates 100 + 25 = 125, updates 'score'
+print(score)       # Displays: 125
+\`\`\`
+
+## Summary
+Variables store values and allow you to update and reuse calculations throughout your program.`,
         exercise: {
-          id: 'py-s1-l1-ex',
+          id: 'py-s1-l1-ex1',
           type: 'multiple-choice',
-          question: 'Which variable name is valid in Python?',
+          question: 'Which variable name is valid according to Python syntax rules?',
           options: ['1st_place', 'first place', 'first_place', 'first-place'],
           correctAnswer: 2,
-          explanation:
-            '`first_place` is valid: it starts with a letter and uses only underscores as separators. Numbers at the start (1st_place), spaces (first place), and hyphens (first-place) are not allowed.',
-          hint: 'Spaces and hyphens are not allowed in variable names.',
+          explanation: '`first_place` is valid: it starts with a letter and uses an underscore. Numbers at the start (1st_place), spaces, and hyphens are forbidden in Python.',
+          hint: 'Variable names cannot start with numbers and cannot contain hyphens or spaces.',
         },
+        exercises: [
+          {
+            id: 'py-s1-l1-ex1',
+            type: 'multiple-choice',
+            question: 'Which variable name is valid according to Python syntax rules?',
+            options: ['1st_place', 'first place', 'first_place', 'first-place'],
+            correctAnswer: 2,
+            explanation: '`first_place` is valid: it starts with a letter and uses an underscore. Numbers at the start (1st_place), spaces, and hyphens are forbidden in Python.',
+            hint: 'Variable names cannot start with numbers and cannot contain hyphens or spaces.',
+          },
+          {
+            id: 'py-s1-l1-ex2',
+            type: 'code-output',
+            question: 'What does this code print to the console?\n\n```python\nx = 10\nx = x + 5\nprint(x)\n```',
+            correctAnswer: '15',
+            explanation: '`x` starts at 10. `x + 5` evaluates to 15, which is then assigned back to `x`. `print(x)` outputs 15.',
+            hint: 'Calculate 10 + 5.',
+          },
+          {
+            id: 'py-s1-l1-ex3',
+            type: 'fill-blank',
+            question: 'Complete the statement to print the value of `user_name`: `___(user_name)`',
+            correctAnswer: 'print',
+            explanation: '`print()` is Python\'s built-in function to display text and variable values.',
+            hint: 'Standard 5-letter output function starting with p.',
+          },
+        ],
       },
       {
         id: 'py-s1-l2',
         stageId: 'py-s1',
         courseId: 'python-fundamentals',
         order: 2,
-        title: 'Numbers and Strings',
-        content: `## Two essential types
+        title: 'Numbers, Math & F-Strings',
+        content: `## Numeric Types: int and float
 
-**Integers** (\`int\`) are whole numbers: \`42\`, \`-7\`, \`0\`
-
-**Floats** (\`float\`) have a decimal point: \`3.14\`, \`-0.5\`
-
-**Strings** (\`str\`) are text, wrapped in quotes:
+Python provides two primary numeric types:
+- **int**: whole numbers (\`42\`, \`-7\`, \`0\`)
+- **float**: decimal numbers (\`3.14\`, \`-0.5\`)
 
 \`\`\`python
-greeting = "Hello, world!"
-pi       = 3.14159
-year     = 2024
+price = 19.99  # float
+quantity = 3   # int
+total = price * quantity  # 59.97 (float)
 \`\`\`
 
-## Combining strings
+## String Formatting with f-strings
 
-Use \`+\` to join strings, or an **f-string** for cleaner formatting:
+Use modern **f-strings** (\`f"..."\`) to embed variables and expressions inside curly braces \`{}\`:
 
 \`\`\`python
-name  = "Alex"
-age   = 20
-print(f"My name is {name} and I am {age} years old.")
-# → My name is Alex and I am 20 years old.
-\`\`\``,
+name = "Alex"
+age = 20
+print(f"Hello, {name}! In 5 years you will be {age + 5}.")
+# Output: Hello, Alex! In 5 years you will be 25.
+\`\`\`
+
+## Arithmetic Operators
+- \`+\` Addition, \`-\` Subtraction
+- \`*\` Multiplication, \`/\` Float division (e.g. \`7 / 2 = 3.5\`)
+- \`//\` Integer division (e.g. \`7 // 2 = 3\`)
+- \`%\` Modulo remainder (e.g. \`7 % 2 = 1\`)`,
         exercise: {
-          id: 'py-s1-l2-ex',
+          id: 'py-s1-l2-ex1',
           type: 'code-output',
-          question:
-            'What does this code print?\n\n```python\nx = 5\ny = 2\nprint(x + y)\n```',
-          correctAnswer: '7',
-          explanation:
-            '`x + y` adds the integer 5 and the integer 2, giving 7. `print()` outputs it to the console.',
-          hint: 'What is 5 + 2?',
+          question: 'What does this code print?\n\n```python\na = 9\nb = 2\nprint(a // b)\n```',
+          correctAnswer: '4',
+          explanation: 'Integer division `//` discards the fractional part: 9 divided by 2 is 4.5, so the result is 4.',
+          hint: 'Integer division rounds down to the whole integer part.',
         },
+        exercises: [
+          {
+            id: 'py-s1-l2-ex1',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\na = 9\nb = 2\nprint(a // b)\n```',
+            correctAnswer: '4',
+            explanation: 'Integer division `//` discards the fractional part: 9 divided by 2 is 4.5, so the result is 4.',
+            hint: 'Integer division rounds down to the whole integer part.',
+          },
+          {
+            id: 'py-s1-l2-ex2',
+            type: 'multiple-choice',
+            question: 'Which prefix activates variable interpolation inside `{}` in Python strings?',
+            options: ['$', '@', 'f', 'v'],
+            correctAnswer: 2,
+            explanation: 'Placing the letter `f` immediately before the opening quote activates f-string formatting.',
+            hint: 'Short for formatted string.',
+          },
+          {
+            id: 'py-s1-l2-ex3',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\nx = 11\ny = 3\nprint(x % y)\n```',
+            correctAnswer: '2',
+            explanation: 'The modulo operator `%` returns the remainder: 11 = 3 * 3 + 2, so the remainder is 2.',
+            hint: 'What is the remainder when 11 is divided by 3?',
+          },
+        ],
       },
       {
         id: 'py-s1-l3',
         stageId: 'py-s1',
         courseId: 'python-fundamentals',
         order: 3,
-        title: 'Lists',
-        content: `## Ordered collections
+        title: 'Lists and Indexing',
+        content: `## Ordered Collections: Lists
 
-A **list** holds multiple values in order, separated by commas inside square brackets:
+A **list** is an ordered, mutable collection of items in square brackets \`[]\`:
 
 \`\`\`python
-fruits  = ["apple", "banana", "cherry"]
-scores  = [88, 92, 75, 100]
-mixed   = [1, "hello", True]
+fruits = ["apple", "banana", "cherry"]
+scores = [95, 88, 72, 100]
+mixed = ["Alice", 25, True]
 \`\`\`
 
-## Accessing items
+## Zero-Based Indexing
+In Python, elements are indexed starting from **0**:
+- \`fruits[0]\` is \`"apple"\` (first item)
+- \`fruits[1]\` is \`"banana"\` (second item)
+- \`fruits[-1]\` is \`"cherry"\` (negative index counts from the end)
 
-Python counts from zero. The first item is at index **0**:
-
+## Essential List Operations
 \`\`\`python
-fruits[0]  # "apple"
-fruits[2]  # "cherry"
-fruits[-1] # "cherry" (last item)
-\`\`\`
-
-## Useful list operations
-
-\`\`\`python
-len(fruits)       # 3  — number of items
-fruits.append("date")  # add to the end
-fruits[1] = "blueberry" # replace by index
+fruits.append("date") # Adds element to the end
+len(fruits)           # Returns total count: 4
+fruits[0] = "apricot" # Replaces element at index 0
 \`\`\``,
         exercise: {
-          id: 'py-s1-l3-ex',
+          id: 'py-s1-l3-ex1',
           type: 'code-output',
-          question:
-            'What does this code print?\n\n```python\ncolors = ["red", "green", "blue"]\nprint(colors[1])\n```',
+          question: 'What does this code print?\n\n```python\ncolors = ["red", "green", "blue"]\nprint(colors[1])\n```',
           correctAnswer: 'green',
-          explanation:
-            'Lists are zero-indexed. `colors[0]` is "red", `colors[1]` is "green", and `colors[2]` is "blue".',
-          hint: 'Remember: Python starts counting from 0.',
+          explanation: 'Lists are zero-indexed. `colors[0]` is "red", and `colors[1]` is "green".',
+          hint: 'Remember that the first element is at index 0.',
         },
+        exercises: [
+          {
+            id: 'py-s1-l3-ex1',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\ncolors = ["red", "green", "blue"]\nprint(colors[1])\n```',
+            correctAnswer: 'green',
+            explanation: 'Lists are zero-indexed. `colors[0]` is "red", and `colors[1]` is "green".',
+            hint: 'Remember that the first element is at index 0.',
+          },
+          {
+            id: 'py-s1-l3-ex2',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\nitems = ["A", "B", "C"]\nitems.append("D")\nprint(len(items))\n```',
+            correctAnswer: '4',
+            explanation: 'Initial length is 3. `.append("D")` adds a fourth item. `len(items)` returns 4.',
+            hint: 'Count total items after appending.',
+          },
+          {
+            id: 'py-s1-l3-ex3',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\nnums = [10, 20, 30, 40]\nprint(nums[-1])\n```',
+            correctAnswer: '40',
+            explanation: 'Negative index `-1` accesses the last element of the list, which is 40.',
+            hint: 'Index -1 accesses the very last item.',
+          },
+        ],
       },
     ],
   },
@@ -141,149 +227,210 @@ fruits[1] = "blueberry" # replace by index
     id: 'py-s2',
     courseId: 'python-fundamentals',
     order: 2,
-    title: 'Control Flow',
-    description: 'Make decisions and repeat actions in your programs.',
+    title: 'Control Flow & Loops',
+    description: 'Make decisions with if/elif/else and repeat tasks with for and while loops.',
     lessons: [
       {
         id: 'py-s2-l1',
         stageId: 'py-s2',
         courseId: 'python-fundamentals',
         order: 1,
-        title: 'if / elif / else',
-        content: `## Conditional logic
+        title: 'if / elif / else Statements',
+        content: `## Branching Logic
 
-Your program can choose different paths depending on conditions:
+Programs use conditionals to make decisions based on dynamic values:
 
 \`\`\`python
 temperature = 28
 
 if temperature > 30:
-    print("It's hot!")
+    print("It's hot outside!")
 elif temperature > 20:
-    print("It's warm.")
+    print("It's pleasant and warm.")
 else:
     print("It's cool.")
 \`\`\`
 
-The code above prints **"It's warm."** because 28 > 20 but not > 30.
+Python evaluates conditions top-to-bottom. As soon as one condition evaluates to \`True\`, its block executes and the rest are skipped.
 
-## Comparison operators
+## Comparison Operators
+- \`==\` equal to, \`!=\` not equal to
+- \`>\` greater than, \`<\` less than
+- \`>=\` greater than or equal, \`<=\` less than or equal
 
-| Operator | Meaning |
-|---|---|
-| \`==\` | equal to |
-| \`!=\` | not equal to |
-| \`>\` / \`<\` | greater / less than |
-| \`>=\` / \`<=\` | greater-or-equal / less-or-equal |
-
-## Indentation matters
-
-Python uses indentation (4 spaces) to group code blocks. A wrong indent is a syntax error.`,
+## Indentation
+In Python, 4 spaces of indentation define code blocks. Mismatched indentation causes an \`IndentationError\`.`,
         exercise: {
-          id: 'py-s2-l1-ex',
+          id: 'py-s2-l1-ex1',
           type: 'multiple-choice',
-          question:
-            'Given `score = 55`, what does this code print?\n\n```python\nif score >= 90:\n    print("A")\nelif score >= 60:\n    print("B")\nelse:\n    print("C")\n```',
+          question: 'Given `score = 55`, what does this code print?\n\n```python\nif score >= 90:\n    print("A")\nelif score >= 60:\n    print("B")\nelse:\n    print("C")\n```',
           options: ['A', 'B', 'C', 'Nothing'],
           correctAnswer: 2,
-          explanation:
-            '55 is not ≥ 90, so the first branch is skipped. 55 is not ≥ 60, so the elif is skipped. The else runs and prints "C".',
-          hint: 'Check each condition in order: is 55 ≥ 90? Then ≥ 60?',
+          explanation: '55 is not >= 90 (first branch skipped). 55 is not >= 60 (elif skipped). The else branch executes and prints "C".',
+          hint: 'Evaluate each condition in sequence: is 55 >= 90? Then >= 60?',
         },
+        exercises: [
+          {
+            id: 'py-s2-l1-ex1',
+            type: 'multiple-choice',
+            question: 'Given `score = 55`, what does this code print?\n\n```python\nif score >= 90:\n    print("A")\nelif score >= 60:\n    print("B")\nelse:\n    print("C")\n```',
+            options: ['A', 'B', 'C', 'Nothing'],
+            correctAnswer: 2,
+            explanation: '55 is not >= 90 (first branch skipped). 55 is not >= 60 (elif skipped). The else branch executes and prints "C".',
+            hint: 'Evaluate each condition in sequence: is 55 >= 90? Then >= 60?',
+          },
+          {
+            id: 'py-s2-l1-ex2',
+            type: 'multiple-choice',
+            question: 'Which operator checks for equality between two values in Python?',
+            options: ['=', '==', '===', 'eq'],
+            correctAnswer: 1,
+            explanation: '`==` is the equality comparison operator. A single `=` is for assignment.',
+            hint: 'Double equal sign tests equality.',
+          },
+          {
+            id: 'py-s2-l1-ex3',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\nx = 10\nif x == 10:\n    print("YES")\nelse:\n    print("NO")\n```',
+            correctAnswer: 'YES',
+            explanation: 'The condition `x == 10` is True, so the if block executes and prints "YES".',
+            hint: 'Does x equal 10?',
+          },
+        ],
       },
       {
         id: 'py-s2-l2',
         stageId: 'py-s2',
         courseId: 'python-fundamentals',
         order: 2,
-        title: 'for Loops',
-        content: `## Repeating with for
+        title: 'for Loops & range()',
+        content: `## Repeating Actions with for Loops
 
-A \`for\` loop runs the same block of code for each item in a sequence:
+A \`for\` loop iterates over each item in a sequence or collection:
 
 \`\`\`python
 fruits = ["apple", "banana", "cherry"]
 
 for fruit in fruits:
-    print(fruit)
-# apple
-# banana
-# cherry
+    print(f"I like {fruit}")
 \`\`\`
 
-## range()
-
-\`range(n)\` generates numbers from 0 to n-1:
-
-\`\`\`python
-for i in range(5):
-    print(i)   # prints 0, 1, 2, 3, 4
-\`\`\`
-
-\`range(start, stop)\` starts at \`start\`:
+## Generating Number Sequences with range()
+- \`range(5)\` produces \`0, 1, 2, 3, 4\` (starts at 0, stops before 5)
+- \`range(1, 6)\` produces \`1, 2, 3, 4, 5\`
+- \`range(0, 10, 2)\` produces \`0, 2, 4, 6, 8\` (step of 2)
 
 \`\`\`python
-for i in range(1, 6):
-    print(i)   # prints 1, 2, 3, 4, 5
+total = 0
+for n in range(1, 4):  # 1, 2, 3
+    total += n
+print(total)  # 6
 \`\`\``,
         exercise: {
-          id: 'py-s2-l2-ex',
+          id: 'py-s2-l2-ex1',
           type: 'code-output',
-          question:
-            'What is the last number printed?\n\n```python\nfor i in range(3):\n    print(i)\n```',
+          question: 'What is the last number printed by this loop?\n\n```python\nfor i in range(3):\n    print(i)\n```',
           correctAnswer: '2',
-          explanation:
-            '`range(3)` produces 0, 1, 2. The loop prints each in order, so the last number printed is 2.',
-          hint: 'range(3) starts at 0 and stops before 3.',
+          explanation: '`range(3)` produces numbers 0, 1, 2. The loop stops before 3, so the last printed number is 2.',
+          hint: 'range(n) starts at 0 and stops at n - 1.',
         },
+        exercises: [
+          {
+            id: 'py-s2-l2-ex1',
+            type: 'code-output',
+            question: 'What is the last number printed by this loop?\n\n```python\nfor i in range(3):\n    print(i)\n```',
+            correctAnswer: '2',
+            explanation: '`range(3)` produces numbers 0, 1, 2. The loop stops before 3, so the last printed number is 2.',
+            hint: 'range(n) starts at 0 and stops at n - 1.',
+          },
+          {
+            id: 'py-s2-l2-ex2',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\ncount = 0\nfor x in [5, 10, 15]:\n    count += 1\nprint(count)\n```',
+            correctAnswer: '3',
+            explanation: 'The loop iterates 3 times (once for each item in the list), incrementing `count` to 3.',
+            hint: 'How many items are in the list?',
+          },
+          {
+            id: 'py-s2-l2-ex3',
+            type: 'multiple-choice',
+            question: 'What numbers are generated by `range(2, 5)`?',
+            options: ['[2, 3, 4, 5]', '[2, 3, 4]', '[0, 1, 2, 3, 4]', '[3, 4, 5]'],
+            correctAnswer: 1,
+            explanation: '`range(start, stop)` starts at `start` (2) and stops before `stop` (5), generating 2, 3, 4.',
+            hint: 'Stop parameter is exclusive.',
+          },
+        ],
       },
       {
         id: 'py-s2-l3',
         stageId: 'py-s2',
         courseId: 'python-fundamentals',
         order: 3,
-        title: 'while Loops',
-        content: `## Repeat while a condition holds
+        title: 'while Loops & break Statements',
+        content: `## Conditional Repetition: while Loops
 
-A \`while\` loop repeats as long as its condition is \`True\`:
+A \`while\` loop repeats as long as its condition remains \`True\`:
 
 \`\`\`python
-count = 0
+count = 1
 
-while count < 3:
-    print(count)
+while count <= 3:
+    print(f"Step {count}")
     count += 1
-# 0
-# 1
-# 2
+# Step 1, Step 2, Step 3
 \`\`\`
 
-## break — exit early
-
-\`break\` stops the loop immediately:
+## Breaking Out Early with break
+The \`break\` keyword exits a loop immediately:
 
 \`\`\`python
+number = 1
 while True:
-    answer = input("Type 'quit' to stop: ")
-    if answer == "quit":
+    if number == 4:
         break
-    print(f"You typed: {answer}")
+    print(number)
+    number += 1
+# Prints: 1, 2, 3
 \`\`\`
 
-## Avoid infinite loops
-
-Always make sure your condition will eventually become \`False\`, or include a \`break\`.`,
+## Skipping Iterations with continue
+The \`continue\` keyword skips the remainder of the current iteration and jumps to the next test.`,
         exercise: {
-          id: 'py-s2-l3-ex',
-          type: 'multiple-choice',
-          question:
-            'How many times does "Hello" print?\n\n```python\nn = 0\nwhile n < 4:\n    print("Hello")\n    n += 1\n```',
-          options: ['3', '4', '5', 'Infinite'],
-          correctAnswer: 1,
-          explanation:
-            'The loop runs while n < 4. n starts at 0 and increments: 0, 1, 2, 3 — all less than 4, so "Hello" prints 4 times. When n reaches 4, the condition is False and the loop stops.',
-          hint: 'Trace through: what values does n take?',
+          id: 'py-s2-l3-ex1',
+          type: 'code-output',
+          question: 'How many times does this code print "Hi"?\n\n```python\nn = 0\nwhile n < 4:\n    print("Hi")\n    n += 1\n```',
+          correctAnswer: '4',
+          explanation: '`n` takes values 0, 1, 2, 3 (4 iterations). When `n` reaches 4, `n < 4` is False, and the loop terminates.',
+          hint: 'Trace the values of n: 0, 1, 2, 3.',
         },
+        exercises: [
+          {
+            id: 'py-s2-l3-ex1',
+            type: 'code-output',
+            question: 'How many times does this code print "Hi"?\n\n```python\nn = 0\nwhile n < 4:\n    print("Hi")\n    n += 1\n```',
+            correctAnswer: '4',
+            explanation: '`n` takes values 0, 1, 2, 3 (4 iterations). When `n` reaches 4, `n < 4` is False, and the loop terminates.',
+            hint: 'Trace the values of n: 0, 1, 2, 3.',
+          },
+          {
+            id: 'py-s2-l3-ex2',
+            type: 'multiple-choice',
+            question: 'Which statement immediately exits a loop in Python?',
+            options: ['stop', 'exit', 'break', 'return'],
+            correctAnswer: 2,
+            explanation: 'The `break` statement immediately terminates the innermost enclosing loop.',
+            hint: 'Starts with b.',
+          },
+          {
+            id: 'py-s2-l3-ex3',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\nx = 1\nwhile x < 10:\n    if x == 3:\n        break\n    x += 1\nprint(x)\n```',
+            correctAnswer: '3',
+            explanation: 'When `x` reaches 3, the if condition triggers `break`. The loop terminates and `print(x)` outputs 3.',
+            hint: 'At what value does the break trigger?',
+          },
+        ],
       },
     ],
   },
@@ -291,121 +438,362 @@ Always make sure your condition will eventually become \`False\`, or include a \
     id: 'py-s3',
     courseId: 'python-fundamentals',
     order: 3,
-    title: 'Functions',
-    description: 'Organise reusable logic into named blocks.',
+    title: 'Functions & Anatomy of def',
+    description: 'Master function definitions, parameters, return values, and variable scope.',
     lessons: [
       {
         id: 'py-s3-l1',
         stageId: 'py-s3',
         courseId: 'python-fundamentals',
         order: 1,
-        title: 'Defining Functions',
-        content: `## What is a function?
+        title: 'Anatomy of def & Function Basics',
+        content: `## What is a Function?
 
-A function is a named block of code you can run any number of times. Define it with \`def\`:
+A **function** is a reusable, named block of code that performs a specific action. You define functions in Python using the \`def\` keyword:
 
 \`\`\`python
-def greet():
-    print("Hello, learner!")
+def greet_learner():
+    print("Welcome to Python!")
 
-greet()   # call it
-greet()   # call it again
+greet_learner()  # Call the function
 \`\`\`
 
-## Why use functions?
+## The 6 Essential Parts of a Function Definition
+1. **\`def\` keyword**: Signals to Python that a function definition begins.
+2. **Function Name**: Descriptive snake_case name (e.g., \`calculate_tax\`).
+3. **Parameters in Parentheses \`()\`**: Input values accepted by the function.
+4. **Colon \`:\`**: Concludes the definition header (mandatory!).
+5. **Indented Body**: 4 spaces defining the block of code inside the function.
+6. **Return Statement**: Sends the result back to the caller.
 
-- **Avoid repetition** — write once, use many times
-- **Organise code** — give logical chunks a name
-- **Make testing easier** — test each function separately`,
+\`\`\`python
+def calculate_area(width, height):
+    return width * height
+
+room_area = calculate_area(5, 4)
+print(room_area)  # 20
+\`\`\``,
         exercise: {
-          id: 'py-s3-l1-ex',
+          id: 'py-s3-l1-ex1',
           type: 'fill-blank',
-          question:
-            'Complete the code to define a function called `welcome`:\n\n```python\n___ welcome():\n    print("Welcome to Kivora!")\n```',
+          question: 'Complete the line to define a function named `say_hello`: `___ say_hello():`',
           correctAnswer: 'def',
-          explanation:
-            'In Python, functions are defined with the `def` keyword, followed by the function name and parentheses.',
-          hint: 'The keyword that starts a function definition.',
+          explanation: 'In Python, functions are defined using the `def` keyword.',
+          hint: 'The 3-letter keyword short for define.',
         },
+        exercises: [
+          {
+            id: 'py-s3-l1-ex1',
+            type: 'fill-blank',
+            question: 'Complete the line to define a function named `say_hello`: `___ say_hello():`',
+            correctAnswer: 'def',
+            explanation: 'In Python, functions are defined using the `def` keyword.',
+            hint: 'The 3-letter keyword short for define.',
+          },
+          {
+            id: 'py-s3-l1-ex2',
+            type: 'multiple-choice',
+            question: 'What punctuation character MUST end the `def` header line in Python?',
+            options: [';', '{', ':', '->'],
+            correctAnswer: 2,
+            explanation: 'A colon `:` is required at the end of the `def` header line in Python syntax.',
+            hint: 'Two dots stacked vertically.',
+          },
+          {
+            id: 'py-s3-l1-ex3',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\ndef double(n):\n    return n * 2\n\nprint(double(7))\n```',
+            correctAnswer: '14',
+            explanation: '`double(7)` passes 7 as argument `n`, computes `7 * 2 = 14`, and returns it to `print()`.',
+            hint: 'What is 7 * 2?',
+          },
+        ],
       },
       {
         id: 'py-s3-l2',
         stageId: 'py-s3',
         courseId: 'python-fundamentals',
         order: 2,
-        title: 'Parameters & Return',
-        content: `## Passing data in and out
+        title: 'Parameters & return vs print',
+        content: `## Parameters: Passing Input Data
 
-**Parameters** let you pass data into a function:
+Parameters allow functions to accept dynamic arguments:
 
 \`\`\`python
 def greet(name):
     print(f"Hello, {name}!")
 
-greet("Maria")   # Hello, Maria!
-greet("Carlos")  # Hello, Carlos!
+greet("Alice")  # Hello, Alice!
+greet("Bob")    # Hello, Bob!
 \`\`\`
 
-**return** sends a value back to the caller:
+## return vs print: The Critical Difference
+- **\`print()\`** merely displays text on the screen for humans to see. It does NOT save the value for the program to use.
+- **\`return\`** passes the computed value back to the caller, allowing you to store it in a variable or use it in further calculations.
 
 \`\`\`python
 def add(a, b):
     return a + b
 
-result = add(3, 5)
-print(result)   # 8
+total = add(10, 20)  # total now stores 30!
+print(total * 2)     # Outputs: 60
 \`\`\`
 
-## Default parameters
-
-\`\`\`python
-def greet(name, greeting="Hello"):
-    print(f"{greeting}, {name}!")
-
-greet("Ana")           # Hello, Ana!
-greet("Ana", "Hi")     # Hi, Ana!
-\`\`\``,
+If a function does not have a \`return\` statement, it implicitly returns \`None\`.`,
         exercise: {
-          id: 'py-s3-l2-ex',
+          id: 'py-s3-l2-ex1',
           type: 'code-output',
-          question:
-            'What does this code print?\n\n```python\ndef multiply(a, b):\n    return a * b\n\nprint(multiply(4, 3))\n```',
-          correctAnswer: '12',
-          explanation:
-            'The function `multiply` returns `a * b`. Calling it with 4 and 3 returns 12, which `print()` outputs.',
-          hint: 'What is 4 × 3?',
+          question: 'What does this code print?\n\n```python\ndef multiply(x, y):\n    return x * y\n\nresult = multiply(4, 5)\nprint(result)\n```',
+          correctAnswer: '20',
+          explanation: '`multiply(4, 5)` returns 20, which is stored in `result` and printed.',
+          hint: 'Multiply 4 by 5.',
         },
+        exercises: [
+          {
+            id: 'py-s3-l2-ex1',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\ndef multiply(x, y):\n    return x * y\n\nresult = multiply(4, 5)\nprint(result)\n```',
+            correctAnswer: '20',
+            explanation: '`multiply(4, 5)` returns 20, which is stored in `result` and printed.',
+            hint: 'Multiply 4 by 5.',
+          },
+          {
+            id: 'py-s3-l2-ex2',
+            type: 'multiple-choice',
+            question: 'What does a Python function return if it contains no `return` statement?',
+            options: ['0', 'False', 'None', '"" (empty string)'],
+            correctAnswer: 2,
+            explanation: 'Python functions that do not explicitly return a value return `None` by default.',
+            hint: 'Python\'s special null value.',
+          },
+          {
+            id: 'py-s3-l2-ex3',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\ndef square(n):\n    return n * n\n\nprint(square(3) + square(4))\n```',
+            correctAnswer: '25',
+            explanation: '`square(3)` is 9, `square(4)` is 16. `9 + 16 = 25`.',
+            hint: 'Compute 3*3 + 4*4.',
+          },
+        ],
       },
       {
         id: 'py-s3-l3',
         stageId: 'py-s3',
         courseId: 'python-fundamentals',
         order: 3,
-        title: 'Built-in Functions',
-        content: `## Python's ready-made tools
+        title: 'Default Arguments & Scope',
+        content: `## Default Parameter Values
 
-Python comes with many useful functions you don't need to define yourself:
+You can provide default values for parameters. If the caller omits the argument, Python uses the default:
 
-| Function | What it does | Example |
-|---|---|---|
-| \`print()\` | Display output | \`print("hi")\` |
-| \`len()\` | Length of a list/string | \`len([1,2,3])\` → 3 |
-| \`type()\` | Type of a value | \`type(42)\` → \`<class 'int'>\` |
-| \`int()\` | Convert to integer | \`int("5")\` → 5 |
-| \`str()\` | Convert to string | \`str(42)\` → "42" |
-| \`range()\` | Sequence of numbers | \`range(5)\` → 0..4 |
-| \`max()\` / \`min()\` | Largest / smallest | \`max(3, 7, 2)\` → 7 |
-| \`sum()\` | Sum of a list | \`sum([1,2,3])\` → 6 |`,
+\`\`\`python
+def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+
+print(greet("Alice"))            # Hello, Alice!
+print(greet("Bob", "Good morning")) # Good morning, Bob!
+\`\`\`
+
+## Local vs Global Scope
+- **Local variables**: Created inside a function and only accessible within that function.
+- **Global variables**: Defined outside all functions and accessible throughout the file.
+
+\`\`\`python
+bonus = 10  # Global variable
+
+def calculate_pay(hours):
+    rate = 20  # Local variable
+    return (hours * rate) + bonus
+
+print(calculate_pay(5))  # (5 * 20) + 10 = 110
+\`\`\`
+
+Variables defined inside \`calculate_pay\` cannot be accessed outside of it.`,
         exercise: {
-          id: 'py-s3-l3-ex',
+          id: 'py-s3-l3-ex1',
           type: 'code-output',
-          question:
-            'What does this code print?\n\n```python\nwords = ["cat", "elephant", "bee"]\nprint(len(words))\n```',
-          correctAnswer: '3',
-          explanation:
-            '`len()` returns the number of items in the list. The list has 3 items ("cat", "elephant", "bee"), so `len(words)` is 3.',
-          hint: 'Count the items in the list.',
+          question: 'What does this code print?\n\n```python\ndef power(base, exp=2):\n    return base ** exp\n\nprint(power(5))\n```',
+          correctAnswer: '25',
+          explanation: 'The second argument `exp` defaults to 2. `5 ** 2` evaluates to 25.',
+          hint: '5 raised to the power of 2.',
         },
+        exercises: [
+          {
+            id: 'py-s3-l3-ex1',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\ndef power(base, exp=2):\n    return base ** exp\n\nprint(power(5))\n```',
+            correctAnswer: '25',
+            explanation: 'The second argument `exp` defaults to 2. `5 ** 2` evaluates to 25.',
+            hint: '5 raised to the power of 2.',
+          },
+          {
+            id: 'py-s3-l3-ex2',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\ndef power(base, exp=2):\n    return base ** exp\n\nprint(power(2, 3))\n```',
+            correctAnswer: '8',
+            explanation: 'Passing 3 overrides the default `exp=2`. `2 ** 3 = 8`.',
+            hint: '2 * 2 * 2.',
+          },
+          {
+            id: 'py-s3-l3-ex3',
+            type: 'multiple-choice',
+            question: 'Where can a local variable defined inside a function be accessed?',
+            options: ['Anywhere in the program', 'Only inside that function', 'In any file that imports it', 'Only inside loops'],
+            correctAnswer: 1,
+            explanation: 'Local variables exist only within the scope of the function where they are declared.',
+            hint: 'Local scope is confined to its enclosing function.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'py-s4',
+    courseId: 'python-fundamentals',
+    order: 4,
+    title: 'Data Structures & Mini-Project',
+    description: 'Work with key-value dictionaries and build an interactive student grade analyzer.',
+    lessons: [
+      {
+        id: 'py-s4-l1',
+        stageId: 'py-s4',
+        courseId: 'python-fundamentals',
+        order: 1,
+        title: 'Dictionaries & Key-Value Pairs',
+        content: `## Dictionaries in Python
+
+A **dictionary** (\`dict\`) stores associative pairs of **keys** and **values** inside curly braces \`{}\`:
+
+\`\`\`python
+student = {
+    "name": "Maria",
+    "age": 21,
+    "course": "Python",
+    "score": 92
+}
+\`\`\`
+
+## Accessing and Updating Values
+Access values using their key in square brackets \`[]\`:
+
+\`\`\`python
+print(student["name"])    # Maria
+student["score"] = 96     # Updates score
+student["grade"] = "A"    # Adds new key-value pair
+\`\`\`
+
+## Safe Access with .get()
+Using \`student.get("city", "Unknown")\` prevents \`KeyError\` if the key doesn't exist.`,
+        exercise: {
+          id: 'py-s4-l1-ex1',
+          type: 'code-output',
+          question: 'What does this code print?\n\n```python\nperson = {"name": "Alex", "age": 25}\nprint(person["name"])\n```',
+          correctAnswer: 'Alex',
+          explanation: '`person["name"]` accesses the value corresponding to key `"name"`, which is "Alex".',
+          hint: 'Look at the value of the key "name".',
+        },
+        exercises: [
+          {
+            id: 'py-s4-l1-ex1',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\nperson = {"name": "Alex", "age": 25}\nprint(person["name"])\n```',
+            correctAnswer: 'Alex',
+            explanation: '`person["name"]` accesses the value corresponding to key `"name"`, which is "Alex".',
+            hint: 'Look at the value of the key "name".',
+          },
+          {
+            id: 'py-s4-l1-ex2',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\nd = {"a": 1, "b": 2}\nd["c"] = 3\nprint(len(d))\n```',
+            correctAnswer: '3',
+            explanation: '`d` begins with 2 pairs. Adding key `"c"` increases the length to 3.',
+            hint: 'Count total key-value pairs in the dictionary.',
+          },
+          {
+            id: 'py-s4-l1-ex3',
+            type: 'multiple-choice',
+            question: 'Which bracket type is used to define a dictionary in Python?',
+            options: ['[]', '()', '{}', '<>'],
+            correctAnswer: 2,
+            explanation: 'Dictionaries are defined using curly braces `{}` with key: value pairs.',
+            hint: 'Curly braces.',
+          },
+        ],
+      },
+      {
+        id: 'py-s4-l2',
+        stageId: 'py-s4',
+        courseId: 'python-fundamentals',
+        order: 2,
+        title: 'Mini-Project: Student Grade Analyzer',
+        content: `## Capstone Mini-Project
+
+Let\'s combine everything you\'ve learned: variables, lists, dictionaries, conditionals, and functions!
+
+\`\`\`python
+students = [
+    {"name": "Alice", "score": 92},
+    {"name": "Bob", "score": 78},
+    {"name": "Charlie", "score": 85}
+]
+
+def calculate_average(records):
+    total = sum(s["score"] for s in records)
+    return total / len(records)
+
+def get_grade(score):
+    if score >= 90:
+        return "A"
+    elif score >= 80:
+        return "B"
+    else:
+        return "C"
+
+avg = calculate_average(students)
+print(f"Average Class Score: {avg:.1f}")
+# Output: Average Class Score: 85.0
+\`\`\`
+
+## Program Architecture
+1. **Data Model**: List of student dictionaries.
+2. **Aggregation Function**: Computes mean score using \`sum()\` and \`len()\`.
+3. **Classification Function**: Maps numeric scores to letter grades via conditionals.
+4. **Report Output**: Formats final results cleanly with an f-string.`,
+        exercise: {
+          id: 'py-s4-l2-ex1',
+          type: 'code-output',
+          question: 'What is the average of scores [80, 90, 100]?\n\n```python\nscores = [80, 90, 100]\nprint(sum(scores) // len(scores))\n```',
+          correctAnswer: '90',
+          explanation: 'Sum is 270. Divided by 3 items gives 90.',
+          hint: '(80 + 90 + 100) / 3.',
+        },
+        exercises: [
+          {
+            id: 'py-s4-l2-ex1',
+            type: 'code-output',
+            question: 'What is the average of scores [80, 90, 100]?\n\n```python\nscores = [80, 90, 100]\nprint(sum(scores) // len(scores))\n```',
+            correctAnswer: '90',
+            explanation: 'Sum is 270. Divided by 3 items gives 90.',
+            hint: '(80 + 90 + 100) / 3.',
+          },
+          {
+            id: 'py-s4-l2-ex2',
+            type: 'multiple-choice',
+            question: 'What grade does `get_grade(85)` return based on the mini-project code?',
+            options: ['A', 'B', 'C', 'D'],
+            correctAnswer: 1,
+            explanation: '85 is not >= 90, but 85 >= 80 evaluates to True, returning "B".',
+            hint: '85 is between 80 and 89.',
+          },
+          {
+            id: 'py-s4-l2-ex3',
+            type: 'code-output',
+            question: 'What does this code print?\n\n```python\nstudents = [{"name": "A", "score": 100}]\nprint(students[0]["name"])\n```',
+            correctAnswer: 'A',
+            explanation: '`students[0]` gets the first dictionary, and `["name"]` retrieves "A".',
+            hint: 'Accessing dictionary inside list.',
+          },
+        ],
       },
     ],
   },

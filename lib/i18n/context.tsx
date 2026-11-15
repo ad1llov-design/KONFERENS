@@ -24,11 +24,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // Load saved locale from localStorage on mount, or detect from browser
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
-      if (saved && (saved === 'en' || saved === 'ru' || saved === 'ky')) {
-        setLocaleState(saved);
-        document.documentElement.lang = saved;
-      } else if (typeof navigator !== 'undefined' && navigator.language) {
+      const urlLang = new URLSearchParams(window.location.search).get('lang') as Locale | null;
+      if (urlLang && (urlLang === 'en' || urlLang === 'ru' || urlLang === 'ky')) {
+        setLocaleState(urlLang);
+        document.documentElement.lang = urlLang;
+      } else {
+        const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
+        if (saved && (saved === 'en' || saved === 'ru' || saved === 'ky')) {
+          setLocaleState(saved);
+          document.documentElement.lang = saved;
+        } else if (typeof navigator !== 'undefined' && navigator.language) {
         const lang = navigator.language.toLowerCase();
         if (lang.startsWith('ky')) {
           setLocaleState('ky');
@@ -41,10 +46,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           document.documentElement.lang = 'ru';
         }
       }
-    } catch {
-      // ignore
     }
-  }, []);
+  } catch {
+    // ignore
+  }
+}, []);
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);

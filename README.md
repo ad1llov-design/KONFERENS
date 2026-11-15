@@ -1,120 +1,229 @@
-# Kivora — Personal Gamified Learning Platform (MVP)
+# 🌟 Kivora — Gamified Interactive Learning Platform
 
-> **Status:** Working MVP for IT Conference Demonstration  
-> **Brand:** Kivora (temporary working brand name)  
-> **Target Audience:** International students, independent learners, junior specialists
+<div align="center">
 
----
+![Next.js](https://img.shields.io/badge/Next.js-16.4-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss)
+![Web Audio](https://img.shields.io/badge/Web_Audio_API-Procedural_SFX-8B5CF6?style=for-the-badge)
+![Web Speech](https://img.shields.io/badge/Web_Speech_API-Text_To_Speech-10B981?style=for-the-badge)
+![i18n](https://img.shields.io/badge/Localization-RU_%7C_KY_%7C_EN-F59E0B?style=for-the-badge)
 
-## 🌟 Overview
+**Next-generation micro-learning ecosystem designed for IT conferences, hackathons, and self-paced mastery.**  
+*Combines board-game serpentines, procedural game audio, original vector mascot stickers, accessibility voice synthesis, and trilingual curriculums.*
 
-Kivora is an educational platform designed around an interactive, gamified learning path:
-1. **Choose a goal & track:** Python Fundamentals or English A1–A2.
-2. **Diagnostic test:** 8 targeted questions that deterministically assess current level (Beginner, Elementary, Pre-Intermediate).
-3. **Structured Personal Study Plan:** Generated based on level and study time (AI-assisted with deterministic fallback).
-4. **Learning Path & Interactive Lessons:** Step-by-step stages with concise reading, practice exercises (multiple-choice, code output, fill-in-the-blank, translation), instant explanations, hints, and progress tracking.
-5. **AI Tutor:** Server-side LLM tutor with course/lesson context that guides and provides hints without giving away answers immediately.
+[🇷🇺 Документация на русском (README.ru.md)](./README.ru.md) • [🌐 Live Demo](http://localhost:3000) • [🔊 Audio Attribution](./public/audio/ATTRIBUTION.md)
 
----
-
-## 🛠 Tech Stack
-
-- **Framework:** Next.js 16 (App Router)
-- **Language:** TypeScript 5 (Strict mode)
-- **Styling:** Tailwind CSS v4 + Centralised CSS Custom Properties (`--bg`, `--accent`, `--glass-bg`)
-- **Icons:** Lucide React
-- **Auth & Storage:** Supabase (PostgreSQL, Auth, RLS policies) with seamless local Demo Mode fallback
-- **AI Integration:** OpenAI API (`gpt-4o-mini`, server-side only) with clearly labelled Demo AI fallback
+</div>
 
 ---
 
-## 🚀 Quick Start
+## 📑 Table of Contents
 
-### 1. Install dependencies
+1. [Key Features & Innovations](#-key-features--innovations)
+2. [Visual Design & Theme System](#-visual-design--theme-system)
+3. [Procedural Audio Engine (Web Audio API)](#-procedural-audio-engine-web-audio-api)
+4. [Voice Assistant & Text-to-Speech (TTS)](#-voice-assistant--text-to-speech-tts)
+5. [Vector Mascot «Kivi» (Киви)](#-vector-mascot-kivi-киви)
+6. [Comprehensive Course Catalog & Chinese Track](#-comprehensive-course-catalog--chinese-track)
+7. [System Architecture](#-system-architecture)
+8. [Getting Started & Local Execution](#-getting-started--local-execution)
+9. [Conference Demonstration Script](#-conference-demonstration-script)
+10. [Licensing & Attribution](#-licensing--attribution)
+
+---
+
+## 🚀 Key Features & Innovations
+
+### 1. Board-Game Serpentine Roadmap (Настольная Дорожка)
+- **Gamified Progression:** Lessons are arranged along a serpentine pathway with stage dividers, active learner avatar tokens, and glowing connection lines.
+- **Milestone Finish Goal:** Clean finish flag with real-time completion counter (`X of Y completed · Z remaining`) with **zero treasure chests** or kitsch clutter.
+- **Diagnostic-Driven:** 8-question placement test automatically determines learner level (*Beginner*, *Elementary*, *Pre-Intermediate*) and tailors the starting milestone.
+
+### 2. Multi-Step Interactive Lesson Stepper
+- **3+ Distinct Exercises per Lesson:** Every lesson contains at least 3 varied checks (Multiple-choice, Code Output, Fill-in-the-Blank, Translation).
+- **Interactive Stepper Bar:** Learners navigate between sub-exercises with real-time status indicators (current, completed, pending).
+- **Adaptive Feedback:** Instant explanations, intelligent hint reveals, and mascot reactions.
+
+### 3. Integrated Code & Interactive Previews
+- **Python Function Decomposition:** Interactive colored parameter breakdown (`def`, name, parameters, type hints, docstring, body, `return`).
+- **Live HTML/CSS Sandbox:** Tabbed view with clean code view and live rendered preview showing responsive flexbox cards with modern aesthetics.
+
+---
+
+## 🎨 Visual Design & Theme System
+
+Kivora implements a dual design system built on CSS custom variables and high-contrast accessibility tokens:
+
+| Element | Apple Light Mode (`light`) | Linear Dark Mode (`dark`) |
+| :--- | :--- | :--- |
+| **Background** | Clean pure light `#FBFBFD` | Deep slate obsidian `#0D0D12` |
+| **Surfaces** | Translucent frost `#FFFFFF` with glass border | Smoked acrylic `#16161F` / `#1C1C28` |
+| **Primary Accent** | Deep royal indigo `#6366F1` | Electric neon indigo `#818CF8` |
+| **Typography** | Crisp dark charcoal `#0F172A` | High-contrast stark white `#F8FAFC` |
+| **Borders** | Subtle hairline `rgba(0,0,0,0.08)` | Refined edge `rgba(255,255,255,0.1)` |
+
+*Switch themes instantly via the 1-click toggle in the navigation bar or profile settings.*
+
+---
+
+## 🔊 Procedural Audio Engine (Web Audio API)
+
+All sound effects are **100% procedurally synthesized in real-time** via the browser's native `AudioContext`.
+- **Zero External Audio Files:** 0 KB MP3/WAV download overhead, zero network latency, zero broken asset URLs.
+- **100% Royalty-Free & Safe:** No copyrighted audio assets. Fully documented under MIT / CC0 in [`public/audio/ATTRIBUTION.md`](./public/audio/ATTRIBUTION.md).
+- **Sound Palette:**
+  - `answer.correct`: Ascending major triad chord (C5 523Hz → E5 659Hz → G5 784Hz) with gentle lowpass shimmer (~0.35s).
+  - `answer.incorrect`: Soft comical marimba descent (D4 293Hz → B3 246Hz → G#3 207Hz) with triangle/sine warmth. Encouraging, never punitive (~0.26s).
+  - `lesson.complete`: Jubilant milestone fanfare chord (C5 → E5 → G5 → C6) with dual-envelope harmonics (~0.55s).
+  - `checkpoint.unlock`: Sparkling resonant chime (E6 1318Hz + B6 1975Hz) with decaying high-resonance bandpass (~0.32s).
+- **User Control & Persistence:** Centralized mute toggle, smooth volume slider, and "Test Sound" button in navigation, roadmap header, and User Profile. State is persisted in `localStorage`.
+
+---
+
+## 🗣️ Voice Assistant & Text-to-Speech (TTS)
+
+Every lesson features an on-demand voice assistant powered by the standard **Web Speech API** (`window.speechSynthesis`):
+- **Clean Audio Stream:** Custom regular-expression sanitizer strips code blocks, markdown symbols, and technical syntax so the voice speaks natural explanations.
+- **Playback Controls:** One-click Play, Pause, Resume, and Stop controls with live pulsing audio waveform indicator.
+- **Speed Selector:** Switch reading speed between `0.8x`, `1.0x`, and `1.2x`.
+- **Intelligent Voice Detection:** Automatically scans available device voices for the user's active locale (`ru-RU`, `ky-KG`, `en-US`). If a language voice is missing from the OS, a polite localized notice is displayed without errors.
+- **Audio Ducking:** Game sound effects are automatically ducked by 60% while speech synthesis is active to ensure crisp vocal clarity.
+- **Clean Unmount:** Playback automatically terminates upon lesson navigation.
+
+---
+
+## 🦊 Vector Mascot «Kivi» (Киви)
+
+Kivi is Kivora's friendly, hand-crafted **100% vector SVG mascot** (a clever little kiwi bird with big bright eyes and expressive feather tufts). Kivi reacts dynamically to the learner's journey with localized speech bubbles in Russian, Kyrgyz, and English:
+
+| Mood | Visual Cues | Speech Bubble Trigger |
+| :--- | :--- | :--- |
+| **`celebrate`** | Sparkling star eyes, graduation cap, celebratory wave | Triggered on correct answer |
+| **`encourage`** | Warm gentle smile, glowing warm heart, comforting pose | Triggered on incorrect answer (friendly reassurance) |
+| **`thinking`** | Tapping chin thoughtfully, glowing yellow lightbulb | Displayed inside Hint cards |
+| **`champion`** | Golden victory laurel medal, proud heroic pose | Displayed upon completing all exercises in a lesson |
+
+---
+
+## 📚 Comprehensive Course Catalog & Chinese Track
+
+Kivora offers **15 production-ready courses** spanning Technology, Languages, and Professional Skills with **100% trilingual localization (RU / KY / EN)**:
+
+### 🇨🇳 Featured Language Deep-Dive: Chinese Intro (`chinese-intro`)
+- **Stage 1: Pinyin & The 4 Tones (Пиньинь и 4 тона / Пиньинь жана 4 тон)**
+  - `zh-s1-l1`: The Four Tones of Mandarin (mā, má, mǎ, mà + neutral tone)
+  - `zh-s1-l2`: Initials & Finals of Pinyin (aspirated vs. unaspirated consonants, ü)
+  - `zh-s1-l3`: Tone Sandhi & Rules (3+3→2+3 sandhi, bù/yī tonal inflections)
+- **Stage 2: Greetings & Numbers (Приветствия и числа / Саламдашуу жана сандар)**
+  - `zh-s2-l1`: Saying Hello and Thank You (Nǐ hǎo, Nín hǎo, Xièxie, Zàijiàn)
+  - `zh-s2-l2`: Numbers 1 to 10 & Counting (yī through shí, compound numbers)
+  - `zh-s2-l3`: Polite Inquiries & Courtesy (Nǐ hǎo ma?, Duìbuqǐ, Méi guānxi)
+- **Stage 3: Introductions & First Characters (Знакомство и иероглифы / Таанышуу жана алгачкы иероглифтер)**
+  - `zh-s3-l1`: Introducing Yourself (Wǒ jiào..., Wǒ shì xuésheng, Nǐ ne?)
+  - `zh-s3-l2`: Essential Hanzi Radicals & Pictograms (人, 口, 日, 月, 木, 明)
+  - `zh-s3-l3`: Capstone Mini-Dialogue (Live natural conversation between Li Ming & Elena)
+
+*Every single lesson contains at least 3 distinct exercises, detailed explanations, and 100% localized Russian and Kyrgyz texts.*
+
+---
+
+## 🏗 System Architecture
+
+```
+kivora/
+├── app/                                 # Next.js 16 App Router
+│   ├── courses/                         # Course catalog & detail pages
+│   │   └── [id]/
+│   │       ├── diagnostic/              # 8-question placement diagnostic
+│   │       ├── learn/                   # Serpentine game-board roadmap
+│   │       └── learn/[lessonId]/        # Interactive lesson with TTS, SFX, Mascot
+│   ├── dashboard/                       # User profile, progress & sound settings
+│   ├── tutor/                           # AI Tutor with course context
+│   └── globals.css                      # Modern CSS variables, glassmorphism, animations
+├── components/
+│   ├── layout/                          # Navbar with language switcher, sound toggle
+│   ├── lesson/                          # CodeBlock, HtmlCssPreview, KiviSticker, LessonTextToSpeech
+│   ├── sound/                           # SoundToggle component with volume slider
+│   └── ui/                              # High-contrast Buttons, Badges, Modals, ProgressBars
+├── lib/
+│   ├── data/
+│   │   ├── courses/                     # Course structures (tech.ts, languages.ts, professional.ts)
+│   │   ├── course-content-localization.ts # 100% localized RU/KY lesson texts & exercises
+│   │   └── diagnostics.ts               # Deterministic diagnostic questions
+│   ├── sound/
+│   │   └── sound-manager.ts             # Web Audio API singleton synthesizer
+│   ├── i18n/                            # React Context for RU, KY, EN switching
+│   └── demo-state.ts                    # Zero-config localStorage persistence
+└── public/
+    └── audio/
+        └── ATTRIBUTION.md               # Procedural audio specification & CC0 license
+```
+
+---
+
+## 💻 Getting Started & Local Execution
+
+### Prerequisites
+- Node.js 18.18+ or 20+
+- npm or pnpm
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/ad1llov-design/KONFERENS.git
+cd KONFERENS
+```
+
+### 2. Install dependencies
 ```bash
 npm install
 ```
 
-### 2. Run locally (Demo Mode — zero setup required)
-The platform is designed to run immediately without external credentials:
+### 3. Run development server
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open **[http://localhost:3000](http://localhost:3000)** in your browser.  
+*The app runs immediately in zero-setup Demo Mode with local storage persistence.*
 
-- In **Demo Mode**, authentication and progress are stored safely in `localStorage`.
-- The AI Tutor provides realistic pre-written demo responses clearly marked with a `Demo AI` badge.
-
-### 3. Build & Typecheck
+### 4. Build and Typecheck
 ```bash
-npm run build
-npm run lint
+npx tsc --noEmit     # TypeScript type safety check (0 errors)
+npm run lint         # ESLint check (0 errors)
+npm run build        # Production Next.js build (27 static/dynamic pages)
 ```
 
 ---
 
-## 🔑 Environment Variables & Production Setup
+## 🎤 Conference Demonstration Script
 
-To enable real Supabase Authentication and live OpenAI responses, copy `.env.example` to `.env.local`:
-
-```bash
-cp .env.example .env.local
-```
-
-Fill in your keys:
-```ini
-# Supabase (Auth & Database)
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
-# OpenAI (AI Tutor & Structured Plans - SERVER ONLY)
-OPENAI_API_KEY=sk-...
-```
-
-### Supabase Database Setup
-Run the SQL migration in `supabase/schema.sql` inside the Supabase SQL Editor. It creates all tables and Row Level Security (RLS) policies ensuring users can only read and write their own data.
-
----
-
-## 🎭 Conference Live Demo Script (Step-by-Step)
+Follow this 5-minute walkthrough to showcase the platform's core strengths:
 
 1. **Landing Page (`/`):**
-   - Show value proposition, design tokens (calm palette, warm background `#F5F4F0`, glass panels).
-   - Point out the preview learning path widget.
-2. **Catalog (`/courses`):**
-   - View available tracks: **Python Fundamentals** (8h) and **English A1–A2** (10h), plus upcoming tracks.
-3. **Course Overview (`/courses/python-fundamentals`):**
-   - Review 3 stages and 9 structured lessons.
-4. **Diagnostic (`/courses/python-fundamentals/diagnostic`):**
-   - Click "Start Diagnostic".
-   - Answer the 8 questions.
-   - Review deterministic score calculation, assigned level badge, and personalized study plan.
-5. **Interactive Lesson (`/courses/python-fundamentals/learn/py-s1-l1`):**
-   - Switch between **Reading** and **Exercise** tabs.
-   - Try an incorrect answer → see explanation & "Try again".
-   - Try the correct answer → green feedback, progress recorded.
-   - Click "Next lesson" to advance along the path.
-6. **AI Tutor (`/tutor?course=python-fundamentals&lesson=py-s1-l1`):**
-   - Open AI Tutor from the lesson link.
-   - Notice context badges (Course + Current Lesson).
-   - Ask a question (e.g. *"Can variable names start with a number?"*).
-   - See clear pedagogical explanation with demo indicator when keys are absent.
-7. **Dashboard (`/dashboard`):**
-   - View enrolled courses with live percentage calculation derived from completed lessons.
+   - Toggle language: switch seamlessly between **Русский**, **Кыргызча**, and **English**.
+   - Toggle theme: demonstrate high-contrast Apple Light mode and Linear Dark mode.
+2. **Sound Controls:**
+   - Click the speaker icon in the top navigation bar or course header.
+   - Adjust the volume slider and click **"Test Sound"** to demonstrate the synthesized Web Audio triad.
+3. **Explore Course Map (`/courses/chinese-intro/learn`):**
+   - View the serpentine board-game roadmap with 3 stages and 9 lessons.
+   - Observe the active learner token (`🦊`) and milestone goal flag.
+   - Click an active node to hear the `playCheckpoint()` resonant chime.
+4. **Interactive Lesson (`/courses/chinese-intro/learn/zh-s1-l1`):**
+   - Click **"Прослушать объяснение" / "Түшүндүрмөнү угуу"** to hear Web Speech API voice synthesis.
+   - Adjust speech rate (`0.8x`, `1.0x`, `1.2x`).
+   - Switch to the **Exercise** tab: observe the 3-step stepper (`1`, `2`, `3`).
+   - Select an incorrect option → hear comical friendly descent, observe Kivi's `encourage` sticker.
+   - Select the correct option → hear ascending major triad, observe Kivi's `celebrate` sticker.
+   - Complete all 3 exercises → hear milestone fanfare, observe Kivi's `champion` victory sticker.
+5. **Code Playground & Diagnostic:**
+   - Open Python Fundamentals lesson `py-s3-l1` to demonstrate interactive `def` keyword breakdown.
+   - Open Web Development lesson `web-s1-l1` to show interactive live HTML/CSS render preview.
 
 ---
 
-## 📋 Readiness Criteria Verification
+## 📜 Licensing & Attribution
 
-- [x] **Clear Landing Page:** Explains value proposition without fake statistics or unverified claims.
-- [x] **Goal & Track Selection:** User can select Python Fundamentals or English A1–A2.
-- [x] **Auth & Demo Mode:** Local demo session + Supabase Auth integration with explicit status banner.
-- [x] **Deterministic Diagnostic:** Predictable scoring algorithm assigning Beginner / Elementary / Pre-Intermediate.
-- [x] **Structured Learning Plan:** AI-generated or verified curriculum schedule with week-by-week goals.
-- [x] **Complete Demo Course:** Python Fundamentals (3 stages, 9 lessons with exercises) and English A1–A2 (3 stages, 9 lessons).
-- [x] **Actionable Lessons & Feedback:** Exercises with explanations, hints, and retry capabilities.
-- [x] **Real Progress Calculation:** Progress percentage strictly calculated from completed lesson IDs.
-- [x] **Secure AI Tutor:** Server-side route handler with token bounds, input sanitization, and honest Demo AI badge when unconfigured.
-- [x] **Responsive & Accessible Design:** Works on mobile and desktop, accessible contrast, no non-functional dummy buttons.
-- [x] **Zero Build / Lint Errors:** Verified with `next build` and `eslint`.
+- **Code:** Licensed under the [MIT License](./LICENSE).
+- **Audio Synthesizer:** 100% procedurally synthesized code using standard Web Audio API oscillators. Zero external copyrighted audio assets. Fully documented in [`public/audio/ATTRIBUTION.md`](./public/audio/ATTRIBUTION.md).
+- **Mascot Stickers:** 100% original SVG vector artwork created specifically for the Kivora project.

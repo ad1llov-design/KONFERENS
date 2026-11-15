@@ -26,6 +26,8 @@ import { useLanguage } from '@/lib/i18n/context';
 import { getLocalizedCourse } from '@/lib/data/course-localization';
 import { getLocalizedStage, getLocalizedLesson } from '@/lib/data/course-content-localization';
 import type { CourseId, LessonStatus } from '@/lib/types';
+import { SoundToggle } from '@/components/sound/SoundToggle';
+import { soundManager } from '@/lib/sound/sound-manager';
 
 function LearnContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -35,7 +37,6 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
   const rawCourse = getCourse(courseId);
   const course = rawCourse ? getLocalizedCourse(rawCourse, locale) : null;
 
-  const [mounted, setMounted] = useState(false);
   const [enrolled, setEnrolled] = useState(false);
   const [level, setLevel] = useState<string>('Beginner');
   const [completionPercent, setCompletionPercent] = useState(0);
@@ -43,7 +44,6 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true);
     if (!rawCourse) return;
     const isEnrolled = DemoState.isEnrolled(courseId);
     setEnrolled(isEnrolled);
@@ -94,7 +94,7 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">
       <Navbar />
 
-      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12 w-full overflow-x-hidden">
+      <main className="flex-1 max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full overflow-x-hidden">
         {/* ── Header: Course Roadmap Overview ──────────────────────────────── */}
         <div className="glass-card rounded-[var(--r-xl)] p-6 mb-8 border border-border shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -193,7 +193,8 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:self-auto self-end">
+          <div className="flex items-center gap-3 sm:self-auto self-end">
+            <SoundToggle showVolumeSlider={true} />
             <div className="text-right">
               <span className="text-xs text-muted block">{t.learn.overallProgress}</span>
               <span className="text-xl font-black text-accent">{completionPercent}%</span>
@@ -291,6 +292,9 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
 
                           <Link
                             href={canAccess ? `/courses/${courseId}/learn/${lesson.id}` : '#'}
+                            onClick={() => {
+                              if (canAccess) soundManager.playCheckpoint();
+                            }}
                             className={[
                               'w-16 h-16 sm:w-18 sm:h-18 rounded-full flex flex-col items-center justify-center font-extrabold text-sm relative transition-all duration-200 border-2 select-none cursor-pointer',
                               isCompleted
@@ -374,7 +378,10 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                           {/* CTA button */}
                           <div className="shrink-0 self-end sm:self-auto">
                             {canAccess ? (
-                              <Link href={`/courses/${courseId}/learn/${lesson.id}`}>
+                              <Link
+                                href={`/courses/${courseId}/learn/${lesson.id}`}
+                                onClick={() => soundManager.playCheckpoint()}
+                              >
                                 <Button
                                   size="sm"
                                   variant={isCurrent ? 'primary' : 'secondary'}

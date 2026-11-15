@@ -38,6 +38,8 @@ export interface Exercise {
   id:            string;
   type:          ExerciseType;
   question:      string;
+  /** Optional code snippet to inspect or fix */
+  codeSnippet?:  string;
   /** Multiple choice options (if applicable) */
   options?:      string[];
   /**
@@ -50,14 +52,17 @@ export interface Exercise {
 }
 
 export interface Lesson {
-  id:        string;
-  stageId:   string;
-  courseId:  CourseId;
-  order:     number;
-  title:     string;
+  id:         string;
+  stageId:    string;
+  courseId:   CourseId;
+  order:      number;
+  title:      string;
   /** HTML-safe teaching content (plain text with simple markup) */
-  content:   string;
-  exercise:  Exercise;
+  content:    string;
+  /** Primary / single exercise for backward compatibility */
+  exercise:   Exercise;
+  /** Multi-check exercises: minimum 3 checks per lesson */
+  exercises?: Exercise[];
 }
 
 export interface Stage {
@@ -137,6 +142,8 @@ export interface UserProfile {
   dailyGoalMinutes?: number;
   locale?:           Locale;
   theme?:            ThemeMode;
+  soundEnabled?:     boolean;
+  soundVolume?:      number;
   createdAt:         string;
 }
 

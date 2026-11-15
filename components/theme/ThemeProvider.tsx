@@ -55,13 +55,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setMounted(true);
     let initialTheme: ThemeMode = 'light';
     try {
-      const stored = localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode | null;
-      if (stored === 'light' || stored === 'dark' || stored === 'system') {
-        initialTheme = stored;
+      const urlTheme = new URLSearchParams(window.location.search).get('theme');
+      if (urlTheme === 'dark' || urlTheme === 'light') {
+        initialTheme = urlTheme;
       } else {
-        const user = DemoState.getUser();
-        if (user?.theme) {
-          initialTheme = user.theme;
+        const stored = localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode | null;
+        if (stored === 'light' || stored === 'dark' || stored === 'system') {
+          initialTheme = stored;
+        } else {
+          const user = DemoState.getUser();
+          if (user?.theme) {
+            initialTheme = user.theme;
+          }
         }
       }
     } catch {
