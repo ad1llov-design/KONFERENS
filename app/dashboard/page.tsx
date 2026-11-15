@@ -253,7 +253,7 @@ export default function DashboardPage() {
                     {analyzerStats.activeCourseTitle}
                   </h2>
                   <p className="text-xs md:text-sm text-muted mb-4">
-                    {t.dashboard.analyzerCompletedRatio}: <strong className="text-foreground">{analyzerStats.totalCompleted}</strong> of {analyzerStats.totalLessonsAcrossEnrolled} {t.courseDetail.lessons}.
+                    {t.dashboard.analyzerCompletedRatio}: <strong className="text-foreground">{analyzerStats.totalCompleted}</strong> / {analyzerStats.totalLessonsAcrossEnrolled} {t.courseDetail.lessons}.
                   </p>
 
                   <div className="bg-surface-raised rounded-[var(--r-md)] p-4 border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">

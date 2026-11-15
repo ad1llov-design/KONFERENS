@@ -6,6 +6,7 @@ import { BookOpen, User, LayoutDashboard, MessageSquare } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/context';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import { PromoBar } from './PromoBar';
 import { DemoState } from '@/lib/demo-state';
 import { useState, useEffect } from 'react';
 
@@ -26,6 +27,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 glass border-b border-border">
+      <PromoBar />
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between gap-2">
         {/* Logo */}
         <Link

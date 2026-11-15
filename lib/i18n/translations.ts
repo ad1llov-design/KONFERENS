@@ -46,6 +46,7 @@ export interface Translations {
     problem3Desc: string;
 
     // How Kivora Works (5 Steps)
+    howBadge: string;
     howTitle: string;
     howSubtitle: string;
     step1Num: string;
@@ -65,9 +66,22 @@ export interface Translations {
     step5Desc: string;
 
     // 15 Tracks Catalog Showcase
+    tracksTitle: string;
+    tracksSubtitle: string;
     availableTitle: string;
     viewAll: string;
     hoursUnit: string;
+
+    // Inside Kivora Architecture
+    insideBadge: string;
+    insideTitle: string;
+    insideSubtitle: string;
+    inside1Title: string;
+    inside1Desc: string;
+    inside2Title: string;
+    inside2Desc: string;
+    inside3Title: string;
+    inside3Desc: string;
 
     // AI Suite
     aiSuiteBadge: string;
@@ -87,6 +101,12 @@ export interface Translations {
     trustNote: string;
     trustFeedbackBtn: string;
     trustParticipantsLabel: string;
+    feedbackBadge: string;
+    feedbackTitle: string;
+    feedbackDesc: string;
+    feedbackSuccess: string;
+    feedbackPlaceholder: string;
+    feedbackBtn: string;
 
     // Freemium Pricing Hypotheses
     pricingBadge: string;
@@ -137,6 +157,23 @@ export interface Translations {
     planned: string;
     filterSearch: string;
   };
+  promo: {
+    bannerText: string;
+    actionBtn: string;
+    consultationTitle: string;
+    consultationSubtitle: string;
+    nameLabel: string;
+    namePlaceholder: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    phoneLabel: string;
+    phonePlaceholder: string;
+    submitBtn: string;
+    submitting: string;
+    successMessage: string;
+    demoNote: string;
+    closeBtn: string;
+  };
   courseDetail: {
     hours: string;
     stages: string;
@@ -146,6 +183,13 @@ export interface Translations {
     structureTitle: string;
     whatYouCover: string;
     backToCatalog: string;
+    whoIsItForTitle: string;
+    skillsTitle: string;
+    formatTitle: string;
+    consultationBtn: string;
+    freeDemoBadge: string;
+    syllabusTitle: string;
+    faqTitle: string;
   };
   diagnostic: {
     badge: string;
@@ -185,13 +229,15 @@ export interface Translations {
     available: string;
     locked: string;
     allStagesCompleted: string;
-    treasureChestTitle: string;
-    treasureChestSubtitle: string;
-    treasureChestUnlocked: string;
-    treasureChestLocked: string;
-    treasureChestGoal: string;
+    finishGoalTitle: string;
+    finishGoalSubtitle: string;
+    finishGoalReached: string;
+    finishGoalPending: string;
     remainingToGoal: string;
-    islandLabel: string;
+    checkpointLabel: string;
+    capstoneLabel: string;
+    learnerToken: string;
+    boardTrackLabel: string;
   };
   lesson: {
     breadcrumbPath: string;
@@ -348,6 +394,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       problem3Title: 'No timely feedback',
       problem3Desc: 'When stuck on an error at midnight, you have no guidance. You waste hours on forum searches instead of continuing your momentum.',
 
+      howBadge: '5 Steps',
       howTitle: 'How Kivora Works in 5 Clear Steps',
       howSubtitle: 'A structured, progressive learning journey designed for measurable results from day one.',
       step1Num: '01',
@@ -366,9 +413,21 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       step5Title: 'Verified Progress & Mastery',
       step5Desc: 'Track real skill checkpoints, maintain your momentum, and build demonstrable competence.',
 
+      tracksTitle: '15 Practical Learning Tracks',
+      tracksSubtitle: 'Practical tracks across Technology, Languages, and Soft Skills.',
       availableTitle: '15 Practical Learning Tracks',
       viewAll: 'View all 15 tracks in catalog',
       hoursUnit: 'h',
+
+      insideBadge: 'Inside Kivora',
+      insideTitle: 'Architecture for deep mastery',
+      insideSubtitle: 'Three interconnected systems that accelerate your learning.',
+      inside1Title: 'Adaptive Curriculum',
+      inside1Desc: 'Diagnostic assessment tailors the pace to your baseline.',
+      inside2Title: 'Socratic AI Tutor',
+      inside2Desc: 'Guided hints and conceptual breakdowns without giving away solutions.',
+      inside3Title: 'Clear Finish Line',
+      inside3Desc: 'Measurable lesson milestones with exact counters.',
 
       aiSuiteBadge: 'Integrated AI Architecture',
       aiSuiteTitle: 'AI that teaches you how to think, not just gives answers',
@@ -386,6 +445,12 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       trustNote: 'Are you testing Kivora at the conference? Your feedback directly shapes our curriculum development and learning algorithms.',
       trustFeedbackBtn: 'Share conference feedback',
       trustParticipantsLabel: 'Active conference testers exploring 15 tracks live',
+      feedbackBadge: 'Community & Trust',
+      feedbackTitle: 'Zero fake reviews. Transparent feedback.',
+      feedbackDesc: 'We are testing Kivora live at the university IT conference and collecting real impressions.',
+      feedbackSuccess: 'Thank you! Your feedback has been recorded for the conference report.',
+      feedbackPlaceholder: 'Your impressions, suggestions, or bug report…',
+      feedbackBtn: 'Send feedback',
 
       pricingBadge: 'Freemium Pricing Hypothesis',
       pricingTitle: 'Simple, transparent student-friendly pricing',
@@ -475,6 +540,23 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       planned: 'Planned',
       filterSearch: 'Search courses…',
     },
+    promo: {
+      bannerText: 'Special Preview: Open demo access to all 15 learning tracks · Explore your personal roadmap',
+      actionBtn: 'Explore Tracks',
+      consultationTitle: 'Enrollment & Consultation',
+      consultationSubtitle: 'Request your personal learning path. In MVP demo mode, no real card charges apply.',
+      nameLabel: 'Your Name',
+      namePlaceholder: 'e.g. Alex Johnson',
+      emailLabel: 'Email Address',
+      emailPlaceholder: 'alex@example.com',
+      phoneLabel: 'Phone or Telegram (optional)',
+      phonePlaceholder: '+1 (555) 012-3456',
+      submitBtn: 'Submit Application',
+      submitting: 'Submitting…',
+      successMessage: 'Request received! We will follow up to align your personalized trajectory.',
+      demoNote: 'Demo mode active: no payment or credit card is processed.',
+      closeBtn: 'Close',
+    },
     courseDetail: {
       hours: 'hours estimated',
       stages: 'modules',
@@ -484,6 +566,13 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       structureTitle: 'Module Structure',
       whatYouCover: 'Key topics covered in this track:',
       backToCatalog: 'Back to catalog',
+      whoIsItForTitle: 'Who this course is for',
+      skillsTitle: 'What you will master',
+      formatTitle: 'Learning format',
+      consultationBtn: 'Enroll / Get consultation',
+      freeDemoBadge: 'Free Demo Access',
+      syllabusTitle: 'Detailed Program Syllabus',
+      faqTitle: 'Frequently Asked Questions',
     },
     diagnostic: {
       badge: 'Skill Assessment',
@@ -523,13 +612,15 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       available: 'Available',
       locked: 'Locked',
       allStagesCompleted: 'Track completed! Great job.',
-      treasureChestTitle: 'Course Treasure Chest',
-      treasureChestSubtitle: 'Complete all milestones on the roadmap to claim your mastery rewards and certificate.',
-      treasureChestUnlocked: 'Treasure unlocked! You have completed the entire course.',
-      treasureChestLocked: 'Treasure chest locked',
-      treasureChestGoal: 'Final Treasure Goal',
-      remainingToGoal: 'milestones remaining to the treasure',
-      islandLabel: 'Exploration Zone',
+      finishGoalTitle: 'Course Finish Goal',
+      finishGoalSubtitle: 'Complete all steps along the board track to master the competencies and claim your certificate.',
+      finishGoalReached: 'Finish reached! You have completed all competencies.',
+      finishGoalPending: 'Course finish goal ahead',
+      remainingToGoal: 'lessons remaining to the finish line',
+      checkpointLabel: 'Checkpoint Quiz',
+      capstoneLabel: 'Capstone Project',
+      learnerToken: 'You are here',
+      boardTrackLabel: 'Board-Game Learning Path',
     },
     lesson: {
       breadcrumbPath: 'Learning Path',
@@ -685,6 +776,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       problem3Title: 'Нет помощи в момент ошибки',
       problem3Desc: 'Когда вы застряли на ошибке ночью, рядом никого нет. Вы тратите часы на форумы вместо сохранения динамики обучения.',
 
+      howBadge: '5 шагов',
       howTitle: 'Как устроена Kivora в 5 простых шагах',
       howSubtitle: 'Понятный, последовательный образовательный процесс для измеримых результатов с первого дня.',
       step1Num: '01',
@@ -703,9 +795,21 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       step5Title: 'Подтверждённый прогресс',
       step5Desc: 'Контрольные точки, реальные метрики освоения материала и уверенный рост компетенций.',
 
+      tracksTitle: '15 практических направлений',
+      tracksSubtitle: 'Прикладные курсы в сферах технологий, языков и профессионального роста.',
       availableTitle: '15 практических направлений',
       viewAll: 'Смотреть все 15 треков в каталоге',
       hoursUnit: 'ч',
+
+      insideBadge: 'Внутри Kivora',
+      insideTitle: 'Архитектура глубокого освоения',
+      insideSubtitle: 'Три взаимосвязанные системы, ускоряющие освоение материала.',
+      inside1Title: 'Адаптивная программа',
+      inside1Desc: 'Диагностика подстраивает темп под ваш реальный уровень.',
+      inside2Title: 'Сократический AI-тьютор',
+      inside2Desc: 'Подсказки и наводящие вопросы вместо готовых ответов.',
+      inside3Title: 'Понятный финиш',
+      inside3Desc: 'Измеримый прогресс каждого урока с точным счётчиком.',
 
       aiSuiteBadge: 'Интегрированный AI-комплекс',
       aiSuiteTitle: 'Искусственный интеллект, который учит мыслить, а не даёт готовые ответы',
@@ -723,6 +827,12 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       trustNote: 'Вы тестируете Kivora на конференции? Ваши впечатления напрямую определят следующие функции и образовательные треки.',
       trustFeedbackBtn: 'Оставить отзыв участника конференции',
       trustParticipantsLabel: 'Участников конференции уже пробуют 15 треков вживую',
+      feedbackBadge: 'Сообщество и доверие',
+      feedbackTitle: 'Ноль фейковых отзывов. Честная обратная связь.',
+      feedbackDesc: 'Мы тестируем Kivora на университетской IT-конференции и собираем честные впечатления.',
+      feedbackSuccess: 'Спасибо! Ваш отзыв сохранён для отчёта конференции.',
+      feedbackPlaceholder: 'Ваши впечатления, пожелания или найденная ошибка…',
+      feedbackBtn: 'Отправить отзыв',
 
       pricingBadge: 'Предварительная гипотеза тарифов',
       pricingTitle: 'Понятные, доступные тарифы для студентов',
@@ -812,6 +922,23 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       planned: 'В плане',
       filterSearch: 'Поиск по курсам…',
     },
+    promo: {
+      bannerText: 'Открытый показ: бесплатный демо-доступ ко всем 15 направлениям · Попробуйте персональную траекторию',
+      actionBtn: 'Выбрать курс',
+      consultationTitle: 'Запись на курс и консультация',
+      consultationSubtitle: 'Оставьте заявку на персональную траекторию обучения. В демо-версии реальная оплата не взимается.',
+      nameLabel: 'Ваше имя',
+      namePlaceholder: 'Например, Азамат Иванов',
+      emailLabel: 'Электронная почта',
+      emailPlaceholder: 'alex@example.com',
+      phoneLabel: 'Телефон или Telegram (необязательно)',
+      phonePlaceholder: '+996 555 123-456',
+      submitBtn: 'Отправить заявку',
+      submitting: 'Отправка…',
+      successMessage: 'Заявка принята! Мы свяжемся с вами для подбора оптимальной программы.',
+      demoNote: 'Активен демо-режим: сбор платёжных карт и реальная оплата отключены.',
+      closeBtn: 'Закрыть',
+    },
     courseDetail: {
       hours: 'часов программы',
       stages: 'модулей',
@@ -821,6 +948,13 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       structureTitle: 'Структура курса',
       whatYouCover: 'Ключевые темы курса:',
       backToCatalog: 'Назад в каталог',
+      whoIsItForTitle: 'Кому подойдёт курс',
+      skillsTitle: 'Чему вы научитесь',
+      formatTitle: 'Формат обучения',
+      consultationBtn: 'Записаться / Консультация',
+      freeDemoBadge: 'Бесплатный демо-доступ',
+      syllabusTitle: 'Подробная программа курса',
+      faqTitle: 'Часто задаваемые вопросы',
     },
     diagnostic: {
       badge: 'Определение уровня',
@@ -860,13 +994,15 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       available: 'Доступен',
       locked: 'Закрыт',
       allStagesCompleted: 'Курс полностью пройден! Отличная работа.',
-      treasureChestTitle: 'Сундук с сокровищами курса',
-      treasureChestSubtitle: 'Пройдите все этапы маршрута, чтобы открыть финальную награду и получить сертификат.',
-      treasureChestUnlocked: 'Сокровище открыто! Вы успешно завершили весь маршрут курса.',
-      treasureChestLocked: 'Сундук закрыт',
-      treasureChestGoal: 'Цель: Сундук сокровищ',
-      remainingToGoal: 'этапов осталось до сокровища',
-      islandLabel: 'Зона маршрута',
+      finishGoalTitle: 'Цель курса: Финиш',
+      finishGoalSubtitle: 'Пройдите все уроки по настольной дорожке, чтобы подтвердить компетенции и получить сертификат.',
+      finishGoalReached: 'Финиш достигнут! Вы успешно освоили все навыки программы.',
+      finishGoalPending: 'Впереди финишная цель курса',
+      remainingToGoal: 'уроков осталось до финиша',
+      checkpointLabel: 'Проверочный чекпоинт',
+      capstoneLabel: 'Итоговый практический проект',
+      learnerToken: 'Вы здесь',
+      boardTrackLabel: 'Игровая настольная дорожка',
     },
     lesson: {
       breadcrumbPath: 'Траектория обучения',
@@ -1022,6 +1158,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       problem3Title: 'Ката кетиргенде колдоонун жоктугу',
       problem3Desc: 'Түндө маселеге тыгылып калганда жаныңызда эч ким жок. Форумдарда сааттап отуруп, окуу динамикасын жоготосуз.',
 
+      howBadge: '5 кадам',
       howTitle: 'Kivora кандайча 5 жөнөкөй кадамда иштейт',
       howSubtitle: 'Биринчи күндөн баштап так натыйжаларга жеткирүүчү иреттүү окуу процесси.',
       step1Num: '01',
@@ -1040,9 +1177,21 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       step5Title: 'Тастыкталган прогресс',
       step5Desc: 'Өздөштүрүүнүн реалдуу көрсөткүчтөрү, текшерилүүчү көндүмдөр жана туруктуу өсүш.',
 
+      tracksTitle: '15 практикалык багыт',
+      tracksSubtitle: 'Технология, тилдер жана кесиптик өнүгүү боюнча практикалык курстар.',
       availableTitle: '15 практикалык багыт',
       viewAll: 'Каталогдогу бардык 15 тректи көрүү',
       hoursUnit: 'саат',
+
+      insideBadge: 'Kivora ичинде',
+      insideTitle: 'Терең өздөштүрүү архитектурасы',
+      insideSubtitle: 'Окуу процессин ылдамдатуучу үч байланышкан система.',
+      inside1Title: 'Адаптивдүү программа',
+      inside1Desc: 'Диагностика окуу темпин деңгээлиңизге ылайыктайт.',
+      inside2Title: 'Сократтык AI-насаатчы',
+      inside2Desc: 'Даяр жооптордун ордуна багыттоочу кеңештер жана суроолор.',
+      inside3Title: 'Ачык финиш',
+      inside3Desc: 'Так эсептегич менен ар бир сабактын өлчөнүүчү прогресси.',
 
       aiSuiteBadge: 'Интеграцияланган AI-комплекси',
       aiSuiteTitle: 'Даяр жоопту бербей, ой жүгүртүүгө үйрөтүүчү жасалма интеллект',
@@ -1060,6 +1209,12 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       trustNote: 'Сиз Kivoraны конференцияда сынап жатасызбы? Сиздин пикириңиз кийинки функцияларды түздөн-түз аныктайт.',
       trustFeedbackBtn: 'Конференция катышуучусунун пикирин калтыруу',
       trustParticipantsLabel: 'Конференция катышуучулары 15 багытты түз эфирде сынап жатышат',
+      feedbackBadge: 'Коомдоштук жана ишеним',
+      feedbackTitle: 'Жалган пикирлер жок. Ачык пикирлер.',
+      feedbackDesc: 'Биз Kivoraны университеттик IT-конференциясында сынап, анык пикирлерди топтоп жатабыз.',
+      feedbackSuccess: 'Ыраазычылык билдиребиз! Сиздин пикириңиз конференциянын отчетуна киргизилди.',
+      feedbackPlaceholder: 'Таасирлериңиз, сунуштарыңыз же табылган ката…',
+      feedbackBtn: 'Пикир жөнөтүү',
 
       pricingBadge: 'Баалардын алдын ала гипотезасы',
       pricingTitle: 'Студенттер үчүн түшүнүктүү жана жеткиликтүү баалар',
@@ -1149,6 +1304,23 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       planned: 'Пландалган',
       filterSearch: 'Курстарды издөө…',
     },
+    promo: {
+      bannerText: 'Ачык көрсөтүү: бардык 15 багытка акысыз демо-мүмкүнчүлүк · Жеке багытыңызды сынап көрүңүз',
+      actionBtn: 'Курс тандоо',
+      consultationTitle: 'Курска жазылуу жана кеңеш алуу',
+      consultationSubtitle: 'Жеке окуу траекториясына билдирме калтырыңыз. Демо-версияда төлөм алынбайт.',
+      nameLabel: 'Сиздин атыңыз',
+      namePlaceholder: 'Мисалы, Бекзат Асанов',
+      emailLabel: 'Электрондук почта',
+      emailPlaceholder: 'alex@example.com',
+      phoneLabel: 'Телефон же Telegram (милдеттүү эмес)',
+      phonePlaceholder: '+996 555 123-456',
+      submitBtn: 'Билдирмени жөнөтүү',
+      submitting: 'Жөнөтүлүүдө…',
+      successMessage: 'Билдирме кабыл алынды! Сизге ылайыктуу маршрутту тандоо үчүн байланышабыз.',
+      demoNote: 'Демо-режим активдүү: картадан каражат чечилбейт.',
+      closeBtn: 'Жабуу',
+    },
     courseDetail: {
       hours: 'саат көлөмү',
       stages: 'модуль',
@@ -1158,6 +1330,13 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       structureTitle: 'Багыттын түзүмү',
       whatYouCover: 'Багытта каралуучу негизги темалар:',
       backToCatalog: 'Каталогго кайтуу',
+      whoIsItForTitle: 'Курс кимге ылайыктуу',
+      skillsTitle: 'Кандай көндүмдөрдү үйрөнөсүз',
+      formatTitle: 'Окутуунун форматы',
+      consultationBtn: 'Жазылуу / Кеңеш алуу',
+      freeDemoBadge: 'Акысыз демо-мүмкүнчүлүк',
+      syllabusTitle: 'Курстун толук программасы',
+      faqTitle: 'Көп берилүүчү суроолор',
     },
     diagnostic: {
       badge: 'Деңгээлди аныктоо',
@@ -1197,13 +1376,15 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       available: 'Жеткиликтүү',
       locked: 'Жабык',
       allStagesCompleted: 'Багыт толугу менен аяктады! Мыкты иш.',
-      treasureChestTitle: 'Курстун кенч сандыкчасы',
-      treasureChestSubtitle: 'Финалдык сыйлыкты ачуу жана сертификат алуу үчүн маршруттун бардык баскычтарын басып өтүңүз.',
-      treasureChestUnlocked: 'Кенч ачылды! Сиз курстун бардык маршрутун ийгиликтүү аяктадыңыз.',
-      treasureChestLocked: 'Сандык жабык',
-      treasureChestGoal: 'Максат: Кенч сандыкчасы',
-      remainingToGoal: 'баскыч калды кенчке чейин',
-      islandLabel: 'Маршрут аймагы',
+      finishGoalTitle: 'Курстун финалдык максаты: Финиш',
+      finishGoalSubtitle: 'Бардык сабактарды аяктап, көндүмдөрдү бекемдеңиз жана сертификат алыңыз.',
+      finishGoalReached: 'Финишке жеттиңиз! Курстун бардык көндүмдөрүн толук өздөштүрдүңүз.',
+      finishGoalPending: 'Алдыда курстун финалдык максаты',
+      remainingToGoal: 'сабак финишке чейин калды',
+      checkpointLabel: 'Текшерүү чекпоинти',
+      capstoneLabel: 'Жыйынтыктоочу долбоор',
+      learnerToken: 'Сиз мындасыз',
+      boardTrackLabel: 'Оюн үстөлү тибиндеги окуу жолу',
     },
     lesson: {
       breadcrumbPath: 'Окуу маршруту',
