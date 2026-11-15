@@ -37,10 +37,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   if (stored === 'dark' || (stored === 'system' && supportDark)) {
                     document.documentElement.classList.add('dark');
                     document.documentElement.classList.remove('light');
+                    document.documentElement.setAttribute('data-theme', 'dark');
                     document.documentElement.style.colorScheme = 'dark';
                   } else {
                     document.documentElement.classList.add('light');
                     document.documentElement.classList.remove('dark');
+                    document.documentElement.setAttribute('data-theme', 'light');
                     document.documentElement.style.colorScheme = 'light';
                   }
                 } catch(e) {}

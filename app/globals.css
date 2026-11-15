@@ -3,7 +3,9 @@
 /* ─── Kivora Design System — Light, Dark & Semantic Tokens ────────────── */
 
 :root,
-html.light {
+html.light,
+html[data-theme="light"],
+[data-theme="light"] {
   color-scheme: light;
 
   /* Backgrounds & Surfaces (Apple-inspired airy, clean minimalism) */
@@ -60,7 +62,9 @@ html.light {
   --r-2xl: 32px;
 }
 
-html.dark {
+html.dark,
+html[data-theme="dark"],
+[data-theme="dark"] {
   color-scheme: dark;
 
   /* Backgrounds & Surfaces (Neutral graphite) */
