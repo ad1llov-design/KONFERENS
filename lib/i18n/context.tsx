@@ -13,21 +13,33 @@ interface LanguageContextType {
 const STORAGE_KEY = 'kivora_locale';
 
 const LanguageContext = createContext<LanguageContextType>({
-  locale: 'en',
+  locale: 'ru',
   setLocale: () => {},
-  t: TRANSLATIONS.en,
+  t: TRANSLATIONS.ru,
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('en');
+  const [locale, setLocaleState] = useState<Locale>('ru');
 
-  // Load saved locale from localStorage on mount
+  // Load saved locale from localStorage on mount, or detect from browser
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
       if (saved && (saved === 'en' || saved === 'ru' || saved === 'ky')) {
         setLocaleState(saved);
         document.documentElement.lang = saved;
+      } else if (typeof navigator !== 'undefined' && navigator.language) {
+        const lang = navigator.language.toLowerCase();
+        if (lang.startsWith('ky')) {
+          setLocaleState('ky');
+          document.documentElement.lang = 'ky';
+        } else if (lang.startsWith('en')) {
+          setLocaleState('en');
+          document.documentElement.lang = 'en';
+        } else {
+          setLocaleState('ru');
+          document.documentElement.lang = 'ru';
+        }
       }
     } catch {
       // ignore

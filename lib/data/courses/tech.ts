@@ -6,41 +6,41 @@ const jsStages: Stage[] = [
     id: 'js-s1',
     courseId: 'javascript-basics',
     order: 1,
-    title: 'Variables & Data Types',
-    description: 'Learn modern const/let declarations and fundamental JS types.',
+    title: 'Переменные и типы данных',
+    description: 'Изучите современные объявления const/let и базовые типы данных JS.',
     lessons: [
       {
         id: 'js-s1-l1',
         stageId: 'js-s1',
         courseId: 'javascript-basics',
         order: 1,
-        title: 'const, let, and Primitive Types',
-        content: `## Modern Variable Declarations
+        title: 'Переменные const, let и типы данных',
+        content: `## Современное объявление переменных
 
-In modern JavaScript (ES6+), avoid \`var\`. Instead use:
+В современном JavaScript (ES6+) не используется устаревший \`var\`. Вместо него применяются:
 
-- **const:** for values that won't be reassigned (default choice!)
-- **let:** for variables whose values will change over time
+- **const:** объявление константы, значение которой нельзя переназначить (выбор по умолчанию!)
+- **let:** переменная, значение которой может изменяться во времени
 
 \`\`\`javascript
 const pi = 3.14159;
 let score = 0;
-score += 10; // valid
+score += 10; // корректно
 
-const name = "Kivora"; // String
-const active = true;   // Boolean
-const count = 42;      // Number
+const siteName = "Kivora"; // String
+const active = true;        // Boolean
+const count = 42;           // Number
 \`\`\`
 
-JavaScript is dynamically typed, but variables hold values of specific primitive types: \`string\`, \`number\`, \`boolean\`, \`null\`, \`undefined\`, \`symbol\`, and \`bigint\`.`,
+JavaScript имеет динамическую типизацию, при этом значения принадлежат конкретным примитивным типам: \`string\`, \`number\`, \`boolean\`, \`null\`, \`undefined\`, \`symbol\`, \`bigint\`.`,
         exercise: {
           id: 'js-s1-l1-ex',
           type: 'code-output',
-          question: 'What is the output of `typeof (42 === "42")` in JavaScript?',
+          question: 'Какой тип вернёт выражение `typeof (42 === "42")` в JavaScript?',
           correctAnswer: 'boolean',
           explanation:
-            '`42 === "42"` evaluates to `false` because strict equality (`===`) checks both value and type without coercion. The `typeof false` is the string `"boolean"`.',
-          hint: 'Strict equality returns true or false. What type is that?',
+            '`42 === "42"` возвращает `false`, так как строгое равенство (`===`) проверяет и значение, и тип без приведения. А `typeof false` — это строка `"boolean"`.',
+          hint: 'Строгое равенство возвращает true или false. Какой это тип?',
         },
       },
     ],
@@ -49,44 +49,44 @@ JavaScript is dynamically typed, but variables hold values of specific primitive
     id: 'js-s2',
     courseId: 'javascript-basics',
     order: 2,
-    title: 'Functions & Arrow Syntax',
-    description: 'Declaring reusable logic with functions and modern arrow functions.',
+    title: 'Функции и стрелочный синтаксис',
+    description: 'Объявление переиспользуемой логики через функции и стрелочный синтаксис ES6.',
     lessons: [
       {
         id: 'js-s2-l1',
         stageId: 'js-s2',
         courseId: 'javascript-basics',
         order: 1,
-        title: 'Arrow Functions and Returns',
-        content: `## Arrow Functions
+        title: 'Стрелочные функции (Arrow Functions)',
+        content: `## Стрелочные функции
 
-Arrow functions provide a concise syntax and lexical \`this\` binding:
+Стрелочные функции обеспечивают лаконичный синтаксис и сохраняют лексический контекст \`this\`:
 
 \`\`\`javascript
-// Standard function
+// Обычная функция
 function add(a, b) {
   return a + b;
 }
 
-// Arrow function with explicit body
+// Стрелочная функция с телом
 const multiply = (a, b) => {
   return a * b;
 };
 
-// Concise arrow function (implicit return)
+// Компактная стрелочная функция (неявный возврат)
 const square = x => x * x;
 \`\`\`
 
-If there is only one expression, you can omit the curly braces and the \`return\` keyword is implied.`,
+Если тело функции состоит из одного выражения, фигурные скобки можно опустить, а значение вернётся автоматически без ключевого слова \`return\`.`,
         exercise: {
           id: 'js-s2-l1-ex',
           type: 'multiple-choice',
-          question: 'Which arrow function correctly doubles a number with an implicit return?',
+          question: 'Какая стрелочная функция правильно удваивает число с неявным возвратом (implicit return)?',
           options: ['const d = n => { n * 2 }', 'const d = n => n * 2', 'const d = (n) => return n * 2', 'const d = (n) { n * 2 }'],
           correctAnswer: 1,
           explanation:
-            '`const d = n => n * 2` uses an implicit return because it omits curly braces. With curly braces, explicit `return` is required.',
-          hint: 'No curly braces means implicit return.',
+            '`const d = n => n * 2` использует неявный возврат, опуская фигурные скобки. При наличии скобок `{}` возврат требует явного слова `return`.',
+          hint: 'Без фигурных скобок выражение возвращается автоматически.',
         },
       },
     ],
@@ -95,37 +95,37 @@ If there is only one expression, you can omit the curly braces and the \`return\
     id: 'js-s3',
     courseId: 'javascript-basics',
     order: 3,
-    title: 'Arrays & Functional Methods',
-    description: 'Transform collections with map, filter, and reduce.',
+    title: 'Массивы и методы трансформации',
+    description: 'Трансформация коллекций с помощью map, filter и reduce.',
     lessons: [
       {
         id: 'js-s3-l1',
         stageId: 'js-s3',
         courseId: 'javascript-basics',
         order: 1,
-        title: 'Transforming Arrays with .map() and .filter()',
-        content: `## Array Transformations
+        title: 'Трансформация массивов через .map() и .filter()',
+        content: `## Неизменяемая трансформация массивов
 
-Modern JS favors immutable array transformations over manual \`for\` loops:
+Современный JS предпочитает декларативные методы трансформации ручным циклам \`for\`:
 
 \`\`\`javascript
 const numbers = [1, 2, 3, 4, 5];
 
-// Filter even numbers:
+// Фильтрация четных чисел:
 const evens = numbers.filter(n => n % 2 === 0); // [2, 4]
 
-// Map to double each number:
+// Умножение каждого числа на два:
 const doubled = numbers.map(n => n * 2); // [2, 4, 6, 8, 10]
 \`\`\`
 
-Both \`.map()\` and \`.filter()\` return a **new** array without mutating the original.`,
+Оба метода \`.map()\` и \`.filter()\` возвращают **новый** массив, не изменяя исходный.`,
         exercise: {
           id: 'js-s3-l1-ex',
           type: 'code-output',
-          question: 'What is the length of `[10, 15, 20, 25].filter(x => x > 15)`?',
+          question: 'Чему равна длина массива `[10, 15, 20, 25].filter(x => x > 15)`?',
           correctAnswer: '2',
-          explanation: 'Only numbers strictly greater than 15 (20 and 25) pass the filter, resulting in an array of 2 elements.',
-          hint: 'Count which numbers are strictly greater than 15.',
+          explanation: 'Только числа строго больше 15 (это 20 и 25) проходят фильтр, поэтому итоговый массив содержит ровно 2 элемента.',
+          hint: 'Посчитайте, сколько чисел строго больше 15.',
         },
       },
     ],
@@ -138,43 +138,46 @@ const webDevStages: Stage[] = [
     id: 'web-s1',
     courseId: 'web-development',
     order: 1,
-    title: 'Semantic HTML5 Architecture',
-    description: 'Accessible structure with semantic HTML tags and page layout.',
+    title: 'Семантическая архитектура HTML5',
+    description: 'Доступная и чистая структура страницы с использованием семантических тегов HTML5.',
     lessons: [
       {
         id: 'web-s1-l1',
         stageId: 'web-s1',
         courseId: 'web-development',
         order: 1,
-        title: 'Building with Semantic Tags',
-        content: `## Why Semantics Matter
+        title: 'Семантическая разметка HTML5',
+        content: `## Почему семантика имеет значение
 
-Instead of nesting infinite generic \`<div>\` elements, semantic HTML describes its meaning to browsers, screen readers, and search engines:
+Семантические теги сообщают браузеру и поисковым системам точный смысл содержимого, улучшая доступность (a11y) и SEO:
 
-- \`<header>\`: Introductory content or navigational aids
-- \`<nav>\`: Major navigation links
-- \`<main>\`: The dominant content of the document (only one per page!)
-- \`<article>\`: Self-contained, syndicatable content (e.g., blog post)
-- \`<section>\`: Thematic grouping of content with a heading
-- \`<footer>\`: Author, copyright, or related document links
+- \`<header>\` — вводная часть сайта или раздела, логотип и навигация
+- \`<nav>\` — блок основных навигационных ссылок
+- \`<main>\` — главное уникальное содержимое страницы (строго один на страницу!)
+- \`<article>\` — самостоятельный независимый материал (статья, пост, карточка товара)
+- \`<section>\` — тематическая смысловая секция с заголовком
+- \`<footer>\` — подвал с авторскими правами, контактами и правовой информацией
 
 \`\`\`html
 <header>
-  <nav><a href="/">Home</a></nav>
+  <nav><a href="/">Главная</a></nav>
 </header>
 <main>
-  <article><h1>Title</h1><p>Body</p></article>
+  <article>
+    <h1>Заголовок статьи</h1>
+    <p>Основной текст публикации</p>
+  </article>
 </main>
 \`\`\``,
         exercise: {
           id: 'web-s1-l1-ex',
           type: 'multiple-choice',
-          question: 'Which tag should contain the unique primary content of a webpage (only one per page)?',
-          options: ['<section>', '<main>', '<article>', '<content>'],
+          question: 'Какой тег HTML5 лучше всего подходит для оборачивания основных навигационных ссылок сайта?',
+          options: ['<menu-bar>', '<nav>', '<navigation>', '<links>'],
           correctAnswer: 1,
           explanation:
-            '`<main>` is the semantic container specifically reserved for the central, non-repeating content of a document.',
-          hint: 'It is the main section of the site.',
+            'Спецификация HTML5 закрепляет тег `<nav>` для блоков главной и второстепенной навигации.',
+          hint: 'Сокращение из трёх букв от слова navigation.',
         },
       },
     ],
@@ -183,29 +186,29 @@ Instead of nesting infinite generic \`<div>\` elements, semantic HTML describes 
     id: 'web-s2',
     courseId: 'web-development',
     order: 2,
-    title: 'Modern CSS: Flexbox & Layout',
-    description: 'Aligning and distributing space with Flexbox.',
+    title: 'Современный CSS: Flexbox и раскладка',
+    description: 'Выравнивание и распределение элементов по осям с помощью Flexbox.',
     lessons: [
       {
         id: 'web-s2-l1',
         stageId: 'web-s2',
         courseId: 'web-development',
         order: 1,
-        title: 'Centering and Distributing with Flexbox',
-        content: `## Flexbox Core Properties
+        title: 'Выравнивание с Flexbox',
+        content: `## Одномерная компоновка элементов
 
-Flexbox operates along two axes: the **main axis** (horizontal by default) and the **cross axis** (vertical by default).
+Flexbox оперирует двумя осями: главной осью (**main axis**, по умолчанию горизонтальной) и поперечной осью (**cross axis**, по умолчанию вертикальной).
 
 \`\`\`css
 .container {
   display: flex;
-  justify-content: space-between; /* distributes along main axis */
-  align-items: center;          /* centers along cross axis */
-  gap: 1.5rem;                  /* space between items */
+  justify-content: space-between; /* распределяет по главной оси */
+  align-items: center;          /* выравнивает по поперечной оси */
+  gap: 1.5rem;                  /* отступ между элементами */
 }
 \`\`\`
 
-To vertically and horizontally center any element inside a container:
+Чтобы идеально отцентрировать элемент по вертикали и горизонтали:
 \`\`\`css
 .parent {
   display: flex;
@@ -216,11 +219,12 @@ To vertically and horizontally center any element inside a container:
         exercise: {
           id: 'web-s2-l1-ex',
           type: 'multiple-choice',
-          question: 'Which property aligns flex items along the cross axis (vertically in row direction)?',
-          options: ['justify-content', 'align-items', 'flex-direction', 'flex-wrap'],
+          question: 'Какое CSS-свойство выравнивает элементы по главной оси внутри flex-контейнера?',
+          options: ['align-items', 'justify-content', 'align-content', 'flex-align'],
           correctAnswer: 1,
-          explanation: '`align-items` controls alignment along the cross axis, while `justify-content` controls the main axis.',
-          hint: 'justify = main axis, align = cross axis.',
+          explanation:
+            '`justify-content` управляет распределением пространства и выравниванием по главной оси flex-контейнера.',
+          hint: 'Слово justify означает выравнивание по ширине или направлению строки.',
         },
       },
     ],
@@ -229,27 +233,27 @@ To vertically and horizontally center any element inside a container:
     id: 'web-s3',
     courseId: 'web-development',
     order: 3,
-    title: 'Responsive Design & Viewports',
-    description: 'Media queries, fluid layouts, and mobile-first principles.',
+    title: 'Адаптивный дизайн и Breakpoints',
+    description: 'Медиа-запросы, гибкая верстка и подход Mobile-First.',
     lessons: [
       {
         id: 'web-s3-l1',
         stageId: 'web-s3',
         courseId: 'web-development',
         order: 1,
-        title: 'Mobile-First Breakpoints',
-        content: `## Mobile-First Strategy
+        title: 'Адаптивный дизайн и Breakpoints',
+        content: `## Подход Mobile-First
 
-Mobile-first means you write base styles for small mobile screens first, then progressively enhance layout on wider viewports using \`min-width\` media queries:
+Современная вёрстка строится от мобильных экранов к десктопным с помощью медиа-запросов (\`@media\`):
 
 \`\`\`css
-/* Base: Mobile single column */
+/* Базовые стили для мобильных устройств */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
 }
 
-/* Tablet & Desktop enhancement */
+/* Стили для планшетов и десктопов (от 768px) */
 @media (min-width: 768px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
@@ -257,17 +261,17 @@ Mobile-first means you write base styles for small mobile screens first, then pr
 }
 \`\`\`
 
-Always include the meta viewport tag in HTML:
+Метатег viewport обязателен в HTML:
 \`<meta name="viewport" content="width=device-width, initial-scale=1">\``,
         exercise: {
           id: 'web-s3-l1-ex',
           type: 'multiple-choice',
-          question: 'In mobile-first responsive design, which media query feature is standard?',
-          options: ['max-width', 'min-width', 'device-height', 'screen-only'],
+          question: 'Какое правило медиа-запроса применяется в подходе Mobile-First для экранов шире 768px?',
+          options: ['@media (max-width: 768px)', '@media (min-width: 768px)', '@media (screen: 768px)', '@media (device: 768px)'],
           correctAnswer: 1,
           explanation:
-            '`@media (min-width: ...)` applies rules as the screen expands, aligning with the mobile-first philosophy of progressive enhancement.',
-          hint: 'We start at 0 width and enhance from a minimum width upward.',
+            'В подходе Mobile-First базовые стили пишутся для телефонов, а для больших экранов задаются правила с `min-width`.',
+          hint: 'Минимальная ширина экрана, при которой включаются расширенные стили.',
         },
       },
     ],

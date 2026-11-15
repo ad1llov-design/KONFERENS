@@ -372,15 +372,15 @@ Strategies for handling risk:
 // ─── 4. Entrepreneurship & Startup Foundations ───────────────────────────────
 const startupStages: Stage[] = [
   {
-    id: 'en-s1',
+    id: 'ent-s1',
     courseId: 'entrepreneurship',
     order: 1,
     title: 'Problem Discovery & Customer Interviews',
     description: 'Validate problems and avoid building things nobody wants.',
     lessons: [
       {
-        id: 'en-s1-l1',
-        stageId: 'en-s1',
+        id: 'ent-s1-l1',
+        stageId: 'ent-s1',
         courseId: 'entrepreneurship',
         order: 1,
         title: 'The Mom Test: Finding Honest Truth',
@@ -395,7 +395,7 @@ People lie to you when they know you are an entrepreneur seeking compliments. Th
    - *"Tell me about the last time you struggled with this problem..."*
 3. **Listen more than you talk.** You are a detective, not a salesperson.`,
         exercise: {
-          id: 'en-s1-l1-ex',
+          id: 'ent-s1-l1-ex',
           type: 'multiple-choice',
           question: 'Which question adheres best to The Mom Test methodology?',
           options: [
@@ -413,15 +413,15 @@ People lie to you when they know you are an entrepreneur seeking compliments. Th
     ],
   },
   {
-    id: 'en-s2',
+    id: 'ent-s2',
     courseId: 'entrepreneurship',
     order: 2,
     title: 'The Lean Canvas & Business Models',
     description: 'Deconstruct your venture on a single page.',
     lessons: [
       {
-        id: 'en-s2-l1',
-        stageId: 'en-s2',
+        id: 'ent-s2-l1',
+        stageId: 'ent-s2',
         courseId: 'entrepreneurship',
         order: 1,
         title: 'Unique Value Proposition (UVP)',
@@ -441,7 +441,7 @@ unlike [Existing Ineffective Alternative]."
 Example:
 *"Kivora helps busy students master practical skills through 5-minute interactive lessons with a private AI tutor, unlike passive video platforms with 30-minute lectures."*`,
         exercise: {
-          id: 'en-s2-l1-ex',
+          id: 'ent-s2-l1-ex',
           type: 'multiple-choice',
           question: 'What is the primary role of a Unique Value Proposition (UVP)?',
           options: [
@@ -458,15 +458,15 @@ Example:
     ],
   },
   {
-    id: 'en-s3',
+    id: 'ent-s3',
     courseId: 'entrepreneurship',
     order: 3,
     title: 'MVP Definition & Pitching',
     description: 'Building the smallest thing that delivers real customer value.',
     lessons: [
       {
-        id: 'en-s3-l1',
-        stageId: 'en-s3',
+        id: 'ent-s3-l1',
+        stageId: 'ent-s3',
         courseId: 'entrepreneurship',
         order: 1,
         title: 'What a Minimum Viable Product Really Is',

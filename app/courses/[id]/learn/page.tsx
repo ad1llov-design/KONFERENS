@@ -73,9 +73,6 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
     );
   }
 
-  if (!mounted) {
-    return <div className="min-h-screen bg-background" />;
-  }
 
   const allLessons = getAllLessons(courseId);
   const totalLessons = allLessons.length;
@@ -86,18 +83,25 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
   const user = DemoState.getUser();
   const learnerAvatar = user?.avatar ?? '🦊';
 
-  return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <Navbar />
-      <main className="flex-1 max-w-4xl mx-auto px-4 py-8 md:py-10 w-full overflow-x-hidden">
+  // Helper for localized lesson label
+  function getLessonNumberLabel(num: number): string {
+    if (locale === 'ky') return `${num}-сабак`;
+    if (locale === 'ru') return `Урок ${num}`;
+    return `Lesson ${num}`;
+  }
 
+  return (
+    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">
+      <Navbar />
+
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12 w-full overflow-x-hidden">
         {/* ── Header: Course Roadmap Overview ──────────────────────────────── */}
-        <div className="surface rounded-[var(--r-xl)] p-6 mb-8 border border-border shadow-sm">
+        <div className="glass-card rounded-[var(--r-xl)] p-6 mb-8 border border-border shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-1.5">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <Badge variant="accent">
-                  <Flame className="h-3.5 w-3.5 mr-1" />
+                  <Flame className="h-3.5 w-3.5 mr-1 text-amber" />
                   {t.lesson.breadcrumbPath}
                 </Badge>
                 {enrolled && (
@@ -107,11 +111,11 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                   {t.learn.boardTrackLabel}
                 </span>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">{course.title}</h1>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-foreground">{course.title}</h1>
               {!enrolled ? (
                 <p className="text-xs md:text-sm text-muted mt-1">{t.learn.diagnosticHint}</p>
               ) : (
-                <p className="text-xs md:text-sm text-muted mt-1">
+                <p className="text-xs md:text-sm text-muted mt-1.5">
                   {locale === 'ru'
                     ? `${completedCount} из ${totalLessons} уроков пройдено (${completionPercent}%)`
                     : locale === 'ky'
@@ -124,17 +128,17 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
             <div className="flex items-center gap-2.5 shrink-0">
               {enrolled && currentLessonId && (
                 <Link href={`/courses/${courseId}/learn/${currentLessonId}`}>
-                  <Button size="md">
-                    {t.learn.continueBtn}
-                    <ArrowRight className="h-4 w-4" />
+                  <Button size="md" className="btn-accent-glow">
+                    <span>{t.learn.continueBtn}</span>
+                    <ArrowRight className="h-4 w-4 ml-1" />
                   </Button>
                 </Link>
               )}
               {!enrolled && (
                 <Link href={`/courses/${courseId}/diagnostic`}>
-                  <Button size="md">
-                    {t.learn.startDiagnostic}
-                    <ArrowRight className="h-4 w-4" />
+                  <Button size="md" className="btn-accent-glow">
+                    <span>{t.learn.startDiagnostic}</span>
+                    <ArrowRight className="h-4 w-4 ml-1" />
                   </Button>
                 </Link>
               )}
@@ -142,7 +146,7 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
           </div>
 
           {enrolled && (
-            <div className="mt-5">
+            <div className="mt-5 pt-4 border-t border-border">
               <ProgressBar value={completionPercent} label={t.learn.overallProgress} showLabel />
             </div>
           )}
@@ -165,24 +169,24 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
               </h3>
               <p className="text-xs text-muted mt-0.5">
                 {isAllCompleted ? (
-                  <span className="text-success font-medium">✓ {t.learn.finishGoalReached}</span>
+                  <span className="text-success font-semibold">✓ {t.learn.finishGoalReached}</span>
                 ) : locale === 'ru' ? (
                   <span>
                     <strong className="text-foreground font-semibold">{completedCount}</strong> из{' '}
                     <strong className="text-foreground font-semibold">{totalLessons}</strong> уроков пройдено · осталось{' '}
-                    <strong className="text-accent font-semibold">{remainingCount}</strong>
+                    <strong className="text-accent font-bold">{remainingCount}</strong>
                   </span>
                 ) : locale === 'ky' ? (
                   <span>
                     <strong className="text-foreground font-semibold">{totalLessons}</strong> сабактын{' '}
                     <strong className="text-foreground font-semibold">{completedCount}</strong>ү аяктады · калды{' '}
-                    <strong className="text-accent font-semibold">{remainingCount}</strong>
+                    <strong className="text-accent font-bold">{remainingCount}</strong>
                   </span>
                 ) : (
                   <span>
                     <strong className="text-foreground font-semibold">{completedCount}</strong> of{' '}
                     <strong className="text-foreground font-semibold">{totalLessons}</strong> lessons completed ·{' '}
-                    <strong className="text-accent font-semibold">{remainingCount}</strong> remaining
+                    <strong className="text-accent font-bold">{remainingCount}</strong> remaining
                   </span>
                 )}
               </p>
@@ -192,13 +196,13 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
           <div className="flex items-center gap-2 sm:self-auto self-end">
             <div className="text-right">
               <span className="text-xs text-muted block">{t.learn.overallProgress}</span>
-              <span className="text-lg font-black text-accent">{completionPercent}%</span>
+              <span className="text-xl font-black text-accent">{completionPercent}%</span>
             </div>
           </div>
         </div>
 
-        {/* ── Board-Game Winding Path (Извилистая настольная дорожка) ───────── */}
-        <div className="flex flex-col gap-12 relative">
+        {/* ── Board-Game Serpentine Road (Извилистая настольная дорожка) ──────── */}
+        <div className="flex flex-col gap-12 relative my-4">
           {rawCourse.stages.map((rawStage, si) => {
             const stage = getLocalizedStage(courseId, rawStage, locale);
             const stageLessons = stage.lessons;
@@ -210,9 +214,9 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
             return (
               <div key={stage.id} className="relative">
                 {/* Stage Milestone Divider */}
-                <div className="flex items-center gap-3 mb-6 bg-surface-raised/70 border border-border/80 px-4 py-2.5 rounded-[var(--r-lg)]">
+                <div className="flex items-center gap-3 mb-8 bg-surface-raised border border-border px-4 py-3 rounded-[var(--r-lg)] shadow-xs">
                   <div className={[
-                    'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border',
+                    'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border',
                     stageCompleted
                       ? 'bg-success text-white border-success'
                       : stageCurrent
@@ -234,8 +238,8 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                   )}
                 </div>
 
-                {/* Serpentine Board Cells */}
-                <div className="flex flex-col gap-6 relative">
+                {/* Serpentine Game Cells Track */}
+                <div className="flex flex-col gap-7 relative">
                   {stageLessons.map((rawLesson, li) => {
                     const lesson = getLocalizedLesson(courseId, rawLesson, locale);
                     const status = lessonStatuses[lesson.id] ?? (enrolled ? 'locked' : 'available');
@@ -243,84 +247,86 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                     const isCompleted = status === 'completed';
                     const isLocked = status === 'locked';
                     const isAvailable = status === 'available';
-
                     const canAccess = isCurrent || isAvailable || isCompleted;
 
                     // Board game node types: checkpoint quiz, capstone project, or standard lesson
                     const isCapstone = li === stageLessons.length - 1 && si === rawCourse.stages.length - 1;
                     const isCheckpoint = !isCapstone && li === Math.floor(stageLessons.length / 2);
 
-                    // Serpentine horizontal offset class (alternates left, center, right)
-                    // Gives a genuine winding board-game trail look
+                    // Serpentine horizontal wave offset (left, center, right, center)
                     const waveOffsets = [
+                      'sm:-translate-x-4 md:-translate-x-8',
+                      'sm:translate-x-4 md:translate-x-8',
                       'sm:translate-x-0',
-                      'sm:translate-x-8 md:translate-x-12',
-                      'sm:translate-x-0',
-                      'sm:-translate-x-8 md:-translate-x-12',
+                      'sm:translate-x-6 md:translate-x-12',
+                      'sm:-translate-x-2 md:-translate-x-4',
                     ];
                     const offsetClass = waveOffsets[li % waveOffsets.length];
 
                     return (
                       <div
                         key={lesson.id}
-                        className={`relative flex items-center gap-4 transition-transform ${offsetClass}`}
+                        className={`relative flex items-center gap-4 sm:gap-6 transition-all duration-300 ${offsetClass}`}
                       >
-                        {/* Winding Trail Line to next node */}
+                        {/* Winding Curved Trail Connector to next node */}
                         {li < stageLessons.length - 1 && (
-                          <div className="absolute left-7 top-14 w-0.5 h-8 border-l-2 border-dashed border-border-strong -z-0 pointer-events-none" />
+                          <div
+                            className="absolute left-8 sm:left-9 top-16 w-0.5 h-10 border-l-2 border-dashed border-accent/40 pointer-events-none -z-0"
+                            aria-hidden="true"
+                          />
                         )}
 
-                        {/* Circular Board Game Node */}
+                        {/* Circular 64x64 Game Board Node */}
                         <div className="relative shrink-0 z-10">
-                          {/* Learner Marker / Token (Фишка ученика) */}
+                          {/* Floating Learner Marker Token (Фишка ученика) */}
                           {isCurrent && (
-                            <div className="absolute -top-7 left-1/2 -translate-x-1/2 flex flex-col items-center z-30 pointer-events-none animate-bounce">
-                              <div className="bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-white/20 whitespace-nowrap">
+                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex flex-col items-center z-30 pointer-events-none animate-bounce">
+                              <div className="bg-accent text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-white/30 whitespace-nowrap">
                                 <span>{learnerAvatar}</span>
                                 <span>{t.learn.learnerToken}</span>
                               </div>
-                              <div className="w-1.5 h-1.5 bg-accent rotate-45 -mt-0.5" />
+                              <div className="w-2 h-2 bg-accent rotate-45 -mt-1 shadow-xs" />
                             </div>
                           )}
 
                           <Link
                             href={canAccess ? `/courses/${courseId}/learn/${lesson.id}` : '#'}
                             className={[
-                              'w-14 h-14 sm:w-16 sm:h-16 rounded-full flex flex-col items-center justify-center font-bold text-sm relative transition-all duration-200 border-2 select-none',
+                              'w-16 h-16 sm:w-18 sm:h-18 rounded-full flex flex-col items-center justify-center font-extrabold text-sm relative transition-all duration-200 border-2 select-none cursor-pointer',
                               isCompleted
-                                ? 'bg-success text-white border-success shadow-xs hover:scale-105'
+                                ? 'bg-success text-white border-success shadow-md hover:scale-105'
                                 : isCurrent
-                                ? 'bg-accent text-white border-accent shadow-md ring-4 ring-accent/25 hover:scale-105'
+                                ? 'bg-accent text-white border-accent shadow-lg ring-4 ring-accent/30 hover:scale-105 animate-pulse'
                                 : isAvailable
-                                ? 'bg-surface text-foreground border-border hover:border-accent hover:scale-105 shadow-xs'
+                                ? 'bg-surface text-foreground border-accent/60 hover:border-accent hover:scale-105 shadow-sm'
                                 : 'bg-surface-raised text-muted border-border/50 opacity-60 cursor-not-allowed',
                             ].join(' ')}
                             tabIndex={canAccess ? 0 : -1}
                             aria-label={`${lesson.title} (${status})`}
                           >
                             {isCompleted ? (
-                              <CheckCircle2 className="h-6 w-6" />
+                              <CheckCircle2 className="h-7 w-7 text-white" />
                             ) : isCurrent ? (
                               <div className="flex flex-col items-center">
-                                <span className="text-base font-black">{li + 1}</span>
+                                <span className="text-lg font-black">{li + 1}</span>
                               </div>
                             ) : isLocked ? (
-                              <Lock className="h-4 w-4" />
+                              <Lock className="h-5 w-5 text-muted" />
                             ) : isCapstone ? (
-                              <Award className="h-5 w-5 text-accent" />
+                              <Award className="h-6 w-6 text-accent" />
                             ) : isCheckpoint ? (
-                              <Target className="h-5 w-5 text-accent" />
+                              <Target className="h-6 w-6 text-amber" />
                             ) : (
-                              <span className="text-sm font-semibold">{li + 1}</span>
+                              <span className="text-base font-bold">{li + 1}</span>
                             )}
                           </Link>
                         </div>
 
                         {/* Interactive Board Card Info */}
                         <div className={[
-                          'flex-1 surface rounded-[var(--r-md)] p-3.5 sm:p-4 border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs',
+                          'flex-1 glass-card rounded-[var(--r-xl)] p-4 sm:p-5 border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs',
                           isCurrent
-                            ? 'border-accent bg-accent-light/40 ring-1 ring-accent/30'
+                            ? 'border-accent bg-accent-light/30 ring-1 ring-accent/30'
                             : isCompleted
                             ? 'border-border/80 hover:border-border-strong'
                             : isAvailable
@@ -330,16 +336,16 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1 flex-wrap">
                               <span className="text-[10px] font-bold uppercase tracking-wider text-muted">
-                                Урок {li + 1}
+                                {getLessonNumberLabel(li + 1)}
                               </span>
                               {isCheckpoint && (
-                                <Badge variant="accent" className="text-[10px] py-0">
+                                <Badge variant="amber" className="text-[10px] py-0">
                                   <CheckSquare className="h-2.5 w-2.5 mr-0.5" />
                                   {t.learn.checkpointLabel}
                                 </Badge>
                               )}
                               {isCapstone && (
-                                <Badge variant="blue" className="text-[10px] py-0">
+                                <Badge variant="accent" className="text-[10px] py-0">
                                   <Award className="h-2.5 w-2.5 mr-0.5" />
                                   {t.learn.capstoneLabel}
                                 </Badge>
@@ -352,7 +358,7 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                             </div>
 
                             <h3 className={[
-                              'text-sm font-bold truncate',
+                              'text-sm sm:text-base font-bold truncate',
                               isCurrent
                                 ? 'text-accent'
                                 : isCompleted
@@ -374,18 +380,20 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                                   variant={isCurrent ? 'primary' : 'secondary'}
                                   className="text-xs"
                                 >
-                                  {isCompleted
-                                    ? t.learn.reviewBtn
-                                    : isCurrent
-                                    ? t.learn.continueBtn
-                                    : t.learn.startBtn}
-                                  <ChevronRight className="h-3 w-3" />
+                                  <span>
+                                    {isCompleted
+                                      ? t.learn.reviewBtn
+                                      : isCurrent
+                                      ? t.learn.continueBtn
+                                      : t.learn.startBtn}
+                                  </span>
+                                  <ChevronRight className="h-3.5 w-3.5 ml-1" />
                                 </Button>
                               </Link>
                             ) : (
-                              <span className="text-xs text-muted flex items-center gap-1 py-1 px-2.5 bg-surface-raised rounded-[var(--r-sm)] border border-border/50">
-                                <Lock className="h-3 w-3" />
-                                {t.learn.locked}
+                              <span className="text-xs text-muted flex items-center gap-1.5 py-1 px-3 bg-surface-raised rounded-[var(--r-sm)] border border-border/50">
+                                <Lock className="h-3.5 w-3.5" />
+                                <span>{t.learn.locked}</span>
                               </span>
                             )}
                           </div>
@@ -398,40 +406,40 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
             );
           })}
 
-          {/* ── Finish Goal Milestone (Финишный флаг в конце настольной дорожки) ── */}
-          <div className="mt-4 pt-6 border-t-2 border-dashed border-border-strong text-center">
+          {/* ── Finish Goal Milestone (Финишный флаг и счётчик узлов) ──────── */}
+          <div className="mt-8 pt-8 border-t-2 border-dashed border-border-strong text-center">
             <div className={[
-              'surface rounded-[var(--r-xl)] p-6 md:p-8 border max-w-lg mx-auto transition-all',
+              'glass-card rounded-[var(--r-2xl)] p-6 md:p-8 border max-w-lg mx-auto transition-all',
               isAllCompleted
                 ? 'border-success bg-success-light/30 shadow-md ring-2 ring-success/30'
                 : 'border-border shadow-sm',
             ].join(' ')}>
               <div className={[
-                'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl mb-3 border-2',
+                'w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl mb-4 border-2 shadow-sm',
                 isAllCompleted
-                  ? 'bg-success text-white border-success shadow-md'
-                  : 'bg-surface-raised text-accent border-accent/40 shadow-xs',
+                  ? 'bg-success text-white border-success'
+                  : 'bg-surface-raised text-accent border-accent/40',
               ].join(' ')}>
-                <Flag className="h-7 w-7" />
+                <Flag className="h-8 w-8" />
               </div>
 
-              <h3 className="text-lg font-bold text-foreground mb-1">
+              <h3 className="text-xl font-extrabold text-foreground mb-1.5">
                 {t.learn.finishGoalTitle}
               </h3>
-              <p className="text-xs text-muted max-w-md mx-auto mb-4 leading-relaxed">
+              <p className="text-xs md:text-sm text-muted max-w-md mx-auto mb-5 leading-relaxed">
                 {t.learn.finishGoalSubtitle}
               </p>
 
               {isAllCompleted ? (
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-success text-white font-semibold text-xs rounded-[var(--r-md)] shadow-sm">
+                <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-success text-white font-semibold text-xs rounded-[var(--r-md)] shadow-sm">
                   <Award className="h-4 w-4" />
-                  {t.learn.finishGoalReached}
+                  <span>{t.learn.finishGoalReached}</span>
                 </div>
               ) : (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-raised rounded-[var(--r-md)] border border-border text-xs text-muted">
-                  <Sparkles className="h-3.5 w-3.5 text-accent" />
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-surface-raised rounded-[var(--r-md)] border border-border text-xs text-muted">
+                  <Sparkles className="h-4 w-4 text-accent" />
                   <span>
-                    <strong className="text-foreground">{remainingCount}</strong> {t.learn.remainingToGoal}
+                    <strong className="text-foreground font-bold">{remainingCount}</strong> {t.learn.remainingToGoal}
                   </span>
                 </div>
               )}

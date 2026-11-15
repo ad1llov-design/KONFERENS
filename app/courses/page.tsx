@@ -163,7 +163,7 @@ export default function CoursesPage() {
 
               return (
                 <Link key={course.id} href={`/courses/${course.id}`} className="group block">
-                  <div className="surface rounded-[var(--r-xl)] p-6 h-full hover-lift transition-all duration-200 border border-border/80 flex flex-col justify-between">
+                  <div className="glass-card rounded-[var(--r-xl)] p-6 h-full hover-lift transition-all duration-200 border border-border flex flex-col justify-between">
                     <div>
                       <div className="flex items-start justify-between mb-4">
                         <div className="w-11 h-11 rounded-[var(--r-sm)] bg-accent/10 border border-accent/20 flex items-center justify-center">

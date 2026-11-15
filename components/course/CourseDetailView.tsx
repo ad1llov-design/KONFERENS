@@ -184,30 +184,46 @@ export function CourseDetailView({ course }: CourseDetailViewProps) {
       </section>
 
       {/* ── 4. Learning Format (Формат обучения) ──────────────────────────── */}
-      <section className="mb-12 surface rounded-[var(--r-xl)] p-6 md:p-8 border border-border">
+      <section className="mb-12 glass-card rounded-[var(--r-xl)] p-6 md:p-8">
         <h2 className="text-xl font-bold text-foreground mb-5">
           {t.courseDetail.formatTitle}
         </h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
           <div className="bg-surface-raised p-4 rounded-[var(--r-md)] border border-border">
             <BookOpen className="w-5 h-5 text-accent mb-2" />
-            <h4 className="font-bold text-foreground mb-1">Микро-уроки</h4>
-            <p className="text-muted leading-relaxed">Пошаговая теория с понятными разборами без воды.</p>
+            <h4 className="font-bold text-foreground mb-1">
+              {locale === 'ru' ? 'Микро-уроки' : locale === 'ky' ? 'Микро-сабактар' : 'Bite-Sized Lessons'}
+            </h4>
+            <p className="text-muted leading-relaxed">
+              {locale === 'ru' ? 'Пошаговая теория с понятными разборами без воды.' : locale === 'ky' ? 'Суусуз, түшүнүктүү кадам-кадам теория.' : 'Structured, step-by-step theory without fluff.'}
+            </p>
           </div>
           <div className="bg-surface-raised p-4 rounded-[var(--r-md)] border border-border">
             <CheckCircle2 className="w-5 h-5 text-success mb-2" />
-            <h4 className="font-bold text-foreground mb-1">Мгновенная проверка</h4>
-            <p className="text-muted leading-relaxed">Интерактивные упражнения с подробным обоснованием.</p>
+            <h4 className="font-bold text-foreground mb-1">
+              {locale === 'ru' ? 'Мгновенная проверка' : locale === 'ky' ? 'Тез текшерүү' : 'Instant Feedback'}
+            </h4>
+            <p className="text-muted leading-relaxed">
+              {locale === 'ru' ? 'Интерактивные упражнения с подробным обоснованием.' : locale === 'ky' ? 'Толук түшүндүрмөсү менен интерактивдүү көнүгүүлөр.' : 'Interactive hands-on tasks with rationale.'}
+            </p>
           </div>
           <div className="bg-surface-raised p-4 rounded-[var(--r-md)] border border-border">
             <MessageSquare className="w-5 h-5 text-accent mb-2" />
-            <h4 className="font-bold text-foreground mb-1">AI-Тьютор</h4>
-            <p className="text-muted leading-relaxed">Сократические подсказки и разбор ошибок 24/7.</p>
+            <h4 className="font-bold text-foreground mb-1">
+              {locale === 'ru' ? 'AI-Тьютор' : locale === 'ky' ? 'AI-Тьютор' : 'Socratic AI Tutor'}
+            </h4>
+            <p className="text-muted leading-relaxed">
+              {locale === 'ru' ? 'Сократические подсказки и разбор ошибок 24/7.' : locale === 'ky' ? '24/7 Сократтык кеңештер жана каталарды талдоо.' : 'Guiding hints and error breakdown 24/7.'}
+            </p>
           </div>
           <div className="bg-surface-raised p-4 rounded-[var(--r-md)] border border-border">
             <Award className="w-5 h-5 text-amber mb-2" />
-            <h4 className="font-bold text-foreground mb-1">Финишный счётчик</h4>
-            <p className="text-muted leading-relaxed">Наглядная настольная дорожка до цели курса.</p>
+            <h4 className="font-bold text-foreground mb-1">
+              {locale === 'ru' ? 'Финишный счётчик' : locale === 'ky' ? 'Финиш эсептегич' : 'Milestone Counter'}
+            </h4>
+            <p className="text-muted leading-relaxed">
+              {locale === 'ru' ? 'Наглядная настольная дорожка до цели курса.' : locale === 'ky' ? 'Курстун максатына чейинки көрүнүктүү маршрут.' : 'Visual board trail toward course completion.'}
+            </p>
           </div>
         </div>
       </section>
@@ -264,7 +280,7 @@ export function CourseDetailView({ course }: CourseDetailViewProps) {
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="w-full flex items-center justify-between p-4 text-left font-semibold text-xs sm:text-sm text-foreground hover:bg-surface-raised transition-colors"
+                  className="w-full flex items-center justify-between p-4 text-left font-semibold text-xs sm:text-sm text-foreground hover:bg-surface-raised transition-colors cursor-pointer"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
@@ -286,23 +302,31 @@ export function CourseDetailView({ course }: CourseDetailViewProps) {
       </section>
 
       {/* ── 7. Commercial Banner & Consultation Modal Trigger ─────────────── */}
-      <div className="surface-raised rounded-[var(--r-xl)] p-6 md:p-8 border border-border text-center">
+      <div className="glass-card rounded-[var(--r-xl)] p-6 md:p-8 text-center">
         <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
-          Готовы начать изучение «{loc.title}»?
+          {locale === 'ru'
+            ? `Готовы начать изучение «${loc.title}»?`
+            : locale === 'ky'
+            ? `«${loc.title}» курсун баштоого даярсызбы?`
+            : `Ready to start learning "${loc.title}"?`}
         </h3>
         <p className="text-xs md:text-sm text-muted max-w-lg mx-auto mb-6">
-          Пройдите входную диагностику за 3 минуты или запишитесь на персональную консультацию.
+          {locale === 'ru'
+            ? 'Пройдите входную диагностику за 3 минуты или запишитесь на персональную консультацию.'
+            : locale === 'ky'
+            ? '3 мүнөттө киришүү диагностикасынан өтүңүз же жеке консультацияга жазылыңыз.'
+            : 'Take the 3-minute diagnostic test or request a 1-on-1 personalized consultation.'}
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link href={`/courses/${course.id}/diagnostic`}>
-            <Button size="md">
-              {t.courseDetail.takeDiagnostic}
-              <ArrowRight className="h-4 w-4" />
+            <Button size="md" className="btn-accent-glow">
+              <span>{t.courseDetail.takeDiagnostic}</span>
+              <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           </Link>
           <button
             onClick={() => setShowEnrollModal(true)}
-            className="px-5 py-2.5 rounded-[var(--r-md)] border border-border bg-surface text-foreground font-medium text-sm hover:border-accent/40 shadow-xs transition-colors"
+            className="px-5 py-2.5 rounded-[var(--r-md)] border border-border bg-surface text-foreground font-semibold text-sm hover:border-accent/40 shadow-xs transition-colors cursor-pointer"
           >
             {t.courseDetail.consultationBtn}
           </button>
