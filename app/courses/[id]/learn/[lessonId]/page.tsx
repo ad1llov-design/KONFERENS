@@ -210,12 +210,10 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
       setAnswerState('correct');
       if (coachMode === 'roast') {
         toxicTutor.recordSuccess();
-        const roast = toxicTutor.getRoast('correct', locale);
-        setRoastSpeechText(roast);
-        toxicTutor.speakRoast(roast, locale);
+        const roastResult = toxicTutor.playRoastEvent('correct', locale);
+        setRoastSpeechText(roastResult.text);
         const winMemes: MemeType[] = ['gigachad', 'galaxy-brain'];
         setCurrentMeme(winMemes[Math.floor(Math.random() * winMemes.length)]);
-        soundManager.playMemeWin();
       }
 
       if (!completedExercises.includes(currentExIndex)) {
@@ -254,21 +252,17 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
       setAnswerState('incorrect');
       if (coachMode === 'roast') {
         const failStreak = toxicTutor.recordMistake();
-        const roast = toxicTutor.getRoast('incorrect', locale);
-        setRoastSpeechText(roast);
-        toxicTutor.speakRoast(roast, locale);
+        const roastResult = toxicTutor.playRoastEvent(
+          failStreak >= 2 ? 'consecutive_fail' : 'incorrect',
+          locale
+        );
+        setRoastSpeechText(roastResult.text);
 
         if (failStreak >= 2) {
-          soundManager.playSadTrombone();
           setCurrentMeme('emotional-damage');
         } else {
           const failMemes: MemeType[] = ['facepalm', 'this-is-fine', 'panic-cat'];
           setCurrentMeme(failMemes[Math.floor(Math.random() * failMemes.length)]);
-          if (Math.random() > 0.5) {
-            soundManager.playBruh();
-          } else {
-            soundManager.playMemeFail();
-          }
         }
       } else {
         soundManager.playIncorrect();
@@ -462,6 +456,7 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
                     <LessonTextToSpeech
                       content={lesson.content}
                       lessonTitle={lesson.title}
+                      lessonId={lesson.id}
                     />
                   </div>
                 </div>

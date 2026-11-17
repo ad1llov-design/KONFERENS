@@ -8,6 +8,7 @@ import { soundManager } from '@/lib/sound/sound-manager';
 interface LessonTextToSpeechProps {
   content: string;
   lessonTitle: string;
+  lessonId?: string;
   className?: string;
 }
 
@@ -47,7 +48,7 @@ function sanitizeTextForSpeech(raw: string, title: string): string {
   return `${title}. ${text}`;
 }
 
-export function LessonTextToSpeech({ content, lessonTitle, className = '' }: LessonTextToSpeechProps) {
+export function LessonTextToSpeech({ content, lessonTitle, lessonId, className = '' }: LessonTextToSpeechProps) {
   const { locale } = useLanguage();
   const [supported, setSupported] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -56,27 +57,34 @@ export function LessonTextToSpeech({ content, lessonTitle, className = '' }: Les
   const [playbackState, setPlaybackState] = useState<'idle' | 'playing' | 'paused'>('idle');
   const [rate, setRate] = useState<number>(1.0);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Check Web Speech API support and load available voices
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    if (typeof window !== 'undefined') {
       setSupported(true);
+      if ('speechSynthesis' in window) {
+        const updateVoices = () => {
+          const available = window.speechSynthesis.getVoices();
+          setVoices(available);
+        };
 
-      const updateVoices = () => {
-        const available = window.speechSynthesis.getVoices();
-        setVoices(available);
-      };
+        updateVoices();
+        window.speechSynthesis.onvoiceschanged = updateVoices;
 
-      updateVoices();
-      window.speechSynthesis.onvoiceschanged = updateVoices;
-
-      return () => {
-        window.speechSynthesis.onvoiceschanged = null;
-        if (window.speechSynthesis.speaking) {
-          window.speechSynthesis.cancel();
-          soundManager.setDucked(false);
-        }
-      };
+        return () => {
+          window.speechSynthesis.onvoiceschanged = null;
+          if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+            soundManager.setDucked(false);
+          }
+          if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+            soundManager.setDucked(false);
+          }
+        };
+      }
     }
   }, []);
 
@@ -85,13 +93,11 @@ export function LessonTextToSpeech({ content, lessonTitle, className = '' }: Les
     if (!voices.length) return null;
 
     const langPrefix = locale === 'ky' ? 'ky' : locale === 'ru' ? 'ru' : 'en';
-    // Exact or prefix match
     const matching = voices.filter(
       (v) => v.lang.toLowerCase().startsWith(langPrefix) || (v as unknown as { locale?: string }).locale?.toLowerCase().startsWith(langPrefix)
     );
 
     if (matching.length > 0) {
-      // Prefer default or local service voices
       return matching.find((v) => v.default) || matching[0];
     }
     return null;
@@ -100,17 +106,20 @@ export function LessonTextToSpeech({ content, lessonTitle, className = '' }: Les
   // Clean up speech on unmount or lesson change
   useEffect(() => {
     return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         soundManager.setDucked(false);
         setPlaybackState('idle');
       }
     };
-  }, [lessonTitle, content]);
+  }, [lessonTitle, content, lessonId]);
 
-  const handleStart = () => {
+  const fallbackSpeechSynthesis = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-
     window.speechSynthesis.cancel();
     setVoiceNotice(null);
 
@@ -134,7 +143,7 @@ export function LessonTextToSpeech({ content, lessonTitle, className = '' }: Les
 
     utterance.onstart = () => {
       setPlaybackState('playing');
-      soundManager.setDucked(true); // Lower game SFX while reading
+      soundManager.setDucked(true);
     };
 
     utterance.onpause = () => {
@@ -159,7 +168,70 @@ export function LessonTextToSpeech({ content, lessonTitle, className = '' }: Les
     window.speechSynthesis.speak(utterance);
   };
 
+  const handleStart = () => {
+    setVoiceNotice(null);
+
+    // Stop any existing playback
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    // Check if neural pre-recorded audio file exists for this lesson
+    if (lessonId && locale === 'ru') {
+      const audioUrl = `/audio/lessons/${lessonId}.wav`;
+      const audio = new Audio(audioUrl);
+      audio.playbackRate = rate;
+
+      audio.onplay = () => {
+        setPlaybackState('playing');
+        soundManager.setDucked(true);
+      };
+
+      audio.onpause = () => {
+        setPlaybackState('paused');
+      };
+
+      audio.onended = () => {
+        setPlaybackState('idle');
+        soundManager.setDucked(false);
+        audioRef.current = null;
+      };
+
+      audio.onerror = () => {
+        // If file doesn't exist, fallback to speech synthesis
+        audioRef.current = null;
+        fallbackSpeechSynthesis();
+      };
+
+      audioRef.current = audio;
+      const promise = audio.play();
+      if (promise !== undefined) {
+        promise.catch(() => {
+          fallbackSpeechSynthesis();
+        });
+      }
+      return;
+    }
+
+    fallbackSpeechSynthesis();
+  };
+
   const handlePause = () => {
+    if (audioRef.current) {
+      if (playbackState === 'playing') {
+        audioRef.current.pause();
+        setPlaybackState('paused');
+      } else if (playbackState === 'paused') {
+        audioRef.current.play().catch(() => {});
+        setPlaybackState('playing');
+      }
+      return;
+    }
+
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       if (playbackState === 'playing') {
         window.speechSynthesis.pause();
@@ -172,11 +244,16 @@ export function LessonTextToSpeech({ content, lessonTitle, className = '' }: Les
   };
 
   const handleStop = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      setPlaybackState('idle');
-      soundManager.setDucked(false);
     }
+    setPlaybackState('idle');
+    soundManager.setDucked(false);
   };
 
   const handleRateChange = (newRate: number) => {

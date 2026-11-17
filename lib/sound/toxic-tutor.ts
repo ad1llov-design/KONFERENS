@@ -90,6 +90,103 @@ const ROAST_QUOTES: Record<
   },
 };
 
+interface AudioLineMapping {
+  audioUrl: string;
+  transcript: string;
+  tag?: 'vlad' | 'meme';
+}
+
+const PRE_RECORDED_AUDIO: Record<
+  'incorrect' | 'consecutive_fail' | 'correct' | 'procrastinate' | 'intro',
+  AudioLineMapping[]
+> = {
+  intro: [
+    {
+      audioUrl: '/audio/vlad/vlad_intro.wav',
+      transcript: 'Здорово! Я сеньор Влад. Готовься к нормальному коду без костылей и без багов!',
+      tag: 'vlad',
+    },
+  ],
+  incorrect: [
+    {
+      audioUrl: '/audio/vlad/vlad_mistake_1.wav',
+      transcript: 'Твою дивизию! Какого чёрта в коде творится? Руки из плеч достань и переделай!',
+      tag: 'vlad',
+    },
+    {
+      audioUrl: '/audio/vlad/vlad_mistake_2.wav',
+      transcript: 'Ё-моё, у меня глаза слезятся! В проде бы уже сервер упал от такого синтаксиса!',
+      tag: 'vlad',
+    },
+    {
+      audioUrl: '/audio/vlad/vlad_mistake_3.wav',
+      transcript: 'Мать моя женщина... кто тебя учил так писать? Перечитай теорию, не позорь команду!',
+      tag: 'vlad',
+    },
+    {
+      audioUrl: '/audio/memes/fiasko.mp3',
+      transcript: 'Это фиаско, братан! Ошибка в коде.',
+      tag: 'meme',
+    },
+    {
+      audioUrl: '/audio/memes/bruh.mp3',
+      transcript: 'Bruh... Серьёзно?!',
+      tag: 'meme',
+    },
+  ],
+  consecutive_fail: [
+    {
+      audioUrl: '/audio/vlad/vlad_streak_fail.wav',
+      transcript: 'Всё, тушите свет! С таким кодом тебя даже на стажировку не возьмут. Соберись!',
+      tag: 'vlad',
+    },
+    {
+      audioUrl: '/audio/memes/wasted.mp3',
+      transcript: 'По-тра-че-ноооо... Сервер не выдержал!',
+      tag: 'meme',
+    },
+    {
+      audioUrl: '/audio/memes/emotional_damage.mp3',
+      transcript: 'Emotional Damage! Две ошибки подряд.',
+      tag: 'meme',
+    },
+  ],
+  correct: [
+    {
+      audioUrl: '/audio/vlad/vlad_win_1.wav',
+      transcript: 'О, вот это уже дело! Чистый код, без единого костыля. Красавчик, засчитано!',
+      tag: 'vlad',
+    },
+    {
+      audioUrl: '/audio/vlad/vlad_win_2.wav',
+      transcript: 'Нормально выдал! Тимлид одобряет, мержим в мастер без лишних вопросов.',
+      tag: 'vlad',
+    },
+    {
+      audioUrl: '/audio/memes/krasavchik.mp3',
+      transcript: 'Какой же я красавчик!',
+      tag: 'meme',
+    },
+    {
+      audioUrl: '/audio/memes/geniy.mp3',
+      transcript: 'Ы-ы-ы я гений!',
+      tag: 'meme',
+    },
+    {
+      audioUrl: '/audio/memes/shedevr.mp3',
+      transcript: 'Включи этот шедевр!',
+      tag: 'meme',
+    },
+  ],
+  procrastinate: [
+    {
+      audioUrl: '/audio/vlad/vlad_idle.wav',
+      transcript: 'Эй, уснул там что ли? Дедлайн горит, кофе остыл, а код сам себя не напишет!',
+      tag: 'vlad',
+    },
+  ],
+};
+
 class ToxicTutorEngine {
   private mode: CoachMode = 'friendly';
   private consecutiveMistakes = 0;
@@ -163,6 +260,40 @@ class ToxicTutorEngine {
   }
 
   /**
+   * Plays a pre-recorded studio neural voice line or viral meme audio.
+   * Eliminates robotic syllable-by-syllable browser speech synthesis.
+   */
+  public playRoastEvent(
+    type: 'incorrect' | 'consecutive_fail' | 'correct' | 'procrastinate' | 'intro',
+    locale: Locale
+  ): { text: string; audioUrl?: string } {
+    if (this.mode !== 'roast') {
+      return { text: '' };
+    }
+
+    // Prioritize studio-quality audio files
+    if (PRE_RECORDED_AUDIO[type]) {
+      const pool = PRE_RECORDED_AUDIO[type];
+      const selected = pool[Math.floor(Math.random() * pool.length)];
+
+      this.stopSpeaking();
+      soundManager.playAudioFile(selected.audioUrl);
+
+      return {
+        text: selected.transcript,
+        audioUrl: selected.audioUrl,
+      };
+    }
+
+    const text = this.getRoast(
+      type === 'consecutive_fail' ? 'incorrect' : (type as 'incorrect' | 'correct' | 'procrastinate'),
+      locale
+    );
+    this.speakRoast(text, locale);
+    return { text };
+  }
+
+  /**
    * Selects natural, deep, realistic male voice prioritizing neural/natural voices
    */
   private selectMaleVoice(locale: Locale): SpeechSynthesisVoice | null {
@@ -183,28 +314,17 @@ class ToxicTutorEngine {
     );
 
     if (langVoices.length === 0) {
-      // Fallback to any matching voice
       return voices.find(v => v.lang.toLowerCase().startsWith(langPrefix)) || voices[0] || null;
     }
 
-    // Score candidate voices
     const scored = langVoices.map(v => {
       const name = v.name.toLowerCase();
       let score = 10;
-
-      // Check quality
       if (qualityTags.some(q => name.includes(q))) score += 40;
-
-      // Check masculine names
       const maleList = langPrefix === 'ru' || locale === 'ky' ? maleNamesRu : maleNamesEn;
       if (maleList.some(m => name.includes(m))) score += 50;
-
-      // Penalize female voices when looking for male coach
       if (femalePenalties.some(f => name.includes(f))) score -= 60;
-
-      // Bonus for Microsoft Natural / Google voices
       if (name.includes('google') || name.includes('microsoft')) score += 15;
-
       return { voice: v, score };
     });
 
@@ -213,13 +333,30 @@ class ToxicTutorEngine {
   }
 
   public speakRoast(text: string, locale: Locale): void {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     if (this.mode !== 'roast') return;
 
-    try {
-      window.speechSynthesis.cancel();
+    // Check if matching pre-recorded audio exists
+    if (text.includes('Влад') || text.includes('Здорово') || text.includes('Привет, я Влад')) {
+      this.stopSpeaking();
+      soundManager.playAudioFile('/audio/vlad/vlad_intro.wav');
+      return;
+    }
 
-      // Humanized text delivery: add natural punctuation breathing pauses
+    // Search in pre-recorded lines
+    for (const key of Object.keys(PRE_RECORDED_AUDIO) as (keyof typeof PRE_RECORDED_AUDIO)[]) {
+      const match = PRE_RECORDED_AUDIO[key].find(item => item.transcript === text);
+      if (match) {
+        this.stopSpeaking();
+        soundManager.playAudioFile(match.audioUrl);
+        return;
+      }
+    }
+
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    try {
+      this.stopSpeaking();
+
       const formattedText = text.replace(/([?!])\s+/g, '$1 ... ');
       const utterance = new SpeechSynthesisUtterance(formattedText);
 
@@ -229,9 +366,8 @@ class ToxicTutorEngine {
         utterance.lang = voice.lang;
       }
 
-      // Male baritone resonance: slightly lower pitch, natural speaking speed
-      utterance.pitch = 0.88; // Deep masculine tone (prevents high robotic squeak)
-      utterance.rate = 1.02;  // Realistic conversational cadence
+      utterance.pitch = 0.88;
+      utterance.rate = 1.02;
       utterance.volume = 1.0;
 
       utterance.onstart = () => {
@@ -246,11 +382,12 @@ class ToxicTutorEngine {
 
       window.speechSynthesis.speak(utterance);
     } catch {
-      // Graceful fallback if speech is blocked
+      // Graceful fallback
     }
   }
 
   public stopSpeaking(): void {
+    soundManager.stopAudioFile();
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       soundManager.setDucked(false);

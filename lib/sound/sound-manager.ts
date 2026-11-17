@@ -20,6 +20,7 @@ export class SoundManager {
   private enabled: boolean = true;
   private volume: number = 0.7; // 0.0 to 1.0
   private ducked: boolean = false;
+  private currentAudioElement: HTMLAudioElement | null = null;
 
   private constructor() {
     if (typeof window !== 'undefined') {
@@ -449,6 +450,74 @@ export class SoundManager {
       osc.start(now + time);
       osc.stop(now + time + dur);
     });
+  }
+
+  /**
+   * Plays a pre-recorded / pre-generated audio file (MP3, WAV, OGG)
+   * Handles audio ducking, browser autoplay constraints, and volume control.
+   */
+  public playAudioFile(url: string, onEnd?: () => void): HTMLAudioElement | null {
+    if (!this.enabled || typeof window === 'undefined') return null;
+    try {
+      this.stopAudioFile();
+      const audio = new Audio(url);
+      audio.volume = this.volume;
+      this.currentAudioElement = audio;
+      this.setDucked(true);
+
+      const cleanup = () => {
+        this.setDucked(false);
+        if (this.currentAudioElement === audio) {
+          this.currentAudioElement = null;
+        }
+        onEnd?.();
+      };
+
+      audio.onended = cleanup;
+      audio.onerror = cleanup;
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          this.setDucked(false);
+          this.currentAudioElement = null;
+        });
+      }
+      return audio;
+    } catch {
+      this.setDucked(false);
+      return null;
+    }
+  }
+
+  /**
+   * Stops currently playing real audio file
+   */
+  public stopAudioFile(): void {
+    if (this.currentAudioElement) {
+      try {
+        this.currentAudioElement.pause();
+        this.currentAudioElement.currentTime = 0;
+      } catch {}
+      this.currentAudioElement = null;
+      this.setDucked(false);
+    }
+  }
+
+  /**
+   * Convenience: play a viral meme sound from public/audio/memes/
+   */
+  public playMemeFile(filename: string, onEnd?: () => void): HTMLAudioElement | null {
+    const path = `/audio/memes/${filename.replace(/^\/+/, '')}`;
+    return this.playAudioFile(path, onEnd);
+  }
+
+  /**
+   * Convenience: play Senior Vlad's voice line from public/audio/vlad/
+   */
+  public playVladFile(filename: string, onEnd?: () => void): HTMLAudioElement | null {
+    const path = `/audio/vlad/${filename.replace(/^\/+/, '')}`;
+    return this.playAudioFile(path, onEnd);
   }
 
   /**

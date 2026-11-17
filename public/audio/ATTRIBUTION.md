@@ -25,10 +25,45 @@ All sound effects are **procedurally synthesized in real-time** via software osc
 
 ---
 
-## 3. License & Copyright Declaration
+## 3. Pre-Rendered Voice & Meme Audio Assets
+
+To provide students with natural, studio-quality speech (eliminating robotic, syllable-by-syllable browser speech synthesis), Kivora includes pre-rendered audio assets:
+
+### 3.1 Senior Vlad Persona (`public/audio/vlad/`)
+- **Engine**: Rhasspy Piper Neural Voice (`ru_RU-dmitri-medium.onnx`).
+- **License**: MIT License (Rhasspy Piper project).
+- **Files**:
+  - `vlad_intro.wav`: Charismatic Senior Vlad intro quote.
+  - `vlad_mistake_1.wav`, `vlad_mistake_2.wav`, `vlad_mistake_3.wav`: Sarcastic code error reactions.
+  - `vlad_streak_fail.wav`: Consecutive mistake warning.
+  - `vlad_win_1.wav`, `vlad_win_2.wav`: Clean code approval quotes.
+  - `vlad_idle.wav`: Standup deadline prompt.
+
+### 3.2 Viral Community Meme Voice Clips (`public/audio/memes/`)
+- **Source**: Public community meme archives (Myinstants, ZvukiPro).
+- **Purpose**: Educational comedic micro-reactions on exercise checks and interactive landing cards.
+- **Files**:
+  - `fiasko.mp3`: «Это фиаско, братан!»
+  - `wasted.mp3`: GTA San Andreas «Потрачено» (Russian Pirate Edition).
+  - `emotional_damage.mp3`: Steven He «Emotional Damage!».
+  - `bruh.mp3`: Vine «Bruh».
+  - `krasavchik.mp3`: «Какой же я красавчик!».
+  - `geniy.mp3`: «Ы-ы-ы я гений!».
+  - `shedevr.mp3`: «Включи этот шедевр!».
+
+### 3.3 Neural Lesson Explanations (`public/audio/lessons/`)
+- **Engine**: Rhasspy Piper Neural Voice (`ru_RU-dmitri-medium.onnx`).
+- **Files**:
+  - `py-s1-l1.wav`, `py-s1-l2.wav`, `py-s1-l3.wav`: Python Fundamentals modules.
+  - `py-s2-l1.wav`, `py-s2-l2.wav`: Python Control Flow & Loops.
+  - `web-s1-l1.wav`: Web Development DOM structure.
+  - `js-s1-l1.wav`: Modern JavaScript reactivity.
+
+---
+
+## 4. License & Copyright Declaration
 
 - **Author**: Kivora Engineering Team
-- **Date**: 2026-11-15
-- **License**: MIT License / Dedicated to Public Domain (CC0 Equivalent for Kivora codebase).
-- **Commercial Use**: Fully compliant and approved for commercial and educational distribution.
-- **Third-Party Assets**: None. No copyrighted media or restricted licenses (such as CC-BY-NC) are included.
+- **Date**: 2026-11-17
+- **License**: MIT License
+- **Commercial & Educational Distribution**: Fully compliant and approved.

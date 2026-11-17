@@ -427,14 +427,7 @@ export default function LandingPage() {
                 type="button"
                 onClick={() => {
                   toxicTutor.setMode('roast');
-                  toxicTutor.speakRoast(
-                    locale === 'ru'
-                      ? 'Привет, я Влад. Пиши код чисто, иначе отправлю переписывать весь проект в пятницу вечером!'
-                      : locale === 'ky'
-                      ? 'Салам, мен Владмын. Кодду таза жаз, болбосо жума күнү кечинде кайра жаздырам!'
-                      : "Hey, I'm Vlad. Write clean code, or I'll make you refactor the whole repo on Friday evening!",
-                    locale
-                  );
+                  toxicTutor.playRoastEvent('intro', locale);
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-[var(--r-md)] bg-rose-500/15 text-rose-500 hover:bg-rose-500/25 border border-rose-500/30 text-xs font-bold transition-all shadow-xs cursor-pointer shrink-0"
               >
@@ -451,7 +444,16 @@ export default function LandingPage() {
 
             {/* Grid of Meme Badges & Coach Vlad Spotlight Card */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="glass-card rounded-[var(--r-xl)] p-4 border border-rose-500/30 bg-rose-500/5 flex items-center gap-3 shadow-sm hover:border-rose-500/50 transition-all">
+              <div
+                onClick={() => {
+                  toxicTutor.setMode('roast');
+                  toxicTutor.playRoastEvent('intro', locale);
+                }}
+                role="button"
+                tabIndex={0}
+                title="Нажмите, чтобы послушать голос Влада"
+                className="glass-card rounded-[var(--r-xl)] p-4 border border-rose-500/30 bg-rose-500/5 flex items-center gap-3 shadow-sm hover:border-rose-500/50 hover:scale-102 active:scale-98 transition-all cursor-pointer"
+              >
                 <ToxicCoachAvatar mood="angry" size="sm" />
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5">

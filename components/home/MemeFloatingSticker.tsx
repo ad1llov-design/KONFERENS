@@ -1,5 +1,7 @@
 'use client';
 
+import { soundManager } from '@/lib/sound/sound-manager';
+
 export type MemeCardType = 'doge' | 'einstein' | 'homer' | 'cat';
 
 interface MemeFloatingStickerProps {
@@ -15,39 +17,51 @@ export function MemeFloatingSticker({
 }: MemeFloatingStickerProps) {
   const meta: Record<
     MemeCardType,
-    { title: string; caption: string; tag: string; tagColor: string }
+    { title: string; caption: string; tag: string; tagColor: string; sound: string }
   > = {
     doge: {
       title: 'Doge Senior Dev',
       caption: customCaption ?? 'Much code. Very syntax. So compile. Wow.',
       tag: 'Classic Meme',
       tagColor: 'bg-amber-500/15 text-amber-500 border-amber-500/30',
+      sound: 'shedevr.mp3',
     },
     einstein: {
       title: 'Альберт Эйнштейн',
       caption: customCaption ?? 'Теория относительности багов: чем ближе дедлайн, тем их больше.',
       tag: '300 IQ Theory',
       tagColor: 'bg-sky-500/15 text-sky-500 border-sky-500/30',
+      sound: 'geniy.mp3',
     },
     homer: {
       title: 'Гомер в кустах',
       caption: customCaption ?? 'Когда случайно запушил в master в пятницу в 18:00.',
       tag: 'Deploy Friday',
       tagColor: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30',
+      sound: 'fiasko.mp3',
     },
     cat: {
       title: 'Hacker Cat',
       caption: customCaption ?? '10 000 строк кода за ночь на чистом кофеине.',
       tag: 'Speedrun Code',
       tagColor: 'bg-rose-500/15 text-rose-500 border-rose-500/30',
+      sound: 'krasavchik.mp3',
     },
   };
 
   const item = meta[type];
 
+  const handleClick = () => {
+    soundManager.playMemeFile(item.sound);
+  };
+
   return (
     <div
-      className={`glass-card rounded-[var(--r-xl)] p-3 sm:p-4 border border-border/80 shadow-md flex items-center gap-3 transition-all duration-300 hover:scale-102 hover:border-accent/40 bg-surface/90 ${className}`}
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      title="Нажмите, чтобы послушать звук"
+      className={`glass-card rounded-[var(--r-xl)] p-3 sm:p-4 border border-border/80 shadow-md flex items-center gap-3 transition-all duration-300 hover:scale-102 hover:border-accent/40 bg-surface/90 cursor-pointer active:scale-98 ${className}`}
     >
       {/* 100% Vector Meme Illustration */}
       <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl bg-surface-raised border border-border flex items-center justify-center overflow-hidden p-1">
