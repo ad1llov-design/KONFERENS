@@ -128,6 +128,11 @@ export const DemoState = {
     return Boolean(state.progress[courseId]);
   },
 
+  getEnrolledCourses(): CourseId[] {
+    const state = loadState();
+    return Object.keys(state.progress) as CourseId[];
+  },
+
   // ── Diagnostic ────────────────────────────────────────────────────────────
 
   saveDiagnosticResult(result: DiagnosticResult): void {

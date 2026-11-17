@@ -244,28 +244,28 @@ function TutorChatInner() {
 
         {/* Chat Window */}
         {courseIdParam && (
-          <div className="flex-1 flex flex-col glass rounded-[var(--r-xl)] border border-border/80 shadow-2xl overflow-hidden min-h-[460px]">
+          <div className="flex-1 flex flex-col glass rounded-[var(--r-xl)] border border-border/80 shadow-2xl overflow-hidden min-h-[380px] sm:min-h-[460px]">
             {/* Messages Scroll Area */}
-            <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4 max-h-[58vh]">
+            <div className="flex-1 overflow-y-auto p-3.5 sm:p-5 flex flex-col gap-3.5 sm:gap-4 max-h-[52vh] sm:max-h-[58vh]">
               {messages.map(msg => (
                 <div
                   key={msg.id}
-                  className={['flex gap-3', msg.role === 'user' ? 'flex-row-reverse' : ''].join(' ')}
+                  className={['flex gap-2.5 sm:gap-3', msg.role === 'user' ? 'flex-row-reverse' : ''].join(' ')}
                 >
                   {/* Avatar */}
                   <div className={[
-                    'w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1',
+                    'w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 mt-1 text-xs',
                     msg.role === 'assistant' ? 'bg-accent/15 border border-accent/25 text-accent' : 'bg-surface border border-border text-foreground',
                   ].join(' ')}>
                     {msg.role === 'assistant'
-                      ? <Bot className="h-4 w-4" />
-                      : <User className="h-4 w-4" />
+                      ? <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      : <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     }
                   </div>
 
                   {/* Bubble */}
                   <div className={[
-                    'max-w-[80%] rounded-[var(--r-lg)] px-4 py-3 text-sm leading-relaxed shadow-sm',
+                    'max-w-[88%] sm:max-w-[80%] rounded-[var(--r-lg)] px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm leading-relaxed shadow-sm',
                     msg.role === 'assistant'
                       ? 'bg-surface border border-border text-foreground rounded-tl-[var(--r-xs)]'
                       : 'bg-accent text-white rounded-tr-[var(--r-xs)]',

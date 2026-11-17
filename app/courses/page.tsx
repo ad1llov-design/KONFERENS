@@ -74,8 +74,8 @@ export default function CoursesPage() {
 
         {/* Filter Bar & Search */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          {/* Category Tabs */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Category Tabs (Horizontally scrollable on mobile) */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:flex-wrap no-scrollbar w-full sm:w-auto shrink-0">
             <button
               onClick={() => setSelectedCategory('all')}
               className={[

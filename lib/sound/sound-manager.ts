@@ -263,6 +263,195 @@ export class SoundManager {
   }
 
   /**
+   * Meme Fail: Comedic dramatic descending chord (C#4 -> A3 -> F3)
+   * With low-pass resonance to simulate classic fail meme sound. Duration: ~0.45s
+   */
+  public playMemeFail(): void {
+    const ctx = this.initContext();
+    if (!ctx) return;
+    const gainVal = this.getEffectiveGain();
+    if (gainVal <= 0) return;
+
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(gainVal * 0.35, now);
+    masterGain.connect(ctx.destination);
+
+    const notes = [
+      { freq: 277.18, time: 0.00, dur: 0.15 }, // C#4
+      { freq: 220.00, time: 0.12, dur: 0.16 }, // A3
+      { freq: 174.61, time: 0.24, dur: 0.25 }, // F3
+    ];
+
+    notes.forEach(({ freq, time, dur }) => {
+      const osc = ctx.createOscillator();
+      const noteGain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      // Low pass filter for muffled comedic impact
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(800, now + time);
+
+      osc.frequency.setValueAtTime(freq, now + time);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.92, now + time + dur);
+
+      noteGain.gain.setValueAtTime(0.001, now + time);
+      noteGain.gain.exponentialRampToValueAtTime(0.8, now + time + 0.02);
+      noteGain.gain.exponentialRampToValueAtTime(0.001, now + time + dur);
+
+      osc.connect(filter);
+      filter.connect(noteGain);
+      noteGain.connect(masterGain);
+
+      osc.start(now + time);
+      osc.stop(now + time + dur);
+    });
+  }
+
+  /**
+   * Bruh Sound Effect: Deep comedic resonant downward pitch slide (~115Hz down to ~75Hz)
+   * Dual oscillator (sawtooth + sine) with formant filter. Duration: ~0.38s
+   */
+  public playBruh(): void {
+    const ctx = this.initContext();
+    if (!ctx) return;
+    const gainVal = this.getEffectiveGain();
+    if (gainVal <= 0) return;
+
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(gainVal * 0.4, now);
+    masterGain.connect(ctx.destination);
+
+    // Filter simulating a chest vocal formant
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(350, now);
+    filter.Q.setValueAtTime(2.5, now);
+    filter.connect(masterGain);
+
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    osc1.type = 'sawtooth';
+    osc2.type = 'sine';
+
+    // Pitch slide down (115Hz -> 75Hz)
+    osc1.frequency.setValueAtTime(115, now);
+    osc1.frequency.exponentialRampToValueAtTime(75, now + 0.35);
+
+    osc2.frequency.setValueAtTime(115, now);
+    osc2.frequency.exponentialRampToValueAtTime(75, now + 0.35);
+
+    gainNode.gain.setValueAtTime(0.001, now);
+    gainNode.gain.exponentialRampToValueAtTime(1.0, now + 0.04);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.36);
+
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    gainNode.connect(filter);
+
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.38);
+    osc2.stop(now + 0.38);
+  }
+
+  /**
+   * Sad Trombone: Classic 4-note comedic descent with pitch bend
+   * D4 -> C#4 -> C4 -> B3 (wah-wah bend). Duration: ~0.7s
+   */
+  public playSadTrombone(): void {
+    const ctx = this.initContext();
+    if (!ctx) return;
+    const gainVal = this.getEffectiveGain();
+    if (gainVal <= 0) return;
+
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(gainVal * 0.3, now);
+    masterGain.connect(ctx.destination);
+
+    const notes = [
+      { freq: 293.66, time: 0.00, dur: 0.16, bend: 1.0 },   // D4
+      { freq: 277.18, time: 0.15, dur: 0.16, bend: 1.0 },   // C#4
+      { freq: 261.63, time: 0.30, dur: 0.16, bend: 1.0 },   // C4
+      { freq: 246.94, time: 0.45, dur: 0.30, bend: 0.88 },  // B3 slide down (wah-wah)
+    ];
+
+    notes.forEach(({ freq, time, dur, bend }) => {
+      const osc = ctx.createOscillator();
+      const noteGain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now + time);
+      if (bend !== 1.0) {
+        osc.frequency.exponentialRampToValueAtTime(freq * bend, now + time + dur);
+      }
+
+      // Wah-wah filter
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(650, now + time);
+
+      noteGain.gain.setValueAtTime(0.001, now + time);
+      noteGain.gain.exponentialRampToValueAtTime(0.85, now + time + 0.03);
+      noteGain.gain.exponentialRampToValueAtTime(0.001, now + time + dur);
+
+      osc.connect(filter);
+      filter.connect(noteGain);
+      noteGain.connect(masterGain);
+
+      osc.start(now + time);
+      osc.stop(now + time + dur);
+    });
+  }
+
+  /**
+   * Meme Win / Giga Victory: Upbeat 8-bit pentatonic arpeggio
+   * G4 -> C5 -> E5 -> G5 -> C6 rapid arpeggio with square sparkle. Duration: ~0.4s
+   */
+  public playMemeWin(): void {
+    const ctx = this.initContext();
+    if (!ctx) return;
+    const gainVal = this.getEffectiveGain();
+    if (gainVal <= 0) return;
+
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(gainVal * 0.25, now);
+    masterGain.connect(ctx.destination);
+
+    const notes = [
+      { freq: 392.00, time: 0.00, dur: 0.08 }, // G4
+      { freq: 523.25, time: 0.07, dur: 0.08 }, // C5
+      { freq: 659.25, time: 0.14, dur: 0.09 }, // E5
+      { freq: 783.99, time: 0.21, dur: 0.12 }, // G5
+      { freq: 1046.50, time: 0.28, dur: 0.25 }, // C6
+    ];
+
+    notes.forEach(({ freq, time, dur }) => {
+      const osc = ctx.createOscillator();
+      const noteGain = ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + time);
+
+      noteGain.gain.setValueAtTime(0.001, now + time);
+      noteGain.gain.exponentialRampToValueAtTime(1.0, now + time + 0.015);
+      noteGain.gain.exponentialRampToValueAtTime(0.001, now + time + dur);
+
+      osc.connect(noteGain);
+      noteGain.connect(masterGain);
+
+      osc.start(now + time);
+      osc.stop(now + time + dur);
+    });
+  }
+
+  /**
    * Test current sound settings with a soft chime
    */
   public testSound(): void {

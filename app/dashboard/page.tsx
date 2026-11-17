@@ -508,7 +508,7 @@ export default function DashboardPage() {
         {/* ── Profile Settings Modal ────────────────────────────────────────── */}
         {showSettings && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="surface rounded-[var(--r-xl)] p-6 md:p-8 border border-border shadow-2xl max-w-md w-full relative">
+            <div className="surface rounded-[var(--r-xl)] p-6 md:p-8 border border-border shadow-2xl max-w-md w-full relative max-h-[90vh] overflow-y-auto">
               <button
                 onClick={() => setShowSettings(false)}
                 className="absolute top-4 right-4 text-muted hover:text-foreground transition-colors p-1"

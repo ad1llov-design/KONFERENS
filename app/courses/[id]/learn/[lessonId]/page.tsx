@@ -15,6 +15,10 @@ import {
   Bookmark,
   CheckSquare,
   ChevronRight,
+  Flame,
+  Smile,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/Button';
@@ -25,8 +29,10 @@ import { PythonDefBreakdown } from '@/components/lesson/PythonDefBreakdown';
 import { HtmlCssPreview } from '@/components/lesson/HtmlCssPreview';
 import { LessonTextToSpeech } from '@/components/lesson/LessonTextToSpeech';
 import { KiviSticker } from '@/components/lesson/KiviSticker';
+import { MemeSticker, type MemeType } from '@/components/lesson/MemeSticker';
 import { SoundToggle } from '@/components/sound/SoundToggle';
 import { soundManager } from '@/lib/sound/sound-manager';
+import { toxicTutor, type CoachMode } from '@/lib/sound/toxic-tutor';
 import { getLesson, getNextLesson, getLessonStage } from '@/lib/data/courses';
 import { getLocalizedLesson, getLocalizedStage } from '@/lib/data/course-content-localization';
 import { DemoState } from '@/lib/demo-state';
@@ -141,6 +147,19 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
   const [showHint, setShowHint] = useState(false);
   const [completedExercises, setCompletedExercises] = useState<number[]>([]);
   const [alreadyCompleted, setAlreadyCompleted] = useState(false);
+  const [coachMode, setCoachMode] = useState<CoachMode>('friendly');
+  const [currentMeme, setCurrentMeme] = useState<MemeType>('facepalm');
+  const [roastSpeechText, setRoastSpeechText] = useState<string>('');
+  const [showMobileCompanion, setShowMobileCompanion] = useState(false);
+
+  useEffect(() => {
+    setCoachMode(toxicTutor.getMode());
+  }, []);
+
+  function toggleCoachMode() {
+    const next = toxicTutor.toggleMode();
+    setCoachMode(next);
+  }
 
   useEffect(() => {
     if (lesson) {
@@ -174,6 +193,7 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
     setUserAnswer(null);
     setAnswerState('idle');
     setShowHint(false);
+    toxicTutor.stopSpeaking();
   }
 
   // Answer validation
@@ -186,13 +206,25 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
 
     if (correct) {
       setAnswerState('correct');
+      if (coachMode === 'roast') {
+        toxicTutor.recordSuccess();
+        const roast = toxicTutor.getRoast('correct', locale);
+        setRoastSpeechText(roast);
+        toxicTutor.speakRoast(roast, locale);
+        const winMemes: MemeType[] = ['gigachad', 'galaxy-brain'];
+        setCurrentMeme(winMemes[Math.floor(Math.random() * winMemes.length)]);
+        soundManager.playMemeWin();
+      }
+
       if (!completedExercises.includes(currentExIndex)) {
         const nextCompleted = [...completedExercises, currentExIndex];
         setCompletedExercises(nextCompleted);
 
         // If all checks are completed, record lesson progress and play complete milestone fanfare
         if (nextCompleted.length >= totalExercises && !alreadyCompleted) {
-          soundManager.playComplete();
+          if (coachMode === 'friendly') {
+            soundManager.playComplete();
+          }
           DemoState.completeLesson({
             lessonId,
             courseId,
@@ -207,14 +239,38 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
             body: JSON.stringify({ courseId, lessonId, correct: true, score: 100 }),
           }).catch(() => {});
         } else {
-          soundManager.playCorrect();
+          if (coachMode === 'friendly') {
+            soundManager.playCorrect();
+          }
         }
       } else {
-        soundManager.playCorrect();
+        if (coachMode === 'friendly') {
+          soundManager.playCorrect();
+        }
       }
     } else {
       setAnswerState('incorrect');
-      soundManager.playIncorrect();
+      if (coachMode === 'roast') {
+        const failStreak = toxicTutor.recordMistake();
+        const roast = toxicTutor.getRoast('incorrect', locale);
+        setRoastSpeechText(roast);
+        toxicTutor.speakRoast(roast, locale);
+
+        if (failStreak >= 2) {
+          soundManager.playSadTrombone();
+          setCurrentMeme('emotional-damage');
+        } else {
+          const failMemes: MemeType[] = ['facepalm', 'this-is-fine', 'panic-cat'];
+          setCurrentMeme(failMemes[Math.floor(Math.random() * failMemes.length)]);
+          if (Math.random() > 0.5) {
+            soundManager.playBruh();
+          } else {
+            soundManager.playMemeFail();
+          }
+        }
+      } else {
+        soundManager.playIncorrect();
+      }
     }
   }
 
@@ -295,8 +351,40 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
             </button>
           </div>
 
-          {/* Quick status pill & Sound Toggle */}
-          <div className="flex items-center gap-2">
+          {/* Quick status pill, Coach Mode Toggle & Sound Toggle */}
+          <div className="flex items-center flex-wrap gap-2">
+            {/* Coach Mode Selector: Friendly Kivi vs Toxic Roast Mode */}
+            <button
+              onClick={toggleCoachMode}
+              title={
+                coachMode === 'friendly'
+                  ? (locale === 'ru' ? 'Режим: Добрый Киви (нажмите для Прожарки)' : locale === 'ky' ? 'Режим: Жумшак Киви (Катуу режим үчүн басыңыз)' : 'Mode: Friendly Kivi (Click for Roast Mode)')
+                  : (locale === 'ru' ? 'Режим: Прожарка / Токсичный коуч (нажмите для Доброго)' : locale === 'ky' ? 'Режим: Катуу Коуч (Жумшак режим үчүн басыңыз)' : 'Mode: Roast / Toxic Coach (Click for Friendly)')
+              }
+              className={[
+                'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--r-md)] text-xs font-semibold border transition-all cursor-pointer',
+                coachMode === 'roast'
+                  ? 'bg-rose-500/10 text-rose-500 border-rose-500/40 hover:bg-rose-500/20 shadow-xs ring-1 ring-rose-500/30 animate-pulse'
+                  : 'bg-surface text-muted border-border hover:text-foreground hover:bg-surface-raised',
+              ].join(' ')}
+            >
+              {coachMode === 'roast' ? (
+                <>
+                  <Flame className="h-3.5 w-3.5 text-rose-500 fill-rose-500" />
+                  <span className="font-bold text-[11px] sm:text-xs">
+                    {locale === 'ru' ? '😈 Прожарка' : locale === 'ky' ? '😈 Катуу' : '😈 Roast'}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Smile className="h-3.5 w-3.5 text-emerald-500" />
+                  <span className="text-[11px] sm:text-xs">
+                    {locale === 'ru' ? '😇 Добрый' : locale === 'ky' ? '😇 Жумшак' : '😇 Friendly'}
+                  </span>
+                </>
+              )}
+            </button>
+
             <SoundToggle showVolumeSlider={true} />
             {alreadyCompleted ? (
               <Badge variant="success">
@@ -306,10 +394,46 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
             ) : (
               <Badge variant="amber">
                 <Target className="h-3.5 w-3.5 mr-1 text-amber" />
-                {completedExercises.length > 0 ? `${completedExercises.length} из ${totalExercises} пройдено` : 'В процессе'}
+                {completedExercises.length > 0 ? `${completedExercises.length}/${totalExercises}` : 'В процессе'}
               </Badge>
             )}
           </div>
+        </div>
+
+        {/* Mobile Learning Goal & AI Companion Collapsible Accordion (Visible on < lg screens) */}
+        <div className="lg:hidden mb-6">
+          <button
+            onClick={() => setShowMobileCompanion(!showMobileCompanion)}
+            className="w-full flex items-center justify-between p-3.5 rounded-[var(--r-md)] bg-surface border border-border shadow-xs text-xs font-semibold text-foreground cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-accent" />
+              <span>
+                {locale === 'ru' ? '🎯 Цель урока и AI-наставник' : locale === 'ky' ? '🎯 Сабактын максаты жана AI-насаатчы' : '🎯 Lesson Goal & AI Tutor'}
+              </span>
+            </div>
+            {showMobileCompanion ? <ChevronUp className="h-4 w-4 text-muted" /> : <ChevronDown className="h-4 w-4 text-muted" />}
+          </button>
+
+          {showMobileCompanion && (
+            <div className="mt-2.5 p-4 rounded-[var(--r-md)] bg-surface border border-border/80 space-y-3.5 animate-fadeIn text-xs">
+              <div>
+                <p className="font-semibold text-foreground mb-1">
+                  {locale === 'ru' ? 'Учебная цель:' : locale === 'ky' ? 'Окуу максаты:' : 'Learning Objective:'}
+                </p>
+                <p className="text-muted leading-relaxed">{lessonGoalText}</p>
+              </div>
+              <div className="pt-2 border-t border-border">
+                <Link
+                  href={`/tutor?course=${courseId}&lesson=${lessonId}`}
+                  className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-[var(--r-sm)] bg-accent text-white font-medium shadow-xs"
+                >
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  <span>{t.lesson.askTutorLink}</span>
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Responsive 2-Column Desktop Grid (8 cols Main + 4 cols Companion Sidebar) */}
@@ -381,7 +505,7 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
                   </div>
 
                   {/* Visual Step Progress Bar */}
-                  <div className="flex items-center gap-2 mb-6">
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-6">
                     {exercises.map((item, idx) => {
                       const isDone = completedExercises.includes(idx);
                       const isCurrent = idx === currentExIndex;
@@ -390,7 +514,7 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
                           key={item.id || idx}
                           onClick={() => selectExercise(idx)}
                           className={[
-                            'flex-1 py-2 px-2 rounded-[var(--r-md)] border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer',
+                            'flex-1 py-2 px-1.5 sm:px-3 rounded-[var(--r-md)] border text-xs font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer min-h-[40px]',
                             isCurrent
                               ? 'border-accent bg-accent text-white shadow-xs'
                               : isDone
@@ -401,12 +525,15 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
                           {isDone ? (
                             <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                           ) : (
-                            <span className="w-3.5 h-3.5 rounded-full border border-current flex items-center justify-center text-[9px] shrink-0">
+                            <span className="w-4 h-4 rounded-full border border-current flex items-center justify-center text-[10px] shrink-0 font-bold">
                               {idx + 1}
                             </span>
                           )}
-                          <span className="truncate">
+                          <span className="hidden sm:inline truncate">
                             {idx === 0 ? 'Понимание' : idx === 1 ? 'Вывод кода' : 'Практика'}
+                          </span>
+                          <span className="sm:hidden font-mono text-xs">
+                            №{idx + 1}
                           </span>
                         </button>
                       );
@@ -538,26 +665,34 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
                   )}
                 </div>
 
-                {/* Explanatory Pedagogical Feedback with Kivi Mascot Reaction */}
+                {/* Explanatory Pedagogical Feedback with Kivi Mascot OR Toxic Roast Meme Sticker */}
                 {answerState !== 'idle' && (
                   <div
                     className={[
-                      'rounded-[var(--r-xl)] p-5 border transition-all animate-fadeIn space-y-3.5',
+                      'rounded-[var(--r-xl)] p-4 sm:p-5 border transition-all animate-fadeIn space-y-3.5',
                       answerState === 'correct'
                         ? 'border-success/40 bg-success-light'
                         : 'border-danger/40 bg-danger-light',
                     ].join(' ')}
                   >
-                    <KiviSticker
-                      mood={
-                        answerState === 'correct'
-                          ? completedExercises.length >= totalExercises
-                            ? 'champion'
-                            : 'celebrate'
-                          : 'encourage'
-                      }
-                      size="sm"
-                    />
+                    {coachMode === 'roast' ? (
+                      <MemeSticker
+                        sticker={currentMeme}
+                        customText={roastSpeechText || undefined}
+                        size="md"
+                      />
+                    ) : (
+                      <KiviSticker
+                        mood={
+                          answerState === 'correct'
+                            ? completedExercises.length >= totalExercises
+                              ? 'champion'
+                              : 'celebrate'
+                            : 'encourage'
+                        }
+                        size="sm"
+                      />
+                    )}
 
                     <div className="flex items-start gap-3">
                       {answerState === 'correct' ? (

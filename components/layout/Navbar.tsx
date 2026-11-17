@@ -39,8 +39,8 @@ export function Navbar() {
           <span>Kivora</span>
         </Link>
 
-        {/* Center / Navigation Links */}
-        <nav className="flex items-center gap-1 sm:gap-1.5" aria-label="Main navigation">
+        {/* Center / Navigation Links (Desktop only - mobile uses MobileBottomNav) */}
+        <nav className="hidden md:flex items-center gap-1.5" aria-label="Main navigation">
           {links.map(({ href, label, icon: Icon }) => {
             const isActive = pathname.startsWith(href);
             return (

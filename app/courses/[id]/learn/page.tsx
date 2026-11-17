@@ -272,21 +272,21 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                         {/* Winding Curved Trail Connector to next node */}
                         {li < stageLessons.length - 1 && (
                           <div
-                            className="absolute left-8 sm:left-9 top-16 w-0.5 h-10 border-l-2 border-dashed border-accent/40 pointer-events-none -z-0"
+                            className="absolute left-7 sm:left-8 top-14 sm:top-16 w-0.5 h-10 border-l-2 border-dashed border-accent/40 pointer-events-none -z-0"
                             aria-hidden="true"
                           />
                         )}
 
-                        {/* Circular 64x64 Game Board Node */}
+                        {/* Circular Game Board Node (compact on mobile) */}
                         <div className="relative shrink-0 z-10">
                           {/* Floating Learner Marker Token (Фишка ученика) */}
                           {isCurrent && (
-                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex flex-col items-center z-30 pointer-events-none animate-bounce">
-                              <div className="bg-accent text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-white/30 whitespace-nowrap">
+                            <div className="absolute -top-7 sm:-top-8 left-1/2 -translate-x-1/2 flex flex-col items-center z-30 pointer-events-none animate-bounce">
+                              <div className="bg-accent text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-white/30 whitespace-nowrap">
                                 <span>{learnerAvatar}</span>
                                 <span>{t.learn.learnerToken}</span>
                               </div>
-                              <div className="w-2 h-2 bg-accent rotate-45 -mt-1 shadow-xs" />
+                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-accent rotate-45 -mt-1 shadow-xs" />
                             </div>
                           )}
 
@@ -296,11 +296,11 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                               if (canAccess) soundManager.playCheckpoint();
                             }}
                             className={[
-                              'w-16 h-16 sm:w-18 sm:h-18 rounded-full flex flex-col items-center justify-center font-extrabold text-sm relative transition-all duration-200 border-2 select-none cursor-pointer',
+                              'w-14 h-14 sm:w-16 sm:h-16 rounded-full flex flex-col items-center justify-center font-extrabold text-sm relative transition-all duration-200 border-2 select-none cursor-pointer',
                               isCompleted
                                 ? 'bg-success text-white border-success shadow-md hover:scale-105'
                                 : isCurrent
-                                ? 'bg-accent text-white border-accent shadow-lg ring-4 ring-accent/30 hover:scale-105 animate-pulse'
+                                ? 'bg-accent text-white border-accent shadow-lg ring-3 sm:ring-4 ring-accent/30 hover:scale-105 animate-pulse'
                                 : isAvailable
                                 ? 'bg-surface text-foreground border-accent/60 hover:border-accent hover:scale-105 shadow-sm'
                                 : 'bg-surface-raised text-muted border-border/50 opacity-60 cursor-not-allowed',
@@ -309,19 +309,19 @@ function LearnContent({ params }: { params: Promise<{ id: string }> }) {
                             aria-label={`${lesson.title} (${status})`}
                           >
                             {isCompleted ? (
-                              <CheckCircle2 className="h-7 w-7 text-white" />
+                              <CheckCircle2 className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
                             ) : isCurrent ? (
                               <div className="flex flex-col items-center">
-                                <span className="text-lg font-black">{li + 1}</span>
+                                <span className="text-base sm:text-lg font-black">{li + 1}</span>
                               </div>
                             ) : isLocked ? (
-                              <Lock className="h-5 w-5 text-muted" />
+                              <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-muted" />
                             ) : isCapstone ? (
-                              <Award className="h-6 w-6 text-accent" />
+                              <Award className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
                             ) : isCheckpoint ? (
-                              <Target className="h-6 w-6 text-amber" />
+                              <Target className="h-5 w-5 sm:h-6 sm:w-6 text-amber" />
                             ) : (
-                              <span className="text-base font-bold">{li + 1}</span>
+                              <span className="text-sm sm:text-base font-bold">{li + 1}</span>
                             )}
                           </Link>
                         </div>
