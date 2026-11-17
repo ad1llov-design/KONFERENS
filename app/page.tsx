@@ -20,11 +20,16 @@ import {
   Award,
   Compass,
   Flame,
+  Zap,
+  Volume2,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { DemoEnrollModal } from '@/components/modals/DemoEnrollModal';
+import { ToxicCoachAvatar } from '@/components/lesson/ToxicCoachAvatar';
+import { MemeFloatingSticker } from '@/components/home/MemeFloatingSticker';
+import { toxicTutor } from '@/lib/sound/toxic-tutor';
 import { useLanguage } from '@/lib/i18n/context';
 import { COURSES } from '@/lib/data/courses';
 import { getLocalizedCourse } from '@/lib/data/course-localization';
@@ -205,7 +210,7 @@ function InteractivePathPreview() {
                 {step.done ? (
                   '✓'
                 ) : step.active ? (
-                  '🦊'
+                  <Compass className="w-4 h-4 text-white" />
                 ) : step.isFinish ? (
                   <Flag className="w-3.5 h-3.5" />
                 ) : step.isCheckpoint ? (
@@ -281,12 +286,25 @@ export default function LandingPage() {
     setFeedbackText('');
   }
 
-  // Micro-badges for hero
-  const heroPills = locale === 'ru'
-    ? ['🎯 15 направлений', '⚡ По 15–20 мин в день', '🦊 Интерактивная дорожка', '💡 Без 40-часовых видео']
-    : locale === 'ky'
-    ? ['🎯 15 багыт', '⚡ Күнүнө 15–20 мүнөт', '🦊 Интерактивдүү маршрут', '💡 Узун лекцияларсыз']
-    : ['🎯 15 Learning Tracks', '⚡ 15–20 mins / day', '🦊 Board-Game Road', '💡 Zero Passive Videos'];
+  // Micro-badges with minimalist icons
+  const heroPills = [
+    {
+      icon: Target,
+      label: locale === 'ru' ? '15 направлений' : locale === 'ky' ? '15 багыт' : '15 Learning Tracks',
+    },
+    {
+      icon: Zap,
+      label: locale === 'ru' ? '15–20 мин в день' : locale === 'ky' ? 'Күнүнө 15–20 мүнөт' : '15–20 mins / day',
+    },
+    {
+      icon: Compass,
+      label: locale === 'ru' ? 'Интерактивная дорожка' : locale === 'ky' ? 'Интерактивдүү маршрут' : 'Board-Game Road',
+    },
+    {
+      icon: VideoOff,
+      label: locale === 'ru' ? 'Без 40-часовых видео' : locale === 'ky' ? 'Узун лекцияларсыз' : 'Zero Passive Videos',
+    },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground relative overflow-hidden transition-colors duration-200">
@@ -303,10 +321,23 @@ export default function LandingPage() {
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             {/* Left Column: Heading, Value Proposition & Actions */}
             <div className="lg:col-span-7 flex flex-col items-start">
-              {/* Product Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-light border border-accent/20 text-accent text-xs font-semibold mb-6 shadow-xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                <span>{t.home.badge}</span>
+              {/* Product Badges: Feature announcement & Conference demo */}
+              <div className="flex flex-wrap items-center gap-2 mb-6">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-light border border-accent/20 text-accent text-xs font-semibold shadow-xs">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                  <span>{t.home.badge}</span>
+                </div>
+
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs font-semibold shadow-xs">
+                  <Flame className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+                  <span>
+                    {locale === 'ru'
+                      ? 'Учись нескучно: Коуч Влад и мемы'
+                      : locale === 'ky'
+                      ? 'Зерикпей үйрөн: Влад жана мемдер'
+                      : 'Zero Boredom: Coach Vlad & Memes'}
+                  </span>
+                </div>
               </div>
 
               {/* Hero Headline */}
@@ -322,16 +353,20 @@ export default function LandingPage() {
                 {t.home.heroSub}
               </p>
 
-              {/* Micro-Stat Pills */}
+              {/* Micro-Stat Pills with Minimalist Icons */}
               <div className="flex flex-wrap gap-2 mb-8">
-                {heroPills.map((pill, i) => (
-                  <span
-                    key={i}
-                    className="px-2.5 py-1 rounded-[var(--r-sm)] bg-surface border border-border text-xs text-foreground font-medium shadow-xs"
-                  >
-                    {pill}
-                  </span>
-                ))}
+                {heroPills.map((pill, i) => {
+                  const Icon = pill.icon;
+                  return (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--r-md)] bg-surface border border-border text-xs text-foreground font-medium shadow-xs"
+                    >
+                      <Icon className="w-3.5 h-3.5 text-accent" />
+                      <span>{pill.label}</span>
+                    </span>
+                  );
+                })}
               </div>
 
               {/* Primary Call to Actions */}
@@ -356,6 +391,82 @@ export default function LandingPage() {
             {/* Right Column: Live Interactive Board-Game Road Preview */}
             <div className="lg:col-span-5 relative w-full">
               <InteractivePathPreview />
+            </div>
+          </div>
+        </section>
+
+        {/* ── 1.5 Meme Zone & Coach Vlad Interactive Showcase ─────────────── */}
+        <section className="py-12 md:py-16 bg-gradient-to-b from-background via-surface-raised/40 to-background border-t border-border relative overflow-hidden">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-500 text-xs font-semibold mb-2 border border-rose-500/30">
+                  <Flame className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+                  <span>
+                    {locale === 'ru' ? 'Инновационный режим прожарки' : locale === 'ky' ? 'Инновациялык катуу режим' : 'Toxic Roast Innovation'}
+                  </span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-foreground">
+                  {locale === 'ru'
+                    ? 'Учись без скуки: Сеньор Влад и культовые IT-мемы'
+                    : locale === 'ky'
+                    ? 'Зерикпей үйрөн: Тимлид Влад жана IT-мемдер'
+                    : 'Learn with Zero Boredom: Senior Lead Vlad & Viral Memes'}
+                </h2>
+                <p className="text-xs md:text-sm text-muted mt-1 max-w-2xl leading-relaxed">
+                  {locale === 'ru'
+                    ? 'Никакой монотонности. Ошибся в коде — саркастичный сеньор устроит прожарку мужским голосом. Решил чисто — получишь мемный зачёт и похвалу.'
+                    : locale === 'ky'
+                    ? 'Бир калыптагы тажатма лекциялар жок. Ката кетирсең — сеньор катуу эскертет. Туура тапсаң — стикер аласың.'
+                    : 'Zero monotony. Make an error — Senior Vlad roasts your logic in a deep natural voice. Nail the syntax — earn meme badges and respect.'}
+                </p>
+              </div>
+
+              {/* Live Voice Preview Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  toxicTutor.setMode('roast');
+                  toxicTutor.speakRoast(
+                    locale === 'ru'
+                      ? 'Привет, я Влад. Пиши код чисто, иначе отправлю переписывать весь проект в пятницу вечером!'
+                      : locale === 'ky'
+                      ? 'Салам, мен Владмын. Кодду таза жаз, болбосо жума күнү кечинде кайра жаздырам!'
+                      : "Hey, I'm Vlad. Write clean code, or I'll make you refactor the whole repo on Friday evening!",
+                    locale
+                  );
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-[var(--r-md)] bg-rose-500/15 text-rose-500 hover:bg-rose-500/25 border border-rose-500/30 text-xs font-bold transition-all shadow-xs cursor-pointer shrink-0"
+              >
+                <Volume2 className="w-4 h-4 text-rose-500 animate-pulse" />
+                <span>
+                  {locale === 'ru'
+                    ? '🔊 Послушать голос Влада'
+                    : locale === 'ky'
+                    ? '🔊 Владдын үнүн угуу'
+                    : '🔊 Hear Vlad Roast Voice'}
+                </span>
+              </button>
+            </div>
+
+            {/* Grid of Meme Badges & Coach Vlad Spotlight Card */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="glass-card rounded-[var(--r-xl)] p-4 border border-rose-500/30 bg-rose-500/5 flex items-center gap-3 shadow-sm hover:border-rose-500/50 transition-all">
+                <ToxicCoachAvatar mood="angry" size="sm" />
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.2 rounded-full bg-rose-500/20 text-rose-500 border border-rose-500/30">
+                      Toxic Coach
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-foreground truncate">Сеньор Влад</h3>
+                  <p className="text-[11px] text-muted line-clamp-2">Мужской голос сеньора, который отчитывает за плохой код.</p>
+                </div>
+              </div>
+
+              <MemeFloatingSticker type="doge" />
+              <MemeFloatingSticker type="einstein" />
+              <MemeFloatingSticker type="homer" />
             </div>
           </div>
         </section>

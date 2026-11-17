@@ -30,6 +30,8 @@ import { HtmlCssPreview } from '@/components/lesson/HtmlCssPreview';
 import { LessonTextToSpeech } from '@/components/lesson/LessonTextToSpeech';
 import { KiviSticker } from '@/components/lesson/KiviSticker';
 import { MemeSticker, type MemeType } from '@/components/lesson/MemeSticker';
+import { LessonDeepDive } from '@/components/lesson/LessonDeepDive';
+import { ToxicCoachAvatar } from '@/components/lesson/ToxicCoachAvatar';
 import { SoundToggle } from '@/components/sound/SoundToggle';
 import { soundManager } from '@/lib/sound/sound-manager';
 import { toxicTutor, type CoachMode } from '@/lib/sound/toxic-tutor';
@@ -372,14 +374,14 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
                 <>
                   <Flame className="h-3.5 w-3.5 text-rose-500 fill-rose-500" />
                   <span className="font-bold text-[11px] sm:text-xs">
-                    {locale === 'ru' ? '😈 Прожарка' : locale === 'ky' ? '😈 Катуу' : '😈 Roast'}
+                    {locale === 'ru' ? '😈 Влад (Прожарка)' : locale === 'ky' ? '😈 Влад (Катуу)' : '😈 Vlad (Roast)'}
                   </span>
                 </>
               ) : (
                 <>
                   <Smile className="h-3.5 w-3.5 text-emerald-500" />
-                  <span className="text-[11px] sm:text-xs">
-                    {locale === 'ru' ? '😇 Добрый' : locale === 'ky' ? '😇 Жумшак' : '😇 Friendly'}
+                  <span className="text-[11px] sm:text-xs font-semibold">
+                    {locale === 'ru' ? '😇 Киви (Добрый)' : locale === 'ky' ? '😇 Киви (Жумшак)' : '😇 Kivi (Friendly)'}
                   </span>
                 </>
               )}
@@ -469,6 +471,14 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
                     content={lesson.content}
                     lessonId={lesson.id}
                     courseId={courseId}
+                  />
+
+                  {/* Interactive Detailed Theory Deep Dive ("Подробнее о теме") */}
+                  <LessonDeepDive
+                    customContent={lesson.deepDive}
+                    lessonTitle={lesson.title}
+                    courseId={courseId}
+                    lessonId={lesson.id}
                   />
                 </div>
 
@@ -676,11 +686,25 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
                     ].join(' ')}
                   >
                     {coachMode === 'roast' ? (
-                      <MemeSticker
-                        sticker={currentMeme}
-                        customText={roastSpeechText || undefined}
-                        size="md"
-                      />
+                      <div className="flex flex-col sm:flex-row items-center gap-3">
+                        <ToxicCoachAvatar
+                          mood={
+                            answerState === 'correct'
+                              ? 'proud'
+                              : toxicTutor.getConsecutiveMistakes() >= 2
+                              ? 'angry'
+                              : 'facepalm'
+                          }
+                          size="md"
+                        />
+                        <div className="flex-1 w-full min-w-0">
+                          <MemeSticker
+                            sticker={currentMeme}
+                            customText={roastSpeechText || undefined}
+                            size="md"
+                          />
+                        </div>
+                      </div>
                     ) : (
                       <KiviSticker
                         mood={

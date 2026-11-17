@@ -59,6 +59,8 @@ export interface Lesson {
   title:      string;
   /** HTML-safe teaching content (plain text with simple markup) */
   content:    string;
+  /** In-depth theory / architecture breakdown opened by "Подробнее" button */
+  deepDive?:  string;
   /** Primary / single exercise for backward compatibility */
   exercise:   Exercise;
   /** Multi-check exercises: minimum 3 checks per lesson */

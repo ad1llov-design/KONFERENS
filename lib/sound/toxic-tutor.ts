@@ -18,70 +18,74 @@ const ROAST_QUOTES: Record<
 > = {
   ru: {
     incorrect: [
-      'Серьёзно?! Ты правда нажал это? Мой кот лапой по клавиатуре ответил бы точнее!',
-      'Ты что, код пяткой читал? А ну открой глаза и перечитай теорию, гений!',
-      'С такими ответами мы до оффера дойдём к 2099 году! Соберись!',
-      'Ты только что изобрел новый баг в простейшем вопросе. Гордись, но переделай!',
-      'Ctrl+Z твою мысль! Это абсолютно мимо. Сконцентрируйся!',
+      'Твою дивизию! Какого чёрта ты нажал?! Код пяткой писал, что ли?!',
+      'Мать моя женщина... Ты что, компилятор решил сломать?! Перечитай теорию, ёлы-палы!',
+      'Блин, ты серьёзно?! Ну это же полнейшая дичь! Даже стажёр в первый день так не накосячит!',
+      'Чё за бред в логике?! Руки из плеч достань и перепиши нормально!',
+      'Ё-моё, глаза от такого кода слезятся! Соберись, оффер сам себя не получит!',
+      'Ctrl+Z срочно! Ты только что задеплоил баг прямо в моё сердце!',
     ],
     consecutive_fail: [
-      'Опять?! Ты испытываешь моё терпение или законы теории вероятностей?!',
-      'Даже CSS без браузера плачет от твоих попыток! Хватит тыкать наугад, начни читать!',
-      'Если бы за каждый такой ответ брали налог, ты бы уже объявил банкротство! Соберись!',
+      'Да твою ж налево! Ты специально мои нервы проверяешь или просто прикалываешься?!',
+      'Срань господня, опять мимо! Хватит тыкать наугад, открой глаза и читай условия!',
+      'Капец... Если бы за каждую такую ошибку штрафовали, ты бы уже банкротом стал! Врубай голову!',
+      'Даже CSS без браузера плачет от твоих попыток! Прекрати гадать, прочитай теорию!',
     ],
     correct: [
-      'Ну наконец-то! Аж кофе остыл, пока ты соображал. Ладно, зачёт, иди дальше!',
-      'Ого, неужели включился мозг?! Не расслабляйся, следующий вопрос в два раза сложнее!',
-      'Повезло или реально понял? Ладно, засчитано, не зазнавайся!',
+      'О, чудо! Неужели мозг включился?! Ладно, зачёт, но не зазнавайся — это был детский сад!',
+      'Ну наконец-то, ёлы-палы! Аж кофе остыл, пока ты соображал. Ладно, двигай дальше!',
+      'Ого, без косяков с первого раза! Смотри-ка, база. Не расслабляйся, дальше будет жёстче!',
+      'Повезло или реально допёрло? Ладно, засчитано. Не позорь команду, держи темп!',
     ],
     procrastinate: [
-      'Ты уже две минуты смотришь в одну строчку. Код сам себя не напишет!',
-      'Эй, мы тут программирование учим или медитируем на пиксели?! Жми ответ!',
+      'Эй, соня! Ты уже три минуты тупишь в одну строчку. Код сам себя не напишет!',
+      'Какого чёрта мы сидим? Просыпайся, шевели извилинами, дедлайн горит!',
     ],
   },
   ky: {
     incorrect: [
-      'Эй, сен эмне көзүңдү жумуп бастыңбы? Мындай жооп менен кантип программист болосуң?! Ойлончу бир аз!',
-      'Кодду бутуң менен окудуңбу? Башынан кайра жакшылап оку, гений!',
-      'Мындай темп менен 2099-жылы араң жумушка киресиң! Чогулт өзүңдү!',
-      'Жөнөкөй суроодон жаңы баг ойлоп таптың го! Кайра жаса!',
+      'Апей, сен эмне кылып жатасың?! Мындай кодду көргөндө чач тик турат го, эй!',
+      'Эй, ботом, баш менен ойлонсоң боло! Мындай темп менен кайсы продго барасың?!',
+      'Айланайын, көзүңдү ачып окучу! Тоодой катаны кантип көрбөй калдың?!',
+      'Ой тообо, бул эмне деген дичь?! Жакшылап ойлонуп туруп бассаң боло!',
+      'Мындай жооп менен офферди 2099-жылы араң аласың! Чогулт өзүңдү тезирээк!',
     ],
     consecutive_fail: [
       'Дагыбы?! Сен менин нервимди сынап жатасыңбы же жөн эле кокустан басып жатасыңбы?!',
-      'Текшербей туруп баса бергенди токтот! Теорияны окуп чык!',
-      'Ар бир туура эмес жоопко айып пул салынса, бат эле банкрот болмоксуң! Ойлон!',
+      'Токтот кокустан басканды! Эгер ар бир катага айып пул салынса, бат эле банкрот болмоксуң!',
+      'Башыңды иштет, эй! Теорияны ач дагы, башынан жакшылап окуп чык!',
     ],
     correct: [
-      'Ооба акыры! Кофе муздап калды го сен ойлонгуча. Болуптур, өтүп кеттиң, кийинкисине өт!',
-      'Мээң иштеп баштады окшойт! Бирок көп мактанба, кийинки суроо мындан кыйын!',
-      'Жөн эле таптыңбы же чындап билдиңби? Мейли, упай сеники!',
+      'Охо, акыры мээң иштеп баштады окшойт! Болуптур, өттүң, бирок көөп кетпе!',
+      'Ооба акыры! Кофе муздап калды го сен ойлонгуча. Жарайсың, кийинкисине өт!',
+      'Таза өттү! Мыкты, бирок алдыдагы суроо мындан эки эсе кыйын болот, даярдан!',
     ],
     procrastinate: [
-      'Эки мүнөттөн бери экранды карап отурасың го! Код өзү жазылбайт, кыймылда!',
-      'Эй, биз программалоо үйрөнүп жатабызбы же экранды карап медитация кылып жатабызбы?!',
+      'Эки мүнөттөн бери экранды карап отурасың го! Код өзү жазылбайт, кыймылда тезирээк!',
+      'Эй, уктаба! Дедлайн күтпөйт, башыңды иштет!',
     ],
   },
   en: {
     incorrect: [
-      "Are you serious?! Even my toaster writes cleaner logic than this! Wake up and read the prompt!",
-      "Did you read the code with your eyes closed?! Undo that thought and try again!",
-      "At this pace, we'll reach production in the year 2099! Focus!",
-      "You just invented a brand new error code. Impressive, but completely wrong!",
-      "Ctrl+Z that thought right now! That wasn't even close. Wake up!",
+      "Holy crap! What on earth was that?! Did you write that code with your elbows?!",
+      "Damn it! That is pure garbage logic! Even a junior on day one knows better!",
+      "What the hell?! Undo that catastrophe before I revoke your Git permissions!",
+      "Are you serious right now?! Ctrl+Z that thought immediately and read the theory!",
+      "My eyes are burning from this syntax! Wake up, production is on fire!",
     ],
     consecutive_fail: [
-      "Again?! Are you testing my patience or the laws of random probability?! Stop guessing and read!",
-      "Even a broken keyboard gets 50% on coin flips! Pull yourself together!",
-      "If each wrong answer cost money, you'd already be bankrupt! Lock in!",
+      "For Pete's sake! Are you testing my sanity or just playing Russian roulette with the keyboard?!",
+      "Again?! If wrong answers were billable, you'd be declared bankrupt by lunch! Read the prompt!",
+      "Stop guessing blindly! Even a broken randomizer gets 50%! Focus!",
     ],
     correct: [
-      "Finally! My coffee got cold waiting for that synapse to fire. Don't get cocky, next one is harder!",
-      "Miracle of the century: you actually got it right! Keep moving before you forget it!",
-      "Did you guess or did you actually study? Fine, points awarded. Next step!",
+      "Miracle of the century: you actually didn't screw this one up! Next one is twice as hard, don't get cocky!",
+      "Finally! My coffee went cold waiting for that brainwave. Acceptable, move on!",
+      "Zero warnings on the first try. Not bad at all. Keep that momentum going!",
     ],
     procrastinate: [
-      "You've been staring at that single line for two minutes. The code won't solve itself!",
-      "Are we learning to build software or meditating on LCD pixels? Make a move!",
+      "Hey sleepyhead! You've been staring at a single line for three minutes. The code won't compile itself!",
+      "What the hell are we waiting for? The sprint deadline is ticking! Make a move!",
     ],
   },
 };
@@ -89,6 +93,7 @@ const ROAST_QUOTES: Record<
 class ToxicTutorEngine {
   private mode: CoachMode = 'friendly';
   private consecutiveMistakes = 0;
+  private cachedVoices: SpeechSynthesisVoice[] = [];
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -96,6 +101,18 @@ class ToxicTutorEngine {
       if (saved === 'friendly' || saved === 'roast') {
         this.mode = saved;
       }
+      this.initVoices();
+    }
+  }
+
+  private initVoices(): void {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    const load = () => {
+      this.cachedVoices = window.speechSynthesis.getVoices();
+    };
+    load();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = load;
     }
   }
 
@@ -145,28 +162,77 @@ class ToxicTutorEngine {
     return pool[randomIndex];
   }
 
+  /**
+   * Selects natural, deep, realistic male voice prioritizing neural/natural voices
+   */
+  private selectMaleVoice(locale: Locale): SpeechSynthesisVoice | null {
+    const voices = this.cachedVoices.length > 0 ? this.cachedVoices : window.speechSynthesis.getVoices();
+    if (!voices || voices.length === 0) return null;
+
+    const langPrefix = locale === 'ky' ? 'ky' : locale === 'ru' ? 'ru' : 'en';
+
+    // Prioritized masculine name tokens and natural engines
+    const maleNamesRu = ['pavel', 'dmitry', 'aleksandr', 'alexander', 'mikhail', 'sergey', 'georgy', 'yuriy', 'google русский'];
+    const maleNamesEn = ['guy', 'david', 'ryan', 'george', 'oliver', 'andrew', 'brian', 'mark', 'google us english', 'google uk english'];
+    const qualityTags = ['natural', 'neural', 'online', 'premium'];
+    const femalePenalties = ['irina', 'elena', 'zira', 'susan', 'victoria', 'female', 'kristina', 'anna'];
+
+    const langVoices = voices.filter(v =>
+      v.lang.toLowerCase().startsWith(langPrefix) ||
+      (locale === 'ky' && v.lang.toLowerCase().startsWith('ru')) // fallback for Kyrgyz if no native voice installed
+    );
+
+    if (langVoices.length === 0) {
+      // Fallback to any matching voice
+      return voices.find(v => v.lang.toLowerCase().startsWith(langPrefix)) || voices[0] || null;
+    }
+
+    // Score candidate voices
+    const scored = langVoices.map(v => {
+      const name = v.name.toLowerCase();
+      let score = 10;
+
+      // Check quality
+      if (qualityTags.some(q => name.includes(q))) score += 40;
+
+      // Check masculine names
+      const maleList = langPrefix === 'ru' || locale === 'ky' ? maleNamesRu : maleNamesEn;
+      if (maleList.some(m => name.includes(m))) score += 50;
+
+      // Penalize female voices when looking for male coach
+      if (femalePenalties.some(f => name.includes(f))) score -= 60;
+
+      // Bonus for Microsoft Natural / Google voices
+      if (name.includes('google') || name.includes('microsoft')) score += 15;
+
+      return { voice: v, score };
+    });
+
+    scored.sort((a, b) => b.score - a.score);
+    return scored[0]?.voice || langVoices[0];
+  }
+
   public speakRoast(text: string, locale: Locale): void {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     if (this.mode !== 'roast') return;
 
     try {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
 
-      const voices = window.speechSynthesis.getVoices();
-      const langPrefix = locale === 'ky' ? 'ky' : locale === 'ru' ? 'ru' : 'en';
-      const voice = voices.find(
-        (v) => v.lang.toLowerCase().startsWith(langPrefix) || (v as unknown as { locale?: string }).locale?.toLowerCase().startsWith(langPrefix)
-      );
+      // Humanized text delivery: add natural punctuation breathing pauses
+      const formattedText = text.replace(/([?!])\s+/g, '$1 ... ');
+      const utterance = new SpeechSynthesisUtterance(formattedText);
 
+      const voice = this.selectMaleVoice(locale);
       if (voice) {
         utterance.voice = voice;
         utterance.lang = voice.lang;
       }
 
-      // Slightly faster, punchier delivery for sarcastic roast
-      utterance.rate = 1.08;
-      utterance.pitch = 0.95;
+      // Male baritone resonance: slightly lower pitch, natural speaking speed
+      utterance.pitch = 0.88; // Deep masculine tone (prevents high robotic squeak)
+      utterance.rate = 1.02;  // Realistic conversational cadence
+      utterance.volume = 1.0;
 
       utterance.onstart = () => {
         soundManager.setDucked(true);

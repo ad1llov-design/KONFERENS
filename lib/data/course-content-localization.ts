@@ -4,6 +4,7 @@ import { getLocalizedCourse } from './course-localization';
 interface LocalizedLessonData {
   title?: string;
   content?: string;
+  deepDive?: string;
   exercise?: {
     question?: string;
     options?: string[];
@@ -3226,6 +3227,7 @@ export function getLocalizedLesson(courseId: CourseId, lesson: Lesson, locale: L
     ...lesson,
     title: translation.title ?? lesson.title,
     content: translation.content ?? lesson.content,
+    deepDive: translation.deepDive ?? lesson.deepDive,
     exercise: localizedExercise,
     exercises: localizedExercises ?? lesson.exercises,
   };
