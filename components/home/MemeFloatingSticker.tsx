@@ -2,7 +2,7 @@
 
 import { soundManager } from '@/lib/sound/sound-manager';
 
-export type MemeCardType = 'doge' | 'einstein' | 'homer' | 'cat';
+export type MemeCardType = 'doge' | 'einstein' | 'homer' | 'cat' | 'bazar-zhoq' | 'oy-baygus';
 
 interface MemeFloatingStickerProps {
   type: MemeCardType;
@@ -17,7 +17,7 @@ export function MemeFloatingSticker({
 }: MemeFloatingStickerProps) {
   const meta: Record<
     MemeCardType,
-    { title: string; caption: string; tag: string; tagColor: string; sound: string }
+    { title: string; caption: string; tag: string; tagColor: string; sound: string; isKz?: boolean }
   > = {
     doge: {
       title: 'Doge Senior Dev',
@@ -47,12 +47,32 @@ export function MemeFloatingSticker({
       tagColor: 'bg-rose-500/15 text-rose-500 border-rose-500/30',
       sound: 'krasavchik.mp3',
     },
+    'bazar-zhoq': {
+      title: 'Базар жоқ!',
+      caption: customCaption ?? 'Нағыз сеньор! Мықты шешім, код таза!',
+      tag: 'KZ Golden Base',
+      tagColor: 'bg-teal-500/15 text-teal-600 border-teal-500/30',
+      sound: 'kz_bazar_zhoq.wav',
+      isKz: true,
+    },
+    'oy-baygus': {
+      title: 'Ой байғұс-ай!',
+      caption: customCaption ?? 'Мынау не пәле?! Қателікті түзе!',
+      tag: 'KZ Fail Meme',
+      tagColor: 'bg-rose-500/15 text-rose-500 border-rose-500/30',
+      sound: 'kz_oy_baygus.wav',
+      isKz: true,
+    },
   };
 
   const item = meta[type];
 
   const handleClick = () => {
-    soundManager.playMemeFile(item.sound);
+    if (item.isKz) {
+      soundManager.playAudioFile(`/audio/memes_kz/${item.sound}`);
+    } else {
+      soundManager.playMemeFile(item.sound);
+    }
   };
 
   return (
@@ -161,6 +181,29 @@ export function MemeFloatingSticker({
             <rect x="18" y="60" width="44" height="12" rx="2" fill="#0F172A" stroke="#10B981" strokeWidth="1.5" />
             <line x1="22" y1="64" x2="58" y2="64" stroke="#10B981" strokeWidth="1" strokeDasharray="2 2" />
             <line x1="24" y1="68" x2="56" y2="68" stroke="#10B981" strokeWidth="1" strokeDasharray="3 2" />
+          </svg>
+        )}
+
+        {type === 'bazar-zhoq' && (
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            <circle cx="40" cy="40" r="34" fill="#0D9488" stroke="#FBBF24" strokeWidth="2" />
+            <circle cx="40" cy="38" r="14" fill="#FDE047" stroke="#F59E0B" strokeWidth="1.5" />
+            <path d="M40 18L40 22M40 54L40 58M20 38L24 38M56 38L60 38" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+            <path d="M22 50C30 42 40 46 40 50C40 46 50 42 58 50C50 54 40 52 40 56C40 52 30 54 22 50Z" fill="#FBBF24" />
+            <circle cx="60" cy="60" r="10" fill="#F59E0B" />
+            <path d="M58 58V62H62" stroke="#1E293B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        )}
+
+        {type === 'oy-baygus' && (
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            <circle cx="40" cy="40" r="34" fill="#FFF1F2" stroke="#F43F5E" strokeWidth="2" />
+            <ellipse cx="40" cy="42" rx="18" ry="22" fill="#FBBF24" stroke="#B45309" strokeWidth="1.5" />
+            <path d="M22 38C20 44 22 52 26 56" stroke="#78350F" strokeWidth="2" strokeLinecap="round" />
+            <path d="M58 38C60 44 58 52 54 56" stroke="#78350F" strokeWidth="2" strokeLinecap="round" />
+            <ellipse cx="40" cy="52" rx="5" ry="8" fill="#1C1917" stroke="#991B1B" strokeWidth="1.5" />
+            <circle cx="34" cy="36" r="3" fill="#EF4444" />
+            <circle cx="46" cy="36" r="3" fill="#EF4444" />
           </svg>
         )}
       </div>

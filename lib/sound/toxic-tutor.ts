@@ -187,6 +187,72 @@ const PRE_RECORDED_AUDIO: Record<
   ],
 };
 
+const PRE_RECORDED_AUDIO_KZ: Record<
+  'incorrect' | 'consecutive_fail' | 'correct' | 'procrastinate' | 'intro',
+  AudioLineMapping[]
+> = {
+  intro: [
+    {
+      audioUrl: '/audio/memes_kz/kz_bazar_zhoq.wav',
+      transcript: 'Базар жоқ! Нағыз сеньор! Мықты шешімдерге дайынсың ба?',
+      tag: 'meme',
+    },
+  ],
+  incorrect: [
+    {
+      audioUrl: '/audio/memes_kz/kz_oy_baygus.wav',
+      transcript: 'Ой байғұс-ай, мынау не пәле?! Қателікті түзе!',
+      tag: 'meme',
+    },
+    {
+      audioUrl: '/audio/memes_kz/kz_ayttym_goy.wav',
+      transcript: 'Айттым ғой саған! Теорияны қайтадан оқы!',
+      tag: 'meme',
+    },
+    {
+      audioUrl: '/audio/memes_kz/kz_maskara.wav',
+      transcript: 'Осыны да білмейсің бе? Тез арада қайта жаса!',
+      tag: 'meme',
+    },
+  ],
+  consecutive_fail: [
+    {
+      audioUrl: '/audio/memes_kz/kz_oy_baygus.wav',
+      transcript: 'Ой байғұс-ай! Қатарынан екі қате! Басыңды істет!',
+      tag: 'meme',
+    },
+    {
+      audioUrl: '/audio/memes/wasted.mp3',
+      transcript: 'По-тра-че-но! Сервер құлады!',
+      tag: 'meme',
+    },
+  ],
+  correct: [
+    {
+      audioUrl: '/audio/memes_kz/kz_bazar_zhoq.wav',
+      transcript: 'Базар жоқ! Нағыз сеньор! Мықты код жаздың!',
+      tag: 'meme',
+    },
+    {
+      audioUrl: '/audio/memes_kz/kz_zharaysyn.wav',
+      transcript: 'Жарайсың! Керемет шешім, тимлид саған риза!',
+      tag: 'meme',
+    },
+    {
+      audioUrl: '/audio/memes_kz/kz_shukir.wav',
+      transcript: 'Шүкір, ақыры дұрыс таптың! Алға баса берейік!',
+      tag: 'meme',
+    },
+  ],
+  procrastinate: [
+    {
+      audioUrl: '/audio/vlad/vlad_idle.wav',
+      transcript: 'Эй, ұйықтап қалдың ба? Дедлайн күтпейді, басыңды істет!',
+      tag: 'vlad',
+    },
+  ],
+};
+
 class ToxicTutorEngine {
   private mode: CoachMode = 'friendly';
   private consecutiveMistakes = 0;
@@ -271,9 +337,10 @@ class ToxicTutorEngine {
       return { text: '' };
     }
 
-    // Prioritize studio-quality audio files
-    if (PRE_RECORDED_AUDIO[type]) {
-      const pool = PRE_RECORDED_AUDIO[type];
+    // Prioritize studio-quality audio files (Kazakh clips for ky, Russian clips for ru/en)
+    const audioMap = locale === 'ky' ? PRE_RECORDED_AUDIO_KZ : PRE_RECORDED_AUDIO;
+    if (audioMap[type] && audioMap[type].length > 0) {
+      const pool = audioMap[type];
       const selected = pool[Math.floor(Math.random() * pool.length)];
 
       this.stopSpeaking();

@@ -8,7 +8,11 @@ export type MemeType =
   | 'panic-cat'
   | 'galaxy-brain'
   | 'gigachad'
-  | 'emotional-damage';
+  | 'emotional-damage'
+  | 'bazar-zhoq'
+  | 'ayttym-goy'
+  | 'oy-baygus'
+  | 'zharaysyn';
 
 interface MemeStickerProps {
   sticker: MemeType;
@@ -55,6 +59,26 @@ export function MemeSticker({
       ru: 'Критический эмоциональный урон! 💔⚡',
       ky: 'Өтө катуу тийди! Эмоционалдык сокку! 💔⚡',
       en: 'Critical Emotional Damage! 💔⚡',
+    },
+    'bazar-zhoq': {
+      ru: 'Базар жок! Настоящий сеньор, код чистый! 🦾🦅',
+      ky: 'Базар жоқ! Нағыз сеньор! Мықты шешім! 🦾🦅',
+      en: 'Bazar zhoq! Pure Senior craft! 🦾🦅',
+    },
+    'ayttym-goy': {
+      ru: 'Айттым ғой саған! Я же предупреждал — читай теорию! ☝️',
+      ky: 'Айттым ғой саған! Теорияны оқы деп ескерттім ғой! ☝️',
+      en: 'Ayttym goy sagan! Told you so, read the theory! ☝️',
+    },
+    'oy-baygus': {
+      ru: 'Ой байғұс-ай, мынау не пәле?! Тез арада қатені түзе! 😱',
+      ky: 'Ой байғұс-ай, мынау не пәле?! Қателікті дереу түзе! 😱',
+      en: 'Oy baygus-ay! What on earth is this bug?! 😱',
+    },
+    zharaysyn: {
+      ru: 'Жарайсың! Керемет жұмыс, тимлид саған риза! 🌟🎉',
+      ky: 'Жарайсың! Керемет нәтиже, команда мақтанады! 🌟🎉',
+      en: 'Zharaysyn! Outstanding work, teamlead is proud! 🌟🎉',
     },
   };
 
@@ -241,6 +265,99 @@ export function MemeSticker({
             <circle cx="30" cy="24" r="2" fill="#F59E0B" />
             <circle cx="70" cy="26" r="2" fill="#F59E0B" />
             <circle cx="50" cy="85" r="2.5" fill="#EF4444" />
+          </svg>
+        )}
+
+        {sticker === 'bazar-zhoq' && (
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-sm">
+            {/* Turquoise Kazakh disc */}
+            <circle cx="50" cy="50" r="46" fill="#0D9488" stroke="#FBBF24" strokeWidth="2.5" />
+            {/* Golden Kazakh Sun Rays */}
+            <circle cx="50" cy="46" r="16" fill="#FDE047" stroke="#F59E0B" strokeWidth="2" />
+            <path d="M50 20L50 26M50 66L50 72M24 46L30 46M70 46L76 46M32 28L36 32M64 60L68 64M32 64L36 60M64 32L68 28" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" />
+            {/* Soaring Golden Steppe Eagle Motif */}
+            <path d="M22 62C34 52 46 56 50 62C54 56 66 52 78 62C68 67 56 65 50 70C44 65 32 67 22 62Z" fill="#FBBF24" stroke="#D97706" strokeWidth="1.5" />
+            {/* Cyber Senior Sunglasses */}
+            <rect x="36" y="42" width="12" height="7" rx="2" fill="#0F172A" />
+            <rect x="52" y="42" width="12" height="7" rx="2" fill="#0F172A" />
+            <line x1="48" y1="45" x2="52" y2="45" stroke="#0F172A" strokeWidth="2" />
+            {/* Thumbs up badge */}
+            <circle cx="74" cy="74" r="12" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="1.5" />
+            <path d="M72 70V76H76C78 76 79 74 78 72C77 71 75 70 72 70ZM72 70L74 65C74 64 73 63 71 64L70 68" stroke="#1E293B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        )}
+
+        {sticker === 'ayttym-goy' && (
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-sm">
+            {/* Purple-indigo disc */}
+            <circle cx="50" cy="50" r="46" fill="#1E1B4B" stroke="#A78BFA" strokeWidth="2" />
+            {/* Traditional Kalpak / Hat with ornament */}
+            <polygon points="32,42 50,20 68,42" fill="#FFFFFF" stroke="#4C1D95" strokeWidth="2" />
+            <path d="M42 42C42 34 58 34 58 42" stroke="#7C3AED" strokeWidth="2" fill="none" />
+            <line x1="50" y1="20" x2="50" y2="14" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" />
+            <circle cx="50" cy="14" r="2.5" fill="#F59E0B" />
+            {/* Wise Face */}
+            <circle cx="50" cy="56" r="20" fill="#FDE68A" />
+            {/* Strict Eyebrows */}
+            <path d="M40 50L46 52M60 50L54 52" stroke="#451A03" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="43" cy="55" r="2" fill="#451A03" />
+            <circle cx="57" cy="55" r="2" fill="#451A03" />
+            {/* Stern mustache */}
+            <path d="M42 63C46 64 50 63 50 63C50 63 54 64 58 63" stroke="#451A03" strokeWidth="2.5" strokeLinecap="round" />
+            {/* Raised pointing index finger ("Айттым ғой!") */}
+            <rect x="70" y="44" width="8" height="24" rx="4" fill="#F59E0B" stroke="#451A03" strokeWidth="1.5" />
+            <path d="M74 44V34C74 32 78 32 78 34V44" fill="#F59E0B" stroke="#451A03" strokeWidth="1.5" />
+          </svg>
+        )}
+
+        {sticker === 'oy-baygus' && (
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-sm">
+            {/* Distressed amber/red disc */}
+            <circle cx="50" cy="50" r="46" fill="#FFF1F2" stroke="#F43F5E" strokeWidth="2" />
+            {/* Shocked Face */}
+            <ellipse cx="50" cy="52" rx="24" ry="28" fill="#FBBF24" stroke="#B45309" strokeWidth="2" />
+            {/* Hands clutching cheeks */}
+            <path d="M26 48C24 56 26 66 32 72C34 66 32 54 30 48Z" fill="#F59E0B" stroke="#78350F" strokeWidth="1.5" />
+            <path d="M74 48C76 56 74 66 68 72C66 66 68 54 70 48Z" fill="#F59E0B" stroke="#78350F" strokeWidth="1.5" />
+            {/* Shocked O-shaped mouth */}
+            <ellipse cx="50" cy="64" rx="7" ry="11" fill="#1C1917" stroke="#991B1B" strokeWidth="2" />
+            {/* Spiral/dizzy eyes */}
+            <circle cx="41" cy="45" r="5" fill="#FFFFFF" stroke="#0F172A" strokeWidth="2" />
+            <circle cx="59" cy="45" r="5" fill="#FFFFFF" stroke="#0F172A" strokeWidth="2" />
+            <circle cx="41" cy="45" r="2" fill="#EF4444" />
+            <circle cx="59" cy="45" r="2" fill="#EF4444" />
+            {/* Question mark swirls */}
+            <path d="M22 26C22 22 26 20 28 22C30 24 28 26 27 28" stroke="#E11D48" strokeWidth="2.5" strokeLinecap="round" />
+            <circle cx="27" cy="33" r="1.5" fill="#E11D48" />
+            <path d="M74 24C74 20 78 18 80 20C82 22 80 24 79 26" stroke="#E11D48" strokeWidth="2.5" strokeLinecap="round" />
+            <circle cx="79" cy="31" r="1.5" fill="#E11D48" />
+          </svg>
+        )}
+
+        {sticker === 'zharaysyn' && (
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-sm">
+            {/* Festive Emerald disc */}
+            <circle cx="50" cy="50" r="46" fill="#ECFDF5" stroke="#10B981" strokeWidth="2" />
+            {/* Golden Star Emblem */}
+            <polygon
+              points="50,16 57,32 74,34 61,46 65,63 50,54 35,63 39,46 26,34 43,32"
+              fill="#FBBF24"
+              stroke="#D97706"
+              strokeWidth="2"
+            />
+            {/* Inner Star shine */}
+            <polygon
+              points="50,24 54,34 65,36 57,43 59,54 50,48 41,54 43,43 35,36 46,34"
+              fill="#FEF08A"
+            />
+            {/* Ribbon streamers below */}
+            <path d="M42 64L36 86L46 80L50 86" fill="#059669" stroke="#047857" strokeWidth="1.5" />
+            <path d="M58 64L64 86L54 80L50 86" fill="#10B981" stroke="#047857" strokeWidth="1.5" />
+            {/* Confetti sparks */}
+            <circle cx="25" cy="30" r="2" fill="#F43F5E" />
+            <circle cx="75" cy="26" r="2" fill="#3B82F6" />
+            <circle cx="20" cy="60" r="2.5" fill="#8B5CF6" />
+            <circle cx="80" cy="62" r="2.5" fill="#F59E0B" />
           </svg>
         )}
       </div>

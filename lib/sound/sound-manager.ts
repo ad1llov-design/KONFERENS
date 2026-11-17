@@ -21,6 +21,8 @@ export class SoundManager {
   private volume: number = 0.7; // 0.0 to 1.0
   private ducked: boolean = false;
   private currentAudioElement: HTMLAudioElement | null = null;
+  private speechListeners: Set<(isSpeaking: boolean) => void> = new Set();
+  private _isSpeaking: boolean = false;
 
   private constructor() {
     if (typeof window !== 'undefined') {
@@ -264,6 +266,34 @@ export class SoundManager {
   }
 
   /**
+   * UI Tap / Interactive mascot poke: Soft pleasant bubble click (520Hz -> 440Hz)
+   * Duration: ~0.08s
+   */
+  public playTap(): void {
+    const ctx = this.initContext();
+    if (!ctx) return;
+    const gainVal = this.getEffectiveGain();
+    if (gainVal <= 0) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(540, now);
+    osc.frequency.exponentialRampToValueAtTime(420, now + 0.07);
+
+    gain.gain.setValueAtTime(gainVal * 0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.08);
+  }
+
+  /**
    * Meme Fail: Comedic dramatic descending chord (C#4 -> A3 -> F3)
    * With low-pass resonance to simulate classic fail meme sound. Duration: ~0.45s
    */
@@ -279,26 +309,26 @@ export class SoundManager {
     masterGain.connect(ctx.destination);
 
     const notes = [
-      { freq: 277.18, time: 0.00, dur: 0.15 }, // C#4
-      { freq: 220.00, time: 0.12, dur: 0.16 }, // A3
-      { freq: 174.61, time: 0.24, dur: 0.25 }, // F3
+      { freq: 277.18, time: 0.00, dur: 0.16 }, // C#4
+      { freq: 220.00, time: 0.14, dur: 0.18 }, // A3
+      { freq: 174.61, time: 0.28, dur: 0.28 }, // F3
     ];
 
     notes.forEach(({ freq, time, dur }) => {
       const osc = ctx.createOscillator();
       const noteGain = ctx.createGain();
 
-      osc.type = 'sawtooth';
-      // Low pass filter for muffled comedic impact
+      // Warm triangle wave: zero harsh buzzing or tremolo flutter
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + time);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.94, now + time + dur);
+
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(800, now + time);
-
-      osc.frequency.setValueAtTime(freq, now + time);
-      osc.frequency.exponentialRampToValueAtTime(freq * 0.92, now + time + dur);
+      filter.frequency.setValueAtTime(1200, now + time);
 
       noteGain.gain.setValueAtTime(0.001, now + time);
-      noteGain.gain.exponentialRampToValueAtTime(0.8, now + time + 0.02);
+      noteGain.gain.linearRampToValueAtTime(0.7, now + time + 0.03);
       noteGain.gain.exponentialRampToValueAtTime(0.001, now + time + dur);
 
       osc.connect(filter);
@@ -312,7 +342,7 @@ export class SoundManager {
 
   /**
    * Bruh Sound Effect: Deep comedic resonant downward pitch slide (~115Hz down to ~75Hz)
-   * Dual oscillator (sawtooth + sine) with formant filter. Duration: ~0.38s
+   * Smooth dual oscillator (triangle + sine) with gentle vocal formant filter. Duration: ~0.38s
    */
   public playBruh(): void {
     const ctx = this.initContext();
@@ -328,15 +358,16 @@ export class SoundManager {
     // Filter simulating a chest vocal formant
     const filter = ctx.createBiquadFilter();
     filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(350, now);
-    filter.Q.setValueAtTime(2.5, now);
+    filter.frequency.setValueAtTime(320, now);
+    filter.Q.setValueAtTime(1.8, now);
     filter.connect(masterGain);
 
     const osc1 = ctx.createOscillator();
     const osc2 = ctx.createOscillator();
     const gainNode = ctx.createGain();
 
-    osc1.type = 'sawtooth';
+    // Triangle + sine prevents harsh sawtooth phase beating / tremolo
+    osc1.type = 'triangle';
     osc2.type = 'sine';
 
     // Pitch slide down (115Hz -> 75Hz)
@@ -347,7 +378,7 @@ export class SoundManager {
     osc2.frequency.exponentialRampToValueAtTime(75, now + 0.35);
 
     gainNode.gain.setValueAtTime(0.001, now);
-    gainNode.gain.exponentialRampToValueAtTime(1.0, now + 0.04);
+    gainNode.gain.linearRampToValueAtTime(0.85, now + 0.04);
     gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.36);
 
     osc1.connect(gainNode);
@@ -361,8 +392,9 @@ export class SoundManager {
   }
 
   /**
-   * Sad Trombone: Classic 4-note comedic descent with pitch bend
-   * D4 -> C#4 -> C4 -> B3 (wah-wah bend). Duration: ~0.7s
+   * Sad Trombone: Classic 4-note comedic descent with smooth pitch slide
+   * D4 -> C#4 -> C4 -> B3 (smooth warm brass). Duration: ~0.72s
+   * Uses triangle waves and gentle low-pass to eliminate sawtooth harshness/tremolo.
    */
   public playSadTrombone(): void {
     const ctx = this.initContext();
@@ -372,33 +404,33 @@ export class SoundManager {
 
     const now = ctx.currentTime;
     const masterGain = ctx.createGain();
-    masterGain.gain.setValueAtTime(gainVal * 0.3, now);
+    masterGain.gain.setValueAtTime(gainVal * 0.35, now);
     masterGain.connect(ctx.destination);
 
     const notes = [
       { freq: 293.66, time: 0.00, dur: 0.16, bend: 1.0 },   // D4
-      { freq: 277.18, time: 0.15, dur: 0.16, bend: 1.0 },   // C#4
-      { freq: 261.63, time: 0.30, dur: 0.16, bend: 1.0 },   // C4
-      { freq: 246.94, time: 0.45, dur: 0.30, bend: 0.88 },  // B3 slide down (wah-wah)
+      { freq: 277.18, time: 0.16, dur: 0.16, bend: 1.0 },   // C#4
+      { freq: 261.63, time: 0.32, dur: 0.16, bend: 1.0 },   // C4
+      { freq: 246.94, time: 0.48, dur: 0.32, bend: 0.90 },  // B3 gentle slide down
     ];
 
     notes.forEach(({ freq, time, dur, bend }) => {
       const osc = ctx.createOscillator();
       const noteGain = ctx.createGain();
 
-      osc.type = 'sawtooth';
+      // Triangle wave delivers smooth brass warmth without sawtooth buzz/tremolo
+      osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, now + time);
       if (bend !== 1.0) {
         osc.frequency.exponentialRampToValueAtTime(freq * bend, now + time + dur);
       }
 
-      // Wah-wah filter
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(650, now + time);
+      filter.frequency.setValueAtTime(1400, now + time);
 
       noteGain.gain.setValueAtTime(0.001, now + time);
-      noteGain.gain.exponentialRampToValueAtTime(0.85, now + time + 0.03);
+      noteGain.gain.linearRampToValueAtTime(0.8, now + time + 0.03);
       noteGain.gain.exponentialRampToValueAtTime(0.001, now + time + dur);
 
       osc.connect(filter);
@@ -454,7 +486,7 @@ export class SoundManager {
 
   /**
    * Plays a pre-recorded / pre-generated audio file (MP3, WAV, OGG)
-   * Handles audio ducking, browser autoplay constraints, and volume control.
+   * Handles audio ducking, browser autoplay constraints, volume control, and speech events.
    */
   public playAudioFile(url: string, onEnd?: () => void): HTMLAudioElement | null {
     if (!this.enabled || typeof window === 'undefined') return null;
@@ -464,9 +496,11 @@ export class SoundManager {
       audio.volume = this.volume;
       this.currentAudioElement = audio;
       this.setDucked(true);
+      this.setSpeaking(true);
 
       const cleanup = () => {
         this.setDucked(false);
+        this.setSpeaking(false);
         if (this.currentAudioElement === audio) {
           this.currentAudioElement = null;
         }
@@ -480,12 +514,14 @@ export class SoundManager {
       if (playPromise !== undefined) {
         playPromise.catch(() => {
           this.setDucked(false);
+          this.setSpeaking(false);
           this.currentAudioElement = null;
         });
       }
       return audio;
     } catch {
       this.setDucked(false);
+      this.setSpeaking(false);
       return null;
     }
   }
@@ -502,6 +538,38 @@ export class SoundManager {
       this.currentAudioElement = null;
       this.setDucked(false);
     }
+    this.setSpeaking(false);
+  }
+
+  /**
+   * Check if real voice/audio is currently playing
+   */
+  public isVoiceActive(): boolean {
+    return this._isSpeaking;
+  }
+
+  /**
+   * Subscribe to speech state changes (e.g. for mouth animation / lip-sync)
+   */
+  public onSpeechChange(listener: (isSpeaking: boolean) => void): () => void {
+    this.speechListeners.add(listener);
+    listener(this._isSpeaking);
+    return () => {
+      this.speechListeners.delete(listener);
+    };
+  }
+
+  /**
+   * Manually trigger or override speech state
+   */
+  public setSpeaking(speaking: boolean): void {
+    if (this._isSpeaking === speaking) return;
+    this._isSpeaking = speaking;
+    this.speechListeners.forEach((fn) => {
+      try {
+        fn(speaking);
+      } catch {}
+    });
   }
 
   /**

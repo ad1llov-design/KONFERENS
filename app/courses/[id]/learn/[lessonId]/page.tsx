@@ -30,8 +30,9 @@ import { HtmlCssPreview } from '@/components/lesson/HtmlCssPreview';
 import { LessonTextToSpeech } from '@/components/lesson/LessonTextToSpeech';
 import { KiviSticker } from '@/components/lesson/KiviSticker';
 import { MemeSticker, type MemeType } from '@/components/lesson/MemeSticker';
+import { MemePopupModal } from '@/components/lesson/MemePopupModal';
+import { TalkingMascot } from '@/components/mascot/TalkingMascot';
 import { LessonDeepDive } from '@/components/lesson/LessonDeepDive';
-import { ToxicCoachAvatar } from '@/components/lesson/ToxicCoachAvatar';
 import { SoundToggle } from '@/components/sound/SoundToggle';
 import { soundManager } from '@/lib/sound/sound-manager';
 import { toxicTutor, type CoachMode } from '@/lib/sound/toxic-tutor';
@@ -153,6 +154,7 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
   const [currentMeme, setCurrentMeme] = useState<MemeType>('facepalm');
   const [roastSpeechText, setRoastSpeechText] = useState<string>('');
   const [showMobileCompanion, setShowMobileCompanion] = useState(false);
+  const [showMemeModal, setShowMemeModal] = useState(false);
 
   useEffect(() => {
     setCoachMode(toxicTutor.getMode());
@@ -195,6 +197,7 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
     setUserAnswer(null);
     setAnswerState('idle');
     setShowHint(false);
+    setShowMemeModal(false);
     toxicTutor.stopSpeaking();
   }
 
@@ -208,12 +211,18 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
 
     if (correct) {
       setAnswerState('correct');
+      const winMemes: MemeType[] =
+        locale === 'ky'
+          ? ['bazar-zhoq', 'zharaysyn', 'gigachad']
+          : ['gigachad', 'galaxy-brain'];
+      const chosenMeme = winMemes[Math.floor(Math.random() * winMemes.length)];
+      setCurrentMeme(chosenMeme);
+      setShowMemeModal(true);
+
       if (coachMode === 'roast') {
         toxicTutor.recordSuccess();
         const roastResult = toxicTutor.playRoastEvent('correct', locale);
         setRoastSpeechText(roastResult.text);
-        const winMemes: MemeType[] = ['gigachad', 'galaxy-brain'];
-        setCurrentMeme(winMemes[Math.floor(Math.random() * winMemes.length)]);
       }
 
       if (!completedExercises.includes(currentExIndex)) {
@@ -250,20 +259,23 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
       }
     } else {
       setAnswerState('incorrect');
+      const failStreak = toxicTutor.recordMistake();
+      const failMemes: MemeType[] =
+        locale === 'ky'
+          ? ['oy-baygus', 'ayttym-goy', 'facepalm']
+          : failStreak >= 2
+          ? ['emotional-damage']
+          : ['facepalm', 'this-is-fine', 'panic-cat'];
+      const chosenMeme = failMemes[Math.floor(Math.random() * failMemes.length)];
+      setCurrentMeme(chosenMeme);
+      setShowMemeModal(true);
+
       if (coachMode === 'roast') {
-        const failStreak = toxicTutor.recordMistake();
         const roastResult = toxicTutor.playRoastEvent(
           failStreak >= 2 ? 'consecutive_fail' : 'incorrect',
           locale
         );
         setRoastSpeechText(roastResult.text);
-
-        if (failStreak >= 2) {
-          setCurrentMeme('emotional-damage');
-        } else {
-          const failMemes: MemeType[] = ['facepalm', 'this-is-fine', 'panic-cat'];
-          setCurrentMeme(failMemes[Math.floor(Math.random() * failMemes.length)]);
-        }
       } else {
         soundManager.playIncorrect();
       }
@@ -413,6 +425,16 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
 
           {showMobileCompanion && (
             <div className="mt-2.5 p-4 rounded-[var(--r-md)] bg-surface border border-border/80 space-y-3.5 animate-fadeIn text-xs">
+              <div className="flex justify-center pb-3 border-b border-border/70">
+                <TalkingMascot
+                  size="sm"
+                  initialMode={coachMode}
+                  onModeChange={(m) => setCoachMode(m)}
+                  speechText={roastSpeechText}
+                  interactive={true}
+                  showControls={true}
+                />
+              </div>
               <div>
                 <p className="font-semibold text-foreground mb-1">
                   {locale === 'ru' ? 'Учебная цель:' : locale === 'ky' ? 'Окуу максаты:' : 'Learning Objective:'}
@@ -680,38 +702,21 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
                         : 'border-danger/40 bg-danger-light',
                     ].join(' ')}
                   >
-                    {coachMode === 'roast' ? (
-                      <div className="flex flex-col sm:flex-row items-center gap-3">
-                        <ToxicCoachAvatar
-                          mood={
-                            answerState === 'correct'
-                              ? 'proud'
-                              : toxicTutor.getConsecutiveMistakes() >= 2
-                              ? 'angry'
-                              : 'facepalm'
-                          }
+                    <div className="flex flex-col sm:flex-row items-center gap-3">
+                      <TalkingMascot
+                        size="sm"
+                        initialMode={coachMode}
+                        showControls={false}
+                        speechText={coachMode === 'roast' ? roastSpeechText : undefined}
+                      />
+                      <div className="flex-1 w-full min-w-0">
+                        <MemeSticker
+                          sticker={currentMeme}
+                          customText={coachMode === 'roast' ? roastSpeechText || undefined : undefined}
                           size="md"
                         />
-                        <div className="flex-1 w-full min-w-0">
-                          <MemeSticker
-                            sticker={currentMeme}
-                            customText={roastSpeechText || undefined}
-                            size="md"
-                          />
-                        </div>
                       </div>
-                    ) : (
-                      <KiviSticker
-                        mood={
-                          answerState === 'correct'
-                            ? completedExercises.length >= totalExercises
-                              ? 'champion'
-                              : 'celebrate'
-                            : 'encourage'
-                        }
-                        size="sm"
-                      />
-                    )}
+                    </div>
 
                     <div className="flex items-start gap-3">
                       {answerState === 'correct' ? (
@@ -796,6 +801,18 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
 
           {/* ── Right Column (4 cols): Sticky Learning Companion Sidebar ── */}
           <aside className="lg:col-span-4 space-y-5 lg:sticky lg:top-24">
+            {/* Card 0: Interactive Talking Mascot with Animated Lip-Sync & Face Switcher */}
+            <div className="glass-card rounded-[var(--r-xl)] p-5 border border-border shadow-xs bg-surface flex flex-col items-center">
+              <TalkingMascot
+                size="md"
+                initialMode={coachMode}
+                onModeChange={(m) => setCoachMode(m)}
+                speechText={roastSpeechText}
+                interactive={true}
+                showControls={true}
+              />
+            </div>
+
             {/* Card 1: Learning Goal & Prerequisites */}
             <div className="glass-card rounded-[var(--r-xl)] p-5 border border-border shadow-xs bg-surface">
               <div className="flex items-center gap-2 mb-2 text-foreground font-bold text-sm">
@@ -888,6 +905,15 @@ function LessonBody({ params }: { params: Promise<{ id: string; lessonId: string
             </div>
           </aside>
         </div>
+
+        {/* High-visibility Prominent Meme Reaction Modal */}
+        <MemePopupModal
+          isOpen={showMemeModal}
+          onClose={() => setShowMemeModal(false)}
+          sticker={currentMeme}
+          isCorrect={answerState === 'correct'}
+          customText={coachMode === 'roast' ? roastSpeechText || undefined : undefined}
+        />
       </main>
     </div>
   );

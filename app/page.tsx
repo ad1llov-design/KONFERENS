@@ -27,7 +27,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { DemoEnrollModal } from '@/components/modals/DemoEnrollModal';
-import { ToxicCoachAvatar } from '@/components/lesson/ToxicCoachAvatar';
+import { TalkingMascot } from '@/components/mascot/TalkingMascot';
 import { MemeFloatingSticker } from '@/components/home/MemeFloatingSticker';
 import { toxicTutor } from '@/lib/sound/toxic-tutor';
 import { useLanguage } from '@/lib/i18n/context';
@@ -442,33 +442,27 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* Grid of Meme Badges & Coach Vlad Spotlight Card */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div
-                onClick={() => {
-                  toxicTutor.setMode('roast');
-                  toxicTutor.playRoastEvent('intro', locale);
-                }}
-                role="button"
-                tabIndex={0}
-                title="Нажмите, чтобы послушать голос Влада"
-                className="glass-card rounded-[var(--r-xl)] p-4 border border-rose-500/30 bg-rose-500/5 flex items-center gap-3 shadow-sm hover:border-rose-500/50 hover:scale-102 active:scale-98 transition-all cursor-pointer"
-              >
-                <ToxicCoachAvatar mood="angry" size="sm" />
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.2 rounded-full bg-rose-500/20 text-rose-500 border border-rose-500/30">
-                      Toxic Coach
-                    </span>
-                  </div>
-                  <h3 className="text-xs font-bold text-foreground truncate">Сеньор Влад</h3>
-                  <p className="text-[11px] text-muted line-clamp-2">Мужской голос сеньора, который отчитывает за плохой код.</p>
-                </div>
+            {/* Grid of Meme Badges & Interactive Talking Mascot Showcase */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+              {/* Mascot Spotlight Card with Real Live Lip-Sync Mouth & Mode Toggle */}
+              <div className="glass-card rounded-[var(--r-xl)] p-4 border border-rose-500/30 bg-rose-500/5 flex flex-col items-center justify-between shadow-sm">
+                <TalkingMascot
+                  size="md"
+                  showControls={true}
+                  interactive={true}
+                />
+                <p className="text-[11px] text-muted text-center mt-2">
+                  {locale === 'ru'
+                    ? 'Нажмите на лицо или кнопку режима'
+                    : locale === 'ky'
+                    ? 'Бетти же режимди басып көрүңүз'
+                    : 'Click the mascot or toggle mode'}
+                </p>
               </div>
 
+              <MemeFloatingSticker type="bazar-zhoq" />
+              <MemeFloatingSticker type="oy-baygus" />
               <MemeFloatingSticker type="doge" />
-              <MemeFloatingSticker type="einstein" />
-              <MemeFloatingSticker type="homer" />
             </div>
           </div>
         </section>
